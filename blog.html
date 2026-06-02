@@ -246,6 +246,9 @@ section{padding:clamp(40px,7vw,80px) var(--pad)}
   .how-arrow{display:none}
 }
 
+
+.blog-card.hidden{display:none}
+.blog-empty{grid-column:1/-1;text-align:center;padding:48px 20px;color:var(--dark-mid);font-size:.9rem}
 </style>
 </head>
 <body>
@@ -268,88 +271,88 @@ section{padding:clamp(40px,7vw,80px) var(--pad)}
   <div class="container">
     <div class="blog-filters">
       <span class="filter-tag active">Все</span>
-      <span class="filter-tag">Энергия и усталость</span>
-      <span class="filter-tag">Slowlife</span>
+      <span class="filter-tag">Энергия и ресурс</span>
+      <span class="filter-tag">Личность</span>
       <span class="filter-tag">Отношения</span>
-      <span class="filter-tag">Планирование</span>
-      <span class="filter-tag">Инструменты</span>
+      <span class="filter-tag">Окружение</span>
+      <span class="filter-tag">Работа и деньги</span>
     </div>
     <div class="blog-grid">
 
-      <a href="#article" class="blog-card">
+      <a href="10-veschey-otdykh.html" class="blog-card" data-category="энергия">
         <div class="blog-cover" style="background:#EDD8D8">
           <div class="blog-cover-bg energy"></div>
-          <span class="blog-cover-label">Энергия</span>⚡
+          <span class="blog-cover-label">Энергия и ресурс</span>☕
         </div>
         <div class="blog-body">
-          <div class="blog-meta"><span class="blog-tag">Энергия</span><span class="blog-dot" style="color:var(--accent-lt)">·</span><span class="blog-date">15 янв 2025</span></div>
-          <div class="blog-title">Усталость без причины — это миф</div>
-          <div class="blog-excerpt">В один день вы успеваете горы, а в другой — три звонка и пластом. Дело не в лени. Дело в энергетических вампирах, которых вы не замечаете.</div>
-          <div class="blog-footer"><span class="blog-read">Читать →</span><span class="blog-time">5 мин</span></div>
-        </div>
-      </a>
-
-      <a href="#" class="blog-card">
-        <div class="blog-cover" style="background:#D4E4DF">
-          <div class="blog-cover-bg slow"></div>
-          <span class="blog-cover-label">Slowlife</span>🌿
-        </div>
-        <div class="blog-body">
-          <div class="blog-meta"><span class="blog-tag" style="color:#4A6057">Slowlife</span><span class="blog-dot" style="color:var(--accent-lt)">·</span><span class="blog-date">22 янв 2025</span></div>
-          <div class="blog-title">5 признаков того, что вы отдыхаете неправильно</div>
-          <div class="blog-excerpt">После выходных чувствуете себя ещё более уставшей? Вы не одна. Рассказываю, почему «отдых» иногда выматывает сильнее работы.</div>
+          <div class="blog-meta"><span class="blog-tag">Энергия и ресурс</span><span class="blog-dot" style="color:var(--accent-lt)">·</span><span class="blog-date">22 мая 2025</span></div>
+          <div class="blog-title">10 вещей, которые ошибочно считают отдыхом</div>
+          <div class="blog-excerpt">В эпоху бешеного ритма даже отдых мы умудряемся превращать в иллюзию восстановления. Вот 10 ловушек, которые мешают по-настоящему расслабиться.</div>
           <div class="blog-footer"><span class="blog-read">Читать →</span><span class="blog-time">4 мин</span></div>
         </div>
       </a>
 
-      <a href="#" class="blog-card">
-        <div class="blog-cover" style="background:#EDD8E4">
-          <div class="blog-cover-bg rel"></div>
-          <span class="blog-cover-label">Отношения</span>💬
+      <a href="work-life-balance.html" class="blog-card" data-category="энергия">
+        <div class="blog-cover" style="background:#EDD8D8">
+          <div class="blog-cover-bg energy"></div>
+          <span class="blog-cover-label">Энергия и ресурс</span>⚡
         </div>
         <div class="blog-body">
-          <div class="blog-meta"><span class="blog-tag" style="color:#7A4A6B">Отношения</span><span class="blog-dot" style="color:var(--accent-lt)">·</span><span class="blog-date">29 янв 2025</span></div>
-          <div class="blog-title">Люди, после которых хочется спать</div>
-          <div class="blog-excerpt">Формально нормальные. Не грубят, не скандалят. Но после встречи с ними — хочется лечь и не вставать. Разбираю четыре типа.</div>
-          <div class="blog-footer"><span class="blog-read">Читать →</span><span class="blog-time">6 мин</span></div>
-        </div>
-      </a>
-
-      <a href="#" class="blog-card">
-        <div class="blog-cover" style="background:#E4E1D4">
-          <div class="blog-cover-bg plan"></div>
-          <span class="blog-cover-label">Планирование</span>📅
-        </div>
-        <div class="blog-body">
-          <div class="blog-meta"><span class="blog-tag" style="color:#6B6040">Планирование</span><span class="blog-dot" style="color:var(--accent-lt)">·</span><span class="blog-date">5 фев 2025</span></div>
-          <div class="blog-title">Почему тайм-менеджмент не работает для большинства женщин</div>
-          <div class="blog-excerpt">Все эти системы придуманы для людей с одним большим блоком работы. А у нас — звонок, ребёнок, задача, магазин. Никакого «блока».</div>
-          <div class="blog-footer"><span class="blog-read">Читать →</span><span class="blog-time">5 мин</span></div>
-        </div>
-      </a>
-
-      <a href="#" class="blog-card">
-        <div class="blog-cover" style="background:#D4DAE4">
-          <div class="blog-cover-bg tools"></div>
-          <span class="blog-cover-label">Инструменты</span>🛠
-        </div>
-        <div class="blog-body">
-          <div class="blog-meta"><span class="blog-tag" style="color:#3D506B">Инструменты</span><span class="blog-dot" style="color:var(--accent-lt)">·</span><span class="blog-date">12 фев 2025</span></div>
-          <div class="blog-title">Шкала энергии: как оценить любое дело за 5 секунд</div>
-          <div class="blog-excerpt">От -10 до +5. Простой инструмент, который за неделю покажет, куда уходят ваши силы — лучше любого психолога.</div>
+          <div class="blog-meta"><span class="blog-tag">Энергия и ресурс</span><span class="blog-dot" style="color:var(--accent-lt)">·</span><span class="blog-date">21 февр 2026</span></div>
+          <div class="blog-title">Что не так с work-life balance?</div>
+          <div class="blog-excerpt">Люди стали осознаннее, стараются держать баланс — но тревожности меньше не становится. Даже наоборот. Разбираю, в чём подвох концепции.</div>
           <div class="blog-footer"><span class="blog-read">Читать →</span><span class="blog-time">3 мин</span></div>
         </div>
       </a>
 
-      <a href="#" class="blog-card">
-        <div class="blog-cover" style="background:#EDD8D8">
-          <div class="blog-cover-bg energy"></div>
-          <span class="blog-cover-label">Slowlife</span>☕
+      <a href="lyubov-k-sebe.html" class="blog-card" data-category="личность">
+        <div class="blog-cover" style="background:#E8DAEF">
+          <div class="blog-cover-bg rel"></div>
+          <span class="blog-cover-label">Личность</span>💛
         </div>
         <div class="blog-body">
-          <div class="blog-meta"><span class="blog-tag">Slowlife</span><span class="blog-dot" style="color:var(--accent-lt)">·</span><span class="blog-date">19 фев 2025</span></div>
-          <div class="blog-title">Разрешите себе скучать</div>
-          <div class="blog-excerpt">Скука — это не проблема. Это пространство, в котором мозг наконец перестаёт обрабатывать входящие и начинает думать своим ходом.</div>
+          <div class="blog-meta"><span class="blog-tag" style="color:#7A4A6B">Личность</span><span class="blog-dot" style="color:var(--accent-lt)">·</span><span class="blog-date">14 мая 2025</span></div>
+          <div class="blog-title">Любовь к себе: модный тренд или реальный путь к счастью?</div>
+          <div class="blog-excerpt">Инфлюенсеры кричат «люби себя», а большинство даже не понимает, что это на самом деле значит. Говорим честно и без культа.</div>
+          <div class="blog-footer"><span class="blog-read">Читать →</span><span class="blog-time">4 мин</span></div>
+        </div>
+      </a>
+
+      <a href="5-prichin.html" class="blog-card" data-category="личность">
+        <div class="blog-cover" style="background:#D5F5E3">
+          <div class="blog-cover-bg slow"></div>
+          <span class="blog-cover-label">Личность</span>🌿
+        </div>
+        <div class="blog-body">
+          <div class="blog-meta"><span class="blog-tag" style="color:#4A6057">Личность</span><span class="blog-dot" style="color:var(--accent-lt)">·</span><span class="blog-date">21 авг 2020</span></div>
+          <div class="blog-title">5 причин не переживать из-за чужого мнения</div>
+          <div class="blog-excerpt">Мы часто переоцениваем значимость чужого мнения. Но людям на вас плевать — и это хорошая новость.</div>
+          <div class="blog-footer"><span class="blog-read">Читать →</span><span class="blog-time">3 мин</span></div>
+        </div>
+      </a>
+
+      <a href="#" class="blog-card" data-category="отношения">
+        <div class="blog-cover" style="background:#EDD8E4">
+          <div class="blog-cover-bg rel"></div>
+          <span class="blog-cover-label">Отношения</span>❤️
+        </div>
+        <div class="blog-body">
+          <div class="blog-meta"><span class="blog-tag" style="color:#7A4A6B">Отношения</span><span class="blog-dot" style="color:var(--accent-lt)">·</span><span class="blog-date">19 мая 2025</span></div>
+          <div class="blog-title">Первый шаг в отношениях</div>
+          <div class="blog-excerpt">Многие отношения не складываются из-за того, что никто не решается сделать первый шаг. Разбираю, почему это происходит.</div>
+          <div class="blog-footer"><span class="blog-read">Читать →</span><span class="blog-time">5 мин</span></div>
+        </div>
+      </a>
+
+      <a href="#" class="blog-card" data-category="окружение">
+        <div class="blog-cover" style="background:#D4DAE4">
+          <div class="blog-cover-bg tools"></div>
+          <span class="blog-cover-label">Окружение</span>👥
+        </div>
+        <div class="blog-body">
+          <div class="blog-meta"><span class="blog-tag" style="color:#3D506B">Окружение</span><span class="blog-dot" style="color:var(--accent-lt)">·</span><span class="blog-date">18 сент 2019</span></div>
+          <div class="blog-title">6 признаков, которые выдают токсичного человека</div>
+          <div class="blog-excerpt">Токсичные люди редко выглядят откровенно неприятными. Чаще они кажутся вполне нормальными — до поры.</div>
           <div class="blog-footer"><span class="blog-read">Читать →</span><span class="blog-time">4 мин</span></div>
         </div>
       </a>
@@ -377,24 +380,61 @@ section{padding:clamp(40px,7vw,80px) var(--pad)}
 </body>
 </html>
 <script>
-document.querySelectorAll('.faq-q, .pfaq-q').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    const item=btn.closest('.faq-item, .pfaq-item');
-    const isOpen=item.classList.contains('open');
-    item.closest('section, div').querySelectorAll('.faq-item,.pfaq-item').forEach(i=>i.classList.remove('open'));
-    if(!isOpen)item.classList.add('open');
-  });
-});
-document.querySelectorAll('.screenshot-thumb').forEach(thumb=>{
-  thumb.addEventListener('click',()=>{
-    document.querySelectorAll('.screenshot-thumb').forEach(t=>t.classList.remove('active'));
-    thumb.classList.add('active');
-  });
-});
-document.querySelectorAll('.filter-tag').forEach(tag=>{
-  tag.addEventListener('click',()=>{
-    document.querySelectorAll('.filter-tag').forEach(t=>t.classList.remove('active'));
+// ── CATEGORY FILTER ──────────────────────────────────────────────
+const filterTags = document.querySelectorAll('.filter-tag');
+const blogCards  = document.querySelectorAll('.blog-card');
+const blogGrid   = document.querySelector('.blog-grid');
+
+// Category map: label → data-category value
+const categoryMap = {
+  'Все': 'all',
+  'Энергия и ресурс': 'энергия',
+  'Личность': 'личность',
+  'Отношения': 'отношения',
+  'Окружение': 'окружение',
+  'Работа и деньги': 'работа',
+};
+
+filterTags.forEach(tag => {
+  tag.addEventListener('click', () => {
+    // Update active state
+    filterTags.forEach(t => t.classList.remove('active'));
     tag.classList.add('active');
+
+    const selected = categoryMap[tag.textContent.trim()] || 'all';
+
+    // Remove old empty message if any
+    const oldEmpty = blogGrid.querySelector('.blog-empty');
+    if (oldEmpty) oldEmpty.remove();
+
+    let visibleCount = 0;
+
+    blogCards.forEach(card => {
+      if (selected === 'all' || card.dataset.category === selected) {
+        card.classList.remove('hidden');
+        visibleCount++;
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+
+    // Show message if no results
+    if (visibleCount === 0) {
+      const msg = document.createElement('p');
+      msg.className = 'blog-empty';
+      msg.textContent = 'В этой категории пока нет статей.';
+      blogGrid.appendChild(msg);
+    }
+  });
+});
+
+// ── FAQ ACCORDION ─────────────────────────────────────────────────
+document.querySelectorAll('.faq-q,.pfaq-q').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.closest('.faq-item,.pfaq-item');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item,.pfaq-item').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
   });
 });
 </script>
