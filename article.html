@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Усталость без причины — это миф — Юля Инамора</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+
+:root {
+  --dark:#3D2E2E;--dark-mid:#6B4E4E;--accent:#B58E8E;--accent-lt:#D4B8B8;
+  --mid:#EDD8D8;--light:#F5ECEC;--lighter:#FBF7F7;--white:#FFFFFF;
+  --serif:'Cormorant Garamond',Georgia,serif;--sans:'Jost',system-ui,sans-serif;
+  --r-sm:6px;--r-md:10px;--r-lg:16px;--max:1100px;--pad:clamp(20px,5vw,80px);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--lighter);color:var(--dark);font-size:16px;line-height:1.7;font-weight:300}
+a{color:inherit;text-decoration:none}
+h1,h2,h3,h4{font-family:var(--serif);font-weight:500;line-height:1.2}
+h1{font-size:clamp(1.8rem,4vw,3rem)}
+h2{font-size:clamp(1.4rem,3vw,2rem)}
+h3{font-size:clamp(1rem,2vw,1.3rem)}
+h4{font-size:1rem;font-family:var(--sans);font-weight:500}
+.label{font-size:.65rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:.5rem;display:block}
+.container{max-width:var(--max);margin:0 auto;padding:0 var(--pad)}
+section{padding:clamp(40px,7vw,80px) var(--pad)}
+.btn{display:inline-block;background:var(--accent);color:var(--dark);font-family:var(--sans);font-size:.85rem;font-weight:500;letter-spacing:.04em;padding:13px 28px;border-radius:var(--r-sm);border:none;cursor:pointer;transition:background .2s,transform .15s}
+.btn:hover{background:var(--accent-lt);transform:translateY(-1px)}
+.btn-outline{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+.btn-outline:hover{background:rgba(181,142,142,.08)}
+.btn-dark{background:var(--dark);color:var(--lighter)}
+.btn-dark:hover{background:#2a1f1f}
+
+/* NAV */
+.nav{background:var(--dark);position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,.05)}
+.nav-inner{max-width:var(--max);margin:0 auto;padding:0 var(--pad);height:56px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-family:var(--serif);font-size:1.1rem;color:var(--lighter)}
+.nav-links{display:flex;gap:24px}
+.nav-links a{color:var(--accent-lt);font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;transition:color .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--lighter)}
+
+/* BREADCRUMB */
+.breadcrumb{padding:14px var(--pad);background:var(--light);border-bottom:1px solid var(--accent-lt)}
+.breadcrumb-inner{max-width:var(--max);margin:0 auto;display:flex;align-items:center;gap:8px;font-size:.75rem;color:var(--dark-mid)}
+.breadcrumb a{color:var(--accent);transition:color .2s}
+.breadcrumb a:hover{color:var(--dark)}
+.breadcrumb .sep{color:var(--accent-lt)}
+
+/* PAGE HERO */
+.page-hero{background:var(--dark);padding:clamp(40px,6vw,72px) var(--pad)}
+.page-hero-inner{max-width:var(--max);margin:0 auto}
+.page-hero h1{color:var(--lighter);margin-bottom:12px;font-style:italic;font-weight:400}
+.page-hero p{color:var(--accent-lt);font-size:1rem;max-width:540px;font-weight:300}
+
+/* FOOTER */
+.footer{background:var(--dark);padding:28px var(--pad)}
+.footer-inner{max-width:var(--max);margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.footer-nav{display:flex;gap:18px;flex-wrap:wrap}
+.footer-nav a{color:var(--accent);font-size:.76rem;transition:color .2s}
+.footer-nav a:hover{color:var(--lighter)}
+.footer-copy{color:var(--dark-mid);font-size:.7rem}
+
+/* PAGE DIVIDER */
+.page-divider{height:1px;background:var(--accent-lt);margin:clamp(32px,5vw,64px) 0}
+
+/* ═══════════════════════════════════════════════════
+   СТРАНИЦА БЛОГА
+═══════════════════════════════════════════════════ */
+.blog-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:32px}
+.filter-tag{padding:6px 14px;border-radius:20px;border:1px solid var(--accent-lt);font-size:.75rem;color:var(--dark-mid);cursor:pointer;transition:all .2s;background:var(--white)}
+.filter-tag:hover,.filter-tag.active{background:var(--accent);color:var(--dark);border-color:var(--accent)}
+
+.blog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.blog-card{background:var(--white);border:1px solid var(--accent-lt);border-radius:var(--r-lg);overflow:hidden;transition:transform .2s,border-color .2s;display:flex;flex-direction:column}
+.blog-card:hover{transform:translateY(-3px);border-color:var(--accent)}
+
+.blog-cover{height:160px;background:var(--mid);display:flex;align-items:center;justify-content:center;font-size:2.4rem;position:relative;overflow:hidden;flex-shrink:0}
+.blog-cover-bg{position:absolute;inset:0;opacity:.15}
+.blog-cover-bg.energy{background:radial-gradient(circle at 30% 50%,#B58E8E,transparent)}
+.blog-cover-bg.slow{background:radial-gradient(circle at 70% 30%,#7A9E94,transparent)}
+.blog-cover-bg.rel{background:radial-gradient(circle at 50% 70%,#9E7A8E,transparent)}
+.blog-cover-bg.plan{background:radial-gradient(circle at 20% 80%,#9E9A7A,transparent)}
+.blog-cover-bg.tools{background:radial-gradient(circle at 80% 20%,#7A859E,transparent)}
+
+.blog-cover-label{position:absolute;top:10px;left:10px;background:rgba(61,46,46,.6);color:var(--lighter);font-size:.62rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:3px;backdrop-filter:blur(4px)}
+
+.blog-body{padding:18px 20px;display:flex;flex-direction:column;flex:1}
+.blog-meta{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.blog-tag{font-size:.65rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.blog-date{font-size:.65rem;color:var(--dark-mid)}
+.blog-title{font-family:var(--serif);font-size:1.1rem;color:var(--dark);line-height:1.3;margin-bottom:8px}
+.blog-excerpt{font-size:.82rem;color:var(--dark-mid);line-height:1.6;flex:1;margin-bottom:14px}
+.blog-footer{display:flex;align-items:center;justify-content:space-between}
+.blog-read{font-size:.78rem;color:var(--accent);font-weight:500;transition:color .2s}
+.blog-card:hover .blog-read{color:var(--dark)}
+.blog-time{font-size:.7rem;color:var(--dark-mid)}
+
+.blog-load-more{text-align:center;margin-top:36px}
+
+/* ═══════════════════════════════════════════════════
+   СТРАНИЦА СТАТЬИ
+═══════════════════════════════════════════════════ */
+.article-layout{display:grid;grid-template-columns:1fr 280px;gap:40px;align-items:start;max-width:var(--max);margin:0 auto;padding:0 var(--pad)}
+@media(max-width:768px){.article-layout{grid-template-columns:1fr}}
+
+.article-main{}
+.article-header{margin-bottom:32px}
+.article-meta{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.article-tag{font-size:.68rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--white);background:var(--accent);padding:3px 10px;border-radius:3px}
+.article-date{font-size:.75rem;color:var(--dark-mid)}
+.article-read{font-size:.75rem;color:var(--dark-mid)}
+.article-dot{color:var(--accent-lt)}
+.article-title{font-size:clamp(1.6rem,4vw,2.6rem);font-style:italic;font-weight:400;color:var(--dark);line-height:1.2;margin-bottom:16px}
+.article-lead{font-size:1.05rem;color:var(--dark-mid);line-height:1.75;padding-bottom:24px;border-bottom:1px solid var(--accent-lt)}
+
+.article-cover{width:100%;height:280px;background:var(--mid);border-radius:var(--r-lg);margin-bottom:32px;display:flex;align-items:center;justify-content:center;font-size:3rem;position:relative;overflow:hidden}
+.article-cover-grad{position:absolute;inset:0;background:radial-gradient(circle at 30% 50%,rgba(181,142,142,.3),transparent 70%)}
+
+.article-body h2{font-size:1.4rem;color:var(--dark);margin:32px 0 12px}
+.article-body h3{font-size:1.1rem;color:var(--dark-mid);margin:24px 0 8px;font-family:var(--sans);font-weight:500}
+.article-body p{font-size:.94rem;color:var(--dark);line-height:1.8;margin-bottom:16px}
+.article-body blockquote{border-left:3px solid var(--accent);padding:12px 20px;margin:24px 0;background:var(--light);border-radius:0 var(--r-sm) var(--r-sm) 0}
+.article-body blockquote p{color:var(--dark-mid);font-style:italic;font-family:var(--serif);font-size:1rem;margin:0}
+.article-body ul{padding-left:20px;margin-bottom:16px}
+.article-body ul li{font-size:.94rem;color:var(--dark);line-height:1.8;margin-bottom:6px}
+.article-body ul li::marker{color:var(--accent)}
+.article-note{background:var(--mid);border-radius:var(--r-md);padding:16px 20px;margin:24px 0}
+.article-note p{margin:0;font-size:.88rem;color:var(--dark-mid)}
+
+.article-share{display:flex;align-items:center;gap:12px;padding:20px 0;border-top:1px solid var(--accent-lt);border-bottom:1px solid var(--accent-lt);margin:32px 0}
+.article-share span{font-size:.82rem;color:var(--dark-mid)}
+.share-btn{padding:6px 14px;border-radius:20px;border:1px solid var(--accent-lt);font-size:.75rem;color:var(--dark-mid);cursor:pointer;transition:all .2s;background:var(--white)}
+.share-btn:hover{background:var(--accent);color:var(--dark);border-color:var(--accent)}
+
+/* Sidebar */
+.article-sidebar{position:sticky;top:72px;display:flex;flex-direction:column;gap:16px}
+.sidebar-card{background:var(--white);border:1px solid var(--accent-lt);border-radius:var(--r-md);padding:20px}
+.sidebar-card h4{font-family:var(--serif);font-size:1rem;color:var(--dark);margin-bottom:10px}
+.sidebar-card p{font-size:.8rem;color:var(--dark-mid);line-height:1.6;margin-bottom:12px}
+.sidebar-price{font-family:var(--serif);font-size:1.3rem;color:var(--dark);margin-bottom:12px;font-weight:500}
+.sidebar-toc{display:flex;flex-direction:column;gap:8px}
+.sidebar-toc a{font-size:.8rem;color:var(--dark-mid);transition:color .2s;padding-left:10px;border-left:2px solid var(--accent-lt)}
+.sidebar-toc a:hover{color:var(--accent);border-left-color:var(--accent)}
+
+/* Related */
+.related{padding:clamp(32px,5vw,60px) var(--pad);background:var(--light)}
+.related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;margin-top:24px}
+.related-card{background:var(--white);border:1px solid var(--accent-lt);border-radius:var(--r-md);overflow:hidden;transition:transform .2s}
+.related-card:hover{transform:translateY(-2px)}
+.related-cover{height:80px;background:var(--mid);display:flex;align-items:center;justify-content:center;font-size:1.6rem}
+.related-body{padding:12px 14px}
+.related-tag{font-size:.62rem;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.related-title{font-family:var(--serif);font-size:.95rem;color:var(--dark);line-height:1.35}
+
+/* Article CTA */
+.article-cta{padding:clamp(32px,5vw,60px) var(--pad);background:var(--dark);text-align:center}
+.article-cta h3{color:var(--lighter);font-size:1.4rem;margin-bottom:6px;font-style:italic;font-weight:400}
+.article-cta p{color:var(--accent-lt);font-size:.88rem;margin-bottom:24px}
+.cta-cards{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:24px}
+.cta-chip{background:rgba(255,255,255,.06);border:1px solid rgba(181,142,142,.25);border-radius:var(--r-sm);padding:8px 16px;font-size:.8rem;color:var(--accent-lt)}
+.cta-chip strong{color:var(--lighter);display:block;font-family:var(--serif);font-size:1rem}
+
+/* ═══════════════════════════════════════════════════
+   КАРТОЧКИ ПРОДУКТОВ (полные страницы)
+═══════════════════════════════════════════════════ */
+.product-hero{padding:clamp(48px,8vw,96px) var(--pad)}
+.product-hero-inner{max-width:var(--max);margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+@media(max-width:640px){.product-hero-inner{grid-template-columns:1fr}}
+.product-hero-content{}
+.product-num{font-size:.65rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+.product-hero h1{font-size:clamp(1.6rem,3.5vw,2.6rem);margin-bottom:14px;font-style:italic;font-weight:400}
+.product-hero-lead{font-size:1rem;color:var(--dark-mid);line-height:1.75;margin-bottom:28px}
+.product-price-row{display:flex;align-items:baseline;gap:14px;margin-bottom:20px}
+.product-price{font-family:var(--serif);font-size:2rem;font-weight:500;color:var(--dark)}
+.product-price-note{font-size:.78rem;color:var(--dark-mid)}
+.product-actions{display:flex;gap:10px;flex-wrap:wrap}
+
+/* Screenshot gallery */
+.screenshot-area{background:var(--mid);border-radius:var(--r-lg);padding:16px;display:flex;flex-direction:column;gap:10px}
+.screenshot-main{background:var(--lighter);border-radius:var(--r-md);border:1px solid var(--accent-lt);overflow:hidden}
+.screenshot-placeholder{height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--accent);font-size:.78rem}
+.screenshot-placeholder .icon{font-size:2rem}
+.screenshot-placeholder span{color:var(--dark-mid)}
+.screenshot-thumbs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.screenshot-thumb{background:var(--lighter);border-radius:var(--r-sm);border:1px solid var(--accent-lt);height:68px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;transition:border-color .2s;font-size:1rem}
+.screenshot-thumb:hover,.screenshot-thumb.active{border-color:var(--accent);background:var(--light)}
+.screenshot-thumb span{font-size:.6rem;color:var(--dark-mid)}
+
+/* What's inside */
+.product-inside{padding:clamp(40px,6vw,72px) var(--pad);background:var(--light)}
+.inside-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:28px}
+.inside-card{background:var(--white);border:1px solid var(--accent-lt);border-radius:var(--r-md);padding:18px}
+.inside-icon{font-size:1.4rem;margin-bottom:8px}
+.inside-card h4{font-size:.9rem;color:var(--dark);margin-bottom:4px}
+.inside-card p{font-size:.78rem;color:var(--dark-mid);line-height:1.55}
+
+/* For whom */
+.product-for{padding:clamp(40px,6vw,72px) var(--pad);background:var(--lighter)}
+.for-list{display:flex;flex-direction:column;gap:10px;margin-top:24px;max-width:640px}
+.for-item{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--white);border:1px solid var(--accent-lt);border-radius:var(--r-md)}
+.for-check{width:20px;height:20px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;color:var(--dark);font-size:.65rem;flex-shrink:0;margin-top:2px}
+.for-item p{font-size:.88rem;color:var(--dark);line-height:1.6}
+
+/* How it works */
+.product-how{padding:clamp(40px,6vw,72px) var(--pad);background:var(--mid)}
+.how-steps{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;margin-top:28px}
+.how-step{text-align:center}
+.how-num{width:36px;height:36px;border-radius:50%;background:var(--dark);color:var(--lighter);font-family:var(--serif);font-size:1rem;display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
+.how-step h4{font-size:.9rem;color:var(--dark);margin-bottom:4px}
+.how-step p{font-size:.78rem;color:var(--dark-mid);line-height:1.55}
+.how-arrow{display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:1.2rem;padding-top:18px}
+
+/* Format */
+.product-format{padding:clamp(32px,5vw,56px) var(--pad);background:var(--lighter)}
+.format-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.format-chip{display:flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid var(--accent-lt);border-radius:20px;font-size:.8rem;color:var(--dark-mid);background:var(--white)}
+.format-chip::before{content:'✓';color:var(--accent);font-size:.75rem}
+
+/* Buy section */
+.product-buy{padding:clamp(40px,6vw,72px) var(--pad);background:var(--dark);text-align:center}
+.product-buy h3{color:var(--lighter);font-size:1.6rem;margin-bottom:6px;font-style:italic;font-weight:400}
+.product-buy p{color:var(--accent-lt);font-size:.88rem;margin-bottom:24px}
+.buy-price-block{margin-bottom:28px}
+.buy-price{font-family:var(--serif);font-size:2.8rem;font-weight:500;color:var(--lighter)}
+.buy-note{font-size:.78rem;color:var(--dark-mid);margin-top:4px}
+.buy-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.upsell{margin-top:28px;padding:16px 20px;background:rgba(255,255,255,.05);border:1px solid rgba(181,142,142,.2);border-radius:var(--r-md);display:inline-block;font-size:.82rem;color:var(--accent-lt)}
+.upsell strong{color:var(--lighter)}
+
+/* Product FAQ */
+.product-faq{padding:clamp(40px,6vw,72px) var(--pad);background:var(--light)}
+.pfaq-list{margin-top:24px;display:flex;flex-direction:column;gap:8px;max-width:680px}
+.pfaq-item{background:var(--white);border:1px solid var(--accent-lt);border-radius:var(--r-md);overflow:hidden}
+.pfaq-q{width:100%;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:none;border:none;cursor:pointer;font-family:var(--sans);font-size:.86rem;color:var(--dark);text-align:left;gap:10px}
+.pfaq-q:hover{background:rgba(181,142,142,.05)}
+.pfaq-chevron{color:var(--accent);font-size:.8rem;flex-shrink:0;transition:transform .25s}
+.pfaq-item.open .pfaq-chevron{transform:rotate(180deg)}
+.pfaq-a{display:none;padding:0 18px 14px;font-size:.82rem;color:var(--dark-mid);line-height:1.7;border-top:1px solid var(--accent-lt);padding-top:12px}
+.pfaq-item.open .pfaq-a{display:block}
+
+@media(max-width:640px){
+  .blog-grid,.inside-grid,.how-steps,.related-grid,.cta-cards{grid-template-columns:1fr}
+  .article-layout{grid-template-columns:1fr}
+  .how-arrow{display:none}
+}
+
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <span class="nav-logo">Юля Инамора</span>
+    <div class="nav-links"><a href="index.html">Главная</a><a href="planer.html">Планер</a><a href="kniga.html">Книга</a><a href="vorkbuk.html">Воркбук</a><a href="blog.html" class="active">Статьи</a></div>
+  </div>
+</nav>
+
+<div class="breadcrumb">
+  <div class="breadcrumb-inner">
+    <a href="#">Главная</a><span class="sep">›</span>
+    <a href="#">Статьи</a><span class="sep">›</span>
+    <span>Усталость без причины — это миф</span>
+  </div>
+</div>
+
+<div style="padding:clamp(32px,5vw,60px) 0">
+  <div class="article-layout" id="article">
+
+    <main class="article-main">
+      <div class="article-header">
+        <div class="article-meta">
+          <span class="article-tag">Энергия и усталость</span>
+          <span class="article-dot">·</span>
+          <span class="article-date">15 января 2025</span>
+          <span class="article-dot">·</span>
+          <span class="article-read">5 минут чтения</span>
+        </div>
+        <h1 class="article-title">Усталость без причины — это миф</h1>
+        <p class="article-lead">В один день вы успеваете гору дел и к вечеру ещё на прогулку остаётся. А в другой — сделали три звонка, и к обеду уже пустота. Почему так происходит — и как это изменить.</p>
+      </div>
+
+      <div class="article-cover">
+        <div class="article-cover-grad"></div>
+        ⚡
+        <span style="position:absolute;bottom:12px;right:12px;font-size:.65rem;color:rgba(255,255,255,.5);background:rgba(0,0,0,.3);padding:3px 8px;border-radius:3px">Фото / иллюстрация</span>
+      </div>
+
+      <div class="article-body">
+        <h2>Дело не в лени и не в силе воли</h2>
+        <p>Когда говорят «усталость без причины», имеют в виду: сделал немного, а выглядишь как после разгрузки вагонов. Это звучит как слабость. Но это не слабость — это энергетический дисбаланс.</p>
+        <p>У усталости всегда есть причина. Просто она не всегда очевидна.</p>
+
+        <blockquote><p>Час в телефоне может вымотать сильнее, чем три часа работы над любимым проектом. Разговор с одной подругой придаёт сил, а с другой — вытягивает всё до капли.</p></blockquote>
+
+        <h2>Четыре типа вампиров</h2>
+        <p>Дела, которые забирают энергию непропорционально своему объёму — я называю их вампирами. Они бывают четырёх типов:</p>
+        <ul>
+          <li><strong>Люди-вампиры</strong> — общение, после которого хочется лечь</li>
+          <li><strong>Задачи-вампиры</strong> — дела, которые вызывают сопротивление</li>
+          <li><strong>Обстоятельства-вампиры</strong> — шум, пробки, уведомления</li>
+          <li><strong>Мысли-вампиры</strong> — внутренний диалог, который не выключается</li>
+        </ul>
+
+        <div class="article-note">
+          <p>💡 Попробуйте один день честно записывать дела и оценивать их по шкале от -10 до +5. Уже через три дня вы увидите своих главных вампиров.</p>
+        </div>
+
+        <h2>Что делать прямо сейчас</h2>
+        <p>Не пытайтесь убрать всё сразу. Выберите одного вампира — и задайте себе вопрос: могу я сделать это иначе? Реже? Делегировать? Убрать совсем?</p>
+        <p>Маленький шаг работает лучше большой революции. Всегда.</p>
+      </div>
+
+      <div class="article-share">
+        <span>Поделиться:</span>
+        <span class="share-btn">Telegram</span>
+        <span class="share-btn">VK</span>
+        <span class="share-btn">Скопировать ссылку</span>
+      </div>
+    </main>
+
+    <aside class="article-sidebar">
+      <div class="sidebar-card">
+        <h4>Содержание</h4>
+        <div class="sidebar-toc">
+          <a href="#">Дело не в лени</a>
+          <a href="#">Четыре типа вампиров</a>
+          <a href="#">Что делать прямо сейчас</a>
+        </div>
+      </div>
+      <div class="sidebar-card" style="background:var(--light);border-color:var(--accent)">
+        <h4>Планер энергии</h4>
+        <p>Увидеть своих вампиров и доноров автоматически — за 28 дней.</p>
+        <div class="sidebar-price">800 ₽</div>
+        <a href="planer.html" class="btn" style="width:100%;text-align:center">Купить планер</a>
+      </div>
+      <div class="sidebar-card">
+        <h4>Книга «Жизнь в ресурсе»</h4>
+        <p>Полная система: скрипты, антикризис, доноры.</p>
+        <div class="sidebar-price">500 ₽</div>
+        <a href="#" class="btn btn-outline" style="width:100%;text-align:center">Купить книгу</a>
+      </div>
+    </aside>
+
+  </div>
+</div>
+
+<section class="related">
+  <div class="container">
+    <span class="label">читайте также</span>
+    <h2>Похожие статьи</h2>
+    <div class="related-grid">
+      <a href="#" class="related-card">
+        <div class="related-cover" style="background:#D4E4DF">🌿</div>
+        <div class="related-body"><div class="related-tag">Slowlife</div><div class="related-title">5 признаков того, что вы отдыхаете неправильно</div></div>
+      </a>
+      <a href="#" class="related-card">
+        <div class="related-cover" style="background:#EDD8E4">💬</div>
+        <div class="related-body"><div class="related-tag">Отношения</div><div class="related-title">Люди, после которых хочется спать</div></div>
+      </a>
+      <a href="#" class="related-card">
+        <div class="related-cover" style="background:#D4DAE4">🛠</div>
+        <div class="related-body"><div class="related-tag">Инструменты</div><div class="related-title">Шкала энергии: как оценить любое дело за 5 секунд</div></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<div class="article-cta">
+  <h3>Хотите пойти дальше?</h3>
+  <p>Инструменты, которые помогут разобраться с вашей энергией</p>
+  <div class="cta-cards">
+    <div class="cta-chip"><strong>Планер</strong>28 дней · 800 ₽</div>
+    <div class="cta-chip"><strong>Книга</strong>PDF · 500 ₽</div>
+    <div class="cta-chip"><strong>Воркбук</strong>Год · 2 000 ₽</div>
+  </div>
+  <a href="index.html#products" class="btn">Выбрать продукт →</a>
+</div>
+
+
+<footer class="footer">
+  <div class="footer-inner">
+    <nav class="footer-nav">
+      <a href="planer.html">Планер</a>
+      <a href="kniga.html">Книга</a>
+      <a href="vorkbuk.html">Воркбук</a>
+      <a href="blog.html">Статьи</a>
+      <a href="#">Политика конфиденциальности</a>
+    </nav>
+    <p class="footer-copy">© Юля Инамора | Life-архитектура | @in.a.mora</p>
+  </div>
+</footer>
+</body>
+</html>
+<script>
+document.querySelectorAll('.faq-q, .pfaq-q').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const item=btn.closest('.faq-item, .pfaq-item');
+    const isOpen=item.classList.contains('open');
+    item.closest('section, div').querySelectorAll('.faq-item,.pfaq-item').forEach(i=>i.classList.remove('open'));
+    if(!isOpen)item.classList.add('open');
+  });
+});
+document.querySelectorAll('.screenshot-thumb').forEach(thumb=>{
+  thumb.addEventListener('click',()=>{
+    document.querySelectorAll('.screenshot-thumb').forEach(t=>t.classList.remove('active'));
+    thumb.classList.add('active');
+  });
+});
+document.querySelectorAll('.filter-tag').forEach(tag=>{
+  tag.addEventListener('click',()=>{
+    document.querySelectorAll('.filter-tag').forEach(t=>t.classList.remove('active'));
+    tag.classList.add('active');
+  });
+});
+</script>
