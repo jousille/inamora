@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Усталость без причины — это миф | Юля Инамора</title>
+<meta name="description" content="Усталость всегда имеет причину. Просто мы её не замечаем. Разбираемся, что такое вампиры энергии и как перестать их кормить.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+
+/* ── CSS VARIABLES (shared with main site) ── */
+:root {
+  --dark:     #3D2E2E;
+  --dark-mid: #6B4E4E;
+  --accent:   #B58E8E;
+  --accent-lt:#D4B8B8;
+  --mid:      #EDD8D8;
+  --light:    #F5ECEC;
+  --lighter:  #FBF7F7;
+  --white:    #FFFFFF;
+
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans:  'Jost', system-ui, sans-serif;
+
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 16px;
+
+  --max: 1100px;
+  --article-max: 720px;
+  --pad: clamp(20px, 5vw, 80px);
+}
+
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--sans); background: var(--lighter); color: var(--dark); font-size: 16px; line-height: 1.7; font-weight: 300; }
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+
+/* ── TYPOGRAPHY ── */
+h1, h2, h3, h4 { font-family: var(--serif); font-weight: 500; line-height: 1.2; }
+h1 { font-size: clamp(2rem, 5vw, 3.4rem); }
+h2 { font-size: clamp(1.5rem, 3vw, 2.2rem); }
+h3 { font-size: clamp(1.1rem, 2vw, 1.35rem); }
+h4 { font-size: 1rem; font-family: var(--sans); font-weight: 500; letter-spacing: 0.01em; }
+
+.section-label {
+  font-family: var(--sans);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+
+/* ── BUTTON ── */
+.btn {
+  display: inline-block;
+  background: var(--accent);
+  color: var(--dark);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  padding: 14px 32px;
+  border-radius: var(--r-sm);
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+.btn:hover { background: var(--accent-lt); transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+.btn-sm {
+  padding: 10px 22px;
+  font-size: 0.78rem;
+}
+
+/* ── NAV ── */
+.nav {
+  background: var(--dark);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.nav-inner {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 var(--pad);
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.nav-logo {
+  font-family: var(--serif);
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--lighter);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.nav-links { display: flex; gap: 24px; align-items: center; }
+.nav-links a {
+  color: var(--accent-lt);
+  font-size: 0.78rem;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: color 0.2s;
+  white-space: nowrap;
+}
+.nav-links a:hover, .nav-links a.active { color: var(--lighter); }
+.nav-cta {
+  background: var(--accent);
+  color: var(--dark) !important;
+  padding: 7px 16px;
+  border-radius: var(--r-sm);
+  font-weight: 500 !important;
+  transition: background 0.2s !important;
+}
+.nav-cta:hover { background: var(--accent-lt) !important; color: var(--dark) !important; }
+
+/* ── ARTICLE HERO ── */
+.article-hero {
+  background: var(--dark);
+  padding: clamp(52px, 9vw, 100px) var(--pad) clamp(40px, 7vw, 72px);
+  position: relative;
+  overflow: hidden;
+}
+.article-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 60% at 80% 20%, rgba(181,142,142,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 10% 80%, rgba(181,142,142,0.07) 0%, transparent 60%);
+  pointer-events: none;
+}
+.article-hero-inner {
+  max-width: var(--article-max);
+  margin: 0 auto;
+  position: relative;
+}
+.article-meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.article-tag {
+  background: rgba(181,142,142,0.18);
+  color: var(--accent-lt);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(181,142,142,0.25);
+}
+.article-read-time {
+  color: var(--dark-mid);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+}
+.article-hero h1 {
+  color: var(--lighter);
+  font-weight: 400;
+  font-style: italic;
+  margin-bottom: 28px;
+  line-height: 1.15;
+}
+.article-hero h1 em {
+  font-style: normal;
+  color: var(--accent);
+}
+.article-byline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(181,142,142,0.18);
+}
+.byline-avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--dark);
+  font-family: var(--serif);
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  border: 2px solid rgba(181,142,142,0.3);
+}
+.byline-info { display: flex; flex-direction: column; gap: 2px; }
+.byline-name { font-size: 0.85rem; color: var(--accent-lt); font-weight: 400; }
+.byline-date { font-size: 0.72rem; color: var(--dark-mid); }
+
+/* ── ARTICLE BODY ── */
+.article-body {
+  max-width: var(--article-max);
+  margin: 0 auto;
+  padding: clamp(40px, 7vw, 72px) var(--pad);
+}
+
+/* Lead / pull-quote */
+.article-lead {
+  font-family: var(--serif);
+  font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+  font-style: italic;
+  color: var(--dark);
+  line-height: 1.55;
+  border-left: 3px solid var(--accent);
+  padding-left: 24px;
+  margin-bottom: 40px;
+  position: relative;
+}
+
+/* Section headings within article */
+.article-body h2 {
+  font-size: clamp(1.2rem, 2.5vw, 1.65rem);
+  font-style: italic;
+  font-weight: 500;
+  color: var(--dark);
+  margin: 48px 0 16px;
+}
+.article-body h2:first-of-type { margin-top: 0; }
+
+/* Paragraphs */
+.article-body p {
+  font-size: 1rem;
+  color: var(--dark-mid);
+  line-height: 1.8;
+  margin-bottom: 20px;
+}
+.article-body p:last-child { margin-bottom: 0; }
+.article-body strong {
+  color: var(--dark);
+  font-weight: 500;
+}
+
+/* Blockquote */
+.article-body blockquote {
+  background: var(--light);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--r-md) var(--r-md) 0;
+  padding: 20px 24px;
+  margin: 32px 0;
+}
+.article-body blockquote p {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  font-style: italic;
+  color: var(--dark);
+  margin-bottom: 0;
+}
+.article-body blockquote cite {
+  display: block;
+  margin-top: 10px;
+  font-size: 0.78rem;
+  color: var(--accent);
+  font-style: normal;
+  letter-spacing: 0.04em;
+}
+
+/* Divider */
+.article-divider {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent-lt), transparent);
+  margin: 40px 0;
+}
+
+/* Checklist callout */
+.callout {
+  background: var(--white);
+  border: 1px solid var(--accent-lt);
+  border-radius: var(--r-lg);
+  padding: 24px 28px;
+  margin: 36px 0;
+}
+.callout-label {
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 14px;
+}
+.callout-title {
+  font-family: var(--serif);
+  font-size: 1.1rem;
+  font-style: italic;
+  color: var(--dark);
+  margin-bottom: 16px;
+  line-height: 1.3;
+}
+.checklist {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.checklist li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: var(--dark-mid);
+  line-height: 1.6;
+}
+.checklist li::before {
+  content: '';
+  width: 18px; height: 18px;
+  border: 1.5px solid var(--accent);
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* ── INLINE PRODUCT TEASER ── */
+.product-teaser {
+  background: var(--dark);
+  border-radius: var(--r-lg);
+  padding: 28px;
+  margin: 48px 0;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.teaser-icon {
+  width: 52px; height: 52px;
+  background: rgba(181,142,142,0.15);
+  border: 1px solid rgba(181,142,142,0.25);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  font-size: 1.3rem;
+}
+.teaser-text { flex: 1; min-width: 200px; }
+.teaser-text h4 {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--lighter);
+  margin-bottom: 6px;
+  line-height: 1.35;
+}
+.teaser-text p {
+  font-size: 0.8rem;
+  color: var(--dark-mid);
+  margin-bottom: 0;
+  line-height: 1.6;
+}
+
+/* ── AUTHOR CARD ── */
+.author-card {
+  background: var(--white);
+  border: 1px solid var(--accent-lt);
+  border-radius: var(--r-lg);
+  padding: 28px;
+  margin: 48px 0 0;
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+.author-card-avatar {
+  width: 60px; height: 60px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--dark);
+  font-family: var(--serif);
+  font-size: 1.1rem;
+  font-weight: 500;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  border: 3px solid var(--mid);
+}
+.author-card-content { flex: 1; }
+.author-card-label {
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+.author-card-name {
+  font-family: var(--serif);
+  font-size: 1.1rem;
+  color: var(--dark);
+  margin-bottom: 8px;
+}
+.author-card-bio {
+  font-size: 0.85rem;
+  color: var(--dark-mid);
+  line-height: 1.7;
+  margin-bottom: 14px;
+}
+.author-tg {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: var(--accent);
+  border: 1px solid var(--accent-lt);
+  padding: 6px 14px;
+  border-radius: 20px;
+  transition: background 0.2s;
+}
+.author-tg:hover { background: var(--light); }
+
+/* ── RELATED ARTICLES ── */
+.related {
+  background: var(--light);
+  padding: clamp(40px, 7vw, 72px) var(--pad);
+}
+.related-inner { max-width: var(--article-max); margin: 0 auto; }
+.related-inner .section-label { margin-bottom: 8px; }
+.related-inner h3 {
+  font-style: italic;
+  font-weight: 500;
+  color: var(--dark);
+  margin-bottom: 24px;
+}
+.related-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+}
+.related-card {
+  background: var(--white);
+  border: 1px solid var(--accent-lt);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  transition: border-color 0.2s, transform 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+.related-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.related-cover {
+  height: 72px;
+  background: var(--mid);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem;
+}
+.related-body { padding: 14px 16px; flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.related-tag {
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.related-title {
+  font-family: var(--serif);
+  font-size: 0.95rem;
+  color: var(--dark);
+  line-height: 1.4;
+  flex: 1;
+}
+.related-link {
+  font-size: 0.75rem;
+  color: var(--accent);
+  margin-top: 4px;
+}
+
+/* ── FOOTER ── */
+.footer {
+  background: var(--dark);
+  padding: 32px var(--pad);
+}
+.footer-inner {
+  max-width: var(--max);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.footer-nav { display: flex; gap: 20px; flex-wrap: wrap; }
+.footer-nav a { color: var(--accent); font-size: 0.78rem; transition: color 0.2s; }
+.footer-nav a:hover { color: var(--lighter); }
+.footer-copy { color: var(--dark-mid); font-size: 0.72rem; }
+
+/* ── PROGRESS BAR ── */
+.reading-progress {
+  position: fixed;
+  top: 56px;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background: var(--accent);
+  z-index: 99;
+  transition: width 0.1s linear;
+}
+
+/* ── BACK LINK ── */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--dark-mid);
+  margin-bottom: clamp(32px, 5vw, 52px);
+  transition: color 0.2s;
+}
+.back-link:hover { color: var(--dark); }
+.back-arrow { font-size: 1rem; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+  .nav-links { display: none; }
+  .author-card { flex-direction: column; align-items: center; text-align: center; }
+  .product-teaser { flex-direction: column; text-align: center; }
+  .product-teaser .btn { width: 100%; text-align: center; }
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.article-hero-inner { animation: fadeUp 0.7s ease both; }
+.article-body       { animation: fadeUp 0.7s 0.15s ease both; }
+</style>
+</head>
+<body>
+
+<!-- READING PROGRESS BAR -->
+<div class="reading-progress" id="progress"></div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">Юля Инамора</a>
+    <div class="nav-links">
+      <a href="../index.html">Главная</a>
+      <a href="#" class="active">Статьи</a>
+      <a href="../index.html#products" class="nav-cta">Купить планер</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ARTICLE HERO -->
+<header class="article-hero">
+  <div class="article-hero-inner">
+    <div class="article-meta">
+      <span class="article-tag">Энергия</span>
+      <span class="article-read-time">7 минут чтения</span>
+    </div>
+    <h1>Усталость без причины —<br>это <em>миф</em></h1>
+    <div class="article-byline">
+      <div class="byline-avatar">ЮИ</div>
+      <div class="byline-info">
+        <span class="byline-name">Юля Инамора</span>
+        <span class="byline-date">Июнь 2025</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ARTICLE BODY -->
+<article class="article-body">
+
+  <!-- Lead paragraph -->
+  <p class="article-lead">
+    Каждый раз, когда кто-то говорит мне «я просто устала, непонятно почему», я знаю: причина есть. Просто она пока невидима.
+  </p>
+
+  <!-- Section 1 -->
+  <h2>Почему мы не замечаем настоящую причину усталости</h2>
+
+  <p>
+    Усталость — это не случайность и не слабость характера. Это сигнал. Точный, конкретный, адресованный лично вам. Но мы привыкли игнорировать этот сигнал или объяснять его чем-то общим: «много работала», «плохо спала», «гормоны».
+  </p>
+  <p>
+    На самом деле усталость возникает в конкретный момент — после конкретного события, разговора, задачи. Просто мы редко связываем следствие с причиной, потому что они разнесены во времени. Утром провели час на нервном совещании — а вечером нет сил даже на книгу. Кажется, просто «тяжёлый день». На самом деле — вполне конкретный вампир.
+  </p>
+
+  <blockquote>
+    <p>Мозг не умеет предъявлять счёт в режиме реального времени. Он собирает долги и выдаёт их разом — обычно вечером, когда вы уже ни на что не способны.</p>
+    <cite>— из книги «Жизнь в ресурсе»</cite>
+  </blockquote>
+
+  <!-- Section 2 -->
+  <h2>Что такое вампиры и доноры энергии</h2>
+
+  <p>
+    Я использую эту метафору не ради красного словца. Дела, события и люди действительно делятся на два типа по тому, что они делают с вашим ресурсом.
+  </p>
+  <p>
+    <strong>Вампиры</strong> — это всё, что забирает больше, чем вы ожидаете. Звонок, который «займёт пять минут». Встреча, с которой вы уходите опустошённой. Задача, к которой страшно подступиться — и от которой вы прокрастинируете три дня, тратя на это больше сил, чем на саму задачу.
+  </p>
+  <p>
+    <strong>Доноры</strong> — это то, после чего вы ощущаете прирост. Бывает, вы провели два часа за интересным проектом — и вышли из него с лучшим настроением, чем до. Это донор. Бывает, прогулка или разговор с подругой буквально перезаряжает вас. Тоже донор.
+  </p>
+  <p>
+    Проблема не в том, что в жизни есть вампиры. Они есть у всех. Проблема в том, что большинство людей не знают, кто именно их вампир. И тратят энергию неосознанно — а потом удивляются, почему к вечеру ничего не осталось.
+  </p>
+
+  <hr class="article-divider">
+
+  <!-- Section 3 -->
+  <h2>Как начать замечать паттерны</h2>
+
+  <p>
+    Есть очень простой, но мощный инструмент: оценка энергии после каждого крупного дела или события. Не по десятибалльной шкале производительности — а по шкале ресурса. Вы после этого дела живее или мертвее?
+  </p>
+  <p>
+    Я прошу записывать это числом — от −10 до +5. Минус — забрало. Плюс — дало. Ноль — нейтрально.
+  </p>
+  <p>
+    Уже через 7–10 дней начинают проявляться паттерны, которые сложно не заметить. Оказывается, что <strong>планёрки каждый понедельник стоят вам минус 4</strong>. Что переписка в рабочем чате — постоянный фоновый минус. Что зумы с конкретным человеком каждый раз отнимают больше, чем вы думали. Это и есть ваши вампиры — с именами и расписанием.
+  </p>
+
+  <!-- CALLOUT: checklist -->
+  <div class="callout">
+    <div class="callout-label">Мини-диагностика</div>
+    <div class="callout-title">Проверьте: какие дела чаще всего оказываются вашими вампирами?</div>
+    <ul class="checklist">
+      <li>Встречи и звонки, к которым приходится «собираться»</li>
+      <li>Незакрытые петли — дела, которые вы не начинаете, но и не вычёркиваете</li>
+      <li>Общение с людьми, которые постоянно жалуются или требуют решений</li>
+      <li>Задачи, которые вы делаете из страха или долга, а не из смысла</li>
+      <li>Перфекционизм — дела, которые «должны быть идеальными»</li>
+      <li>Решения, которые вы откладываете и про которые думаете каждый день</li>
+    </ul>
+  </div>
+
+  <!-- INLINE PRODUCT TEASER -->
+  <div class="product-teaser">
+    <div class="teaser-icon">⚡</div>
+    <div class="teaser-text">
+      <h4>Устали считать вручную? Планер покажет ваших вампиров автоматически</h4>
+      <p>28 дней наблюдений. Google Таблица сама строит графики и выделяет паттерны. Работает с телефона.</p>
+    </div>
+    <a href="../index.html#products" class="btn btn-sm">Попробовать планер</a>
+  </div>
+
+  <!-- Section 4 -->
+  <h2>Что делать с вампирами, когда вы их нашли</h2>
+
+  <p>
+    Важный момент: цель не в том, чтобы убрать из жизни всё, что даёт минус. Это невозможно и не нужно. Цель — видеть баланс и управлять им осознанно.
+  </p>
+  <p>
+    Если вы знаете, что в среду вас ждёт минус 6 (большая встреча + сложный разговор), вы можете заранее запланировать что-то, что даст плюс. Прогулку. Разговор с человеком, которого любите. Час без уведомлений. Не как роскошь — а как часть системы.
+  </p>
+  <p>
+    Некоторые вампиры поддаются изменению. Встречу можно сократить или перенести в переписку. Человека — перевести из еженедельных разговоров в ежемесячные. Задачу — делегировать. Но для этого сначала нужно их увидеть.
+  </p>
+
+  <blockquote>
+    <p>Вы не можете изменить то, чего не замечаете. Наблюдение — это уже вмешательство.</p>
+  </blockquote>
+
+  <!-- Section 5 -->
+  <h2>С чего начать прямо сейчас</h2>
+
+  <p>
+    Возьмите любой блокнот или заметку в телефоне. В конце сегодняшнего дня напишите три-пять дел или событий, которые были. Рядом с каждым — число от −10 до +5: сколько энергии это вам дало или забрало.
+  </p>
+  <p>
+    Не нужно анализировать. Просто запишите. Сделайте это три дня подряд — и посмотрите, что видно. Скорее всего, вы уже на этом этапе заметите кое-что, что удивит вас.
+  </p>
+  <p>
+    <strong>Усталость без причины — это миф. Причина всегда есть.</strong> И когда вы её находите, появляется кое-что важное: выбор.
+  </p>
+
+  <hr class="article-divider">
+
+  <!-- AUTHOR CARD -->
+  <div class="author-card">
+    <div class="author-card-avatar">ЮИ</div>
+    <div class="author-card-content">
+      <div class="author-card-label">Об авторе</div>
+      <div class="author-card-name">Юля Инамора</div>
+      <p class="author-card-bio">Life-архитектор. Несколько лет назад поняла, что устаю не от количества дел — а от их качества. Начала записывать. Анализировать. Строить систему. Сначала для себя. Потом — для вас.</p>
+      <a href="https://t.me/in.a.mora" class="author-tg">✈ @in.a.mora в Telegram</a>
+    </div>
+  </div>
+
+</article>
+
+<!-- RELATED ARTICLES -->
+<section class="related">
+  <div class="related-inner">
+    <div class="section-label">читать дальше</div>
+    <h3>Другие статьи про энергию</h3>
+    <div class="related-grid">
+      <a href="#" class="related-card">
+        <div class="related-cover">🌿</div>
+        <div class="related-body">
+          <div class="related-tag">Slowlife</div>
+          <div class="related-title">5 признаков того, что вы отдыхаете неправильно</div>
+          <div class="related-link">Читать →</div>
+        </div>
+      </a>
+      <a href="#" class="related-card">
+        <div class="related-cover">💬</div>
+        <div class="related-body">
+          <div class="related-tag">Отношения</div>
+          <div class="related-title">Люди, после которых хочется спать</div>
+          <div class="related-link">Читать →</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <nav class="footer-nav">
+      <a href="../index.html#products">Планер</a>
+      <a href="../index.html#products">Книга</a>
+      <a href="../index.html#products">Воркбук</a>
+      <a href="#">Статьи</a>
+      <a href="#">Политика конфиденциальности</a>
+    </nav>
+    <p class="footer-copy">© Юля Инамора | Life-архитектура | @in.a.mora</p>
+  </div>
+</footer>
+
+<script>
+// Reading progress bar
+const progress = document.getElementById('progress');
+window.addEventListener('scroll', () => {
+  const doc = document.documentElement;
+  const scrolled = doc.scrollTop;
+  const total = doc.scrollHeight - doc.clientHeight;
+  progress.style.width = (scrolled / total * 100) + '%';
+}, { passive: true });
+</script>
+
+</body>
+</html>
