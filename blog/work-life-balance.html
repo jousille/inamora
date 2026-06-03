@@ -264,14 +264,32 @@ section{padding:clamp(40px,7vw,80px) var(--pad)}
 .article-cta-inline p{color:var(--accent-lt);font-size:.88rem;margin-bottom:16px}
 .article-cta-inline h4{color:var(--lighter);font-family:var(--serif);font-size:1.2rem;margin-bottom:8px;font-weight:400;font-style:italic}
 
+
+.social-icons{display:flex;gap:10px;align-items:center}
+.social-icon{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:opacity .2s;flex-shrink:0}
+.social-icon:hover{opacity:.8}
+.social-icon svg{width:18px;height:18px;fill:currentColor}
+.social-tg{background:#2AABEE;color:#fff}
+.social-vk{background:#0077FF;color:#fff}
+.social-ok{background:#EE8208;color:#fff}
+
+.nav-inner{gap:12px}
+.prod-format{font-size:.72rem;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+
+.blog-cover-img{transition:opacity .3s}
+
 </style>
 </head>
 <body>
-<nav class="nav"><div class="nav-inner"><span class="nav-logo">Юля Инамора</span><div class="nav-links"><a href="../index.html">Главная</a><a href="../planer.html">Планер</a><a href="../kniga.html">Книга</a><a href="../vorkbuk.html">Воркбук</a><a href="../blog.html" class="active">Статьи</a></div></div></nav>
+<nav class="nav"><div class="nav-inner"><a href="../index.html" class="nav-logo">Юля Инамора</a><div class="nav-links"><a href="../index.html">Главная</a><a href="../products/planer.html">Планер</a><a href="../products/kniga.html">Книга</a><a href="../products/vorkbuk.html">Воркбук</a><a href="../blog.html" class="active">Статьи</a><a href="../products/free/index.html">Бесплатно</a></div><div class="social-icons">
+  <a href="https://t.me/in.a.mora" class="social-icon social-tg" target="_blank" rel="noopener" title="Telegram"><svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248-1.97 9.289c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.932z"/></svg></a>
+  <a href="https://vk.com/inamora" class="social-icon social-vk" target="_blank" rel="noopener" title="ВКонтакте"><svg viewBox="0 0 24 24"><path d="M15.684 0H8.316C1.592 0 0 1.592 0 8.316v7.368C0 22.408 1.592 24 8.316 24h7.368C22.408 24 24 22.408 24 15.684V8.316C24 1.592 22.392 0 15.684 0zm3.692 17.123h-1.744c-.66 0-.864-.525-2.05-1.727-1.033-1-1.49-1.135-1.744-1.135-.356 0-.458.102-.458.593v1.575c0 .424-.135.678-1.253.678-1.846 0-3.896-1.118-5.335-3.202C4.624 10.857 4.03 8.57 4.03 8.096c0-.254.102-.491.593-.491h1.744c.44 0 .61.203.78.677.863 2.49 2.303 4.675 2.896 4.675.22 0 .322-.102.322-.66V9.721c-.068-1.186-.695-1.287-.695-1.71 0-.204.17-.407.44-.407h2.743c.372 0 .508.203.508.643v3.473c0 .372.17.508.271.508.22 0 .407-.136.813-.542 1.253-1.406 2.151-3.574 2.151-3.574.119-.254.322-.491.763-.491h1.744c.525 0 .644.27.525.643-.22 1.017-2.354 4.031-2.354 4.031-.186.305-.254.44 0 .78.186.254.796.779 1.203 1.253.745.847 1.32 1.558 1.473 2.05.17.49-.085.745-.576.745z"/></svg></a>
+  <a href="https://ok.ru/inamora" class="social-icon social-ok" target="_blank" rel="noopener" title="Одноклассники"><svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm.041 6.402a2.952 2.952 0 1 1 0 5.904 2.952 2.952 0 0 1 0-5.904zm4.914 7.699c-.51.882-1.35 1.537-2.33 1.814l2.162 2.162a1.066 1.066 0 0 1-1.508 1.508L12 16.306l-3.28 3.28a1.066 1.066 0 0 1-1.507-1.508l2.162-2.162c-.98-.277-1.82-.932-2.33-1.814a1.066 1.066 0 1 1 1.845-1.066c.45.779 1.282 1.26 2.151 1.26h.003c.87 0 1.701-.481 2.151-1.26a1.066 1.066 0 1 1 1.845 1.066h-.04z"/></svg></a>
+</div></div></nav>
 
 <div class="breadcrumb"><div class="breadcrumb-inner">
   <a href="../index.html">Главная</a><span class="sep">›</span>
-  <a href="../blog.html">Статьи</a><span class="sep">›</span>
+  <a href="../blog.html">Статьи</a><a href="../products/free/index.html">Бесплатно</a><span class="sep">›</span>
   <span>Что не так с work-life balance?</span>
 </div></div>
 
@@ -289,7 +307,7 @@ section{padding:clamp(40px,7vw,80px) var(--pad)}
         <h1 class="article-title">Что не так с work-life balance?</h1>
       </div>
       <div class="article-cover" style="background:#EDD8D8">
-        <img src="images/work-life-balance.png"
+        <img src="work-life-balance-cover.png"
              alt="Что не так с work-life balance?"
              style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center">
         <span style="position:absolute;bottom:12px;right:12px;font-size:.65rem;color:rgba(255,255,255,.7);background:rgba(61,46,46,.5);padding:3px 8px;border-radius:3px;backdrop-filter:blur(4px)">Юля Инамора</span>
@@ -322,32 +340,28 @@ section{padding:clamp(40px,7vw,80px) var(--pad)}
       </div>
     </main>
     <aside class="article-sidebar">
-      <div class="sidebar-card" style="background:var(--light);border-color:var(--accent)">
-        <h4>Планер энергии</h4>
-        <p>28 дней наблюдений — увидите, куда уходят силы. Вампиры и доноры автоматически.</p>
-        <div class="sidebar-price">800 ₽</div>
-        <a href="../planer.html" class="btn" style="width:100%;text-align:center;display:block">Купить планер</a>
-      </div>
-      <div class="sidebar-card">
-        <h4>Книга «Жизнь в ресурсе»</h4>
-        <p>Почему мы устаём и как это изменить. Скрипты, антикризисный протокол, 50 доноров.</p>
-        <div class="sidebar-price">500 ₽</div>
-        <a href="../kniga.html" class="btn btn-outline" style="width:100%;text-align:center;display:block">Купить книгу</a>
-      </div>
-      <div class="sidebar-card" style="background:var(--dark);border-color:var(--dark)">
-        <p style="font-size:.65rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:8px">Флагман ★</p>
-        <h4 style="color:var(--lighter)">Воркбук «Архитектура жизни»</h4>
-        <p style="color:var(--accent-lt)">Рабочая тетрадь на год: диагностика, ценности, 52 недели.</p>
-        <div class="sidebar-price" style="color:var(--lighter)">2 000 ₽</div>
-        <a href="../vorkbuk.html" class="btn" style="width:100%;text-align:center;display:block">Купить воркбук</a>
-      </div>
-      <div class="sidebar-card" style="text-align:center;background:var(--mid);border-color:var(--accent-lt)">
-        <p style="font-size:.78rem;color:var(--dark-mid);margin-bottom:8px">Или всё сразу</p>
-        <div style="font-family:var(--serif);font-size:1.1rem;color:var(--dark);margin-bottom:4px">2 500 ₽</div>
-        <p style="font-size:.72rem;color:var(--dark-mid);text-decoration:line-through;margin-bottom:10px">3 300 ₽ по отдельности</p>
-        <a href="../index.html#products" class="btn btn-outline" style="width:100%;text-align:center;display:block;font-size:.78rem">Купить комплект →</a>
-      </div>
-    </aside>
+  <div class="sidebar-card" style="background:#FBF7F7;border-color:#D4B8B8">
+    <p style="font-size:.65rem;color:#B58E8E;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">Бесплатно · PDF для печати</p>
+    <h4>Планер энергетического баланса</h4>
+    <p>Распечатайте и заполняйте от руки. 28 дней наблюдений.</p>
+    <div class="sidebar-price" style="color:#B58E8E">Бесплатно</div>
+    <a href="../products/free/planer.html" class="btn btn-outline" style="width:100%;text-align:center;display:block">Скачать PDF</a>
+  </div>
+  <div class="sidebar-card" style="background:#EDD8D8;border-color:#D4B8B8">
+    <p style="font-size:.65rem;color:#6B4E4E;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">Google Таблица · 490 ₽</p>
+    <h4>Планер энергетического баланса</h4>
+    <p>Вампиры и доноры автоматически. Работает с телефона.</p>
+    <div class="sidebar-price">490 ₽</div>
+    <a href="../products/planer.html#google" class="btn" style="width:100%;text-align:center;display:block">Купить</a>
+  </div>
+  <div class="sidebar-card" style="background:#D4B8B8;border-color:#C8A8A8;opacity:.7">
+    <p style="font-size:.65rem;color:#6B4E4E;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">Скоро · PDF · ~80 страниц</p>
+    <h4>Книга «Жизнь в ресурсе»</h4>
+    <p>Скрипты «нет», антикризисный протокол, 50 доноров энергии.</p>
+    <div class="sidebar-price" style="color:#6B4E4E">Скоро</div>
+    <a href="https://t.me/in.a.mora" class="btn btn-outline" target="_blank" rel="noopener" style="width:100%;text-align:center;display:block">✈ Telegram</a>
+  </div>
+</aside>
   </div>
 </div>
 <section class="related"><div class="container">
@@ -368,19 +382,29 @@ section{padding:clamp(40px,7vw,80px) var(--pad)}
   <h3 style="color:var(--lighter);font-style:italic;font-weight:400;margin-bottom:6px">Хотите пойти дальше?</h3>
   <p style="color:var(--accent-lt);font-size:.88rem;margin-bottom:20px">Инструменты, которые помогут разобраться с вашей энергией</p>
   <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:20px">
-    <div style="background:rgba(255,255,255,.06);border:1px solid rgba(181,142,142,.25);border-radius:var(--r-sm);padding:8px 16px;font-size:.8rem;color:var(--accent-lt)"><strong style="color:var(--lighter);display:block;font-family:var(--serif);font-size:1rem">Планер</strong>28 дней · 800 ₽</div>
-    <div style="background:rgba(255,255,255,.06);border:1px solid rgba(181,142,142,.25);border-radius:var(--r-sm);padding:8px 16px;font-size:.8rem;color:var(--accent-lt)"><strong style="color:var(--lighter);display:block;font-family:var(--serif);font-size:1rem">Книга</strong>PDF · 500 ₽</div>
-    <div style="background:rgba(255,255,255,.06);border:1px solid rgba(181,142,142,.25);border-radius:var(--r-sm);padding:8px 16px;font-size:.8rem;color:var(--accent-lt)"><strong style="color:var(--lighter);display:block;font-family:var(--serif);font-size:1rem">Воркбук</strong>Год · 2 000 ₽</div>
+    <div style="background:rgba(255,255,255,.06);border:1px solid rgba(181,142,142,.25);border-radius:var(--r-sm);padding:8px 16px;font-size:.8rem;color:var(--accent-lt)"><strong style="color:var(--lighter);display:block;font-family:var(--serif);font-size:1rem">Планер</strong>28 дней · 490 ₽</div>
+    <div style="background:rgba(255,255,255,.06);border:1px solid rgba(181,142,142,.25);border-radius:var(--r-sm);padding:8px 16px;font-size:.8rem;color:var(--accent-lt)"><strong style="color:var(--lighter);display:block;font-family:var(--serif);font-size:1rem">Книга</strong>PDF · 1 290 ₽</div>
+    <div style="background:rgba(255,255,255,.06);border:1px solid rgba(181,142,142,.25);border-radius:var(--r-sm);padding:8px 16px;font-size:.8rem;color:var(--accent-lt)"><strong style="color:var(--lighter);display:block;font-family:var(--serif);font-size:1rem">Воркбук</strong>Год · Скоро</div>
   </div>
   <a href="../index.html#products" style="display:inline-block;background:var(--accent);color:var(--dark);font-size:.85rem;font-weight:500;padding:13px 28px;border-radius:var(--r-sm)">Выбрать продукт →</a>
 </div>
 <footer class="footer"><div class="footer-inner">
-  <nav class="footer-nav">
-    <a href="../planer.html">Планер</a><a href="../kniga.html">Книга</a>
-    <a href="../vorkbuk.html">Воркбук</a><a href="../blog.html">Статьи</a>
-    <a href="../privacy.html">Политика конфиденциальности</a>
-  </nav>
-  <p class="footer-copy">© Юля Инамора | Life-архитектура | @in.a.mora</p>
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
+    <nav class="footer-nav">
+      <a href="../products/planer.html">Планер</a>
+      <a href="../products/kniga.html">Книга</a>
+      <a href="../products/vorkbuk.html">Воркбук</a>
+      <a href="../products/free/index.html">Бесплатно</a>
+      <a href="../blog.html">Статьи</a>
+      <a href="../privacy.html">Политика конфиденциальности</a>
+    </nav>
+    <div class="social-icons">
+  <a href="https://t.me/in.a.mora" class="social-icon social-tg" target="_blank" rel="noopener" title="Telegram"><svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248-1.97 9.289c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.932z"/></svg></a>
+  <a href="https://vk.com/inamora" class="social-icon social-vk" target="_blank" rel="noopener" title="ВКонтакте"><svg viewBox="0 0 24 24"><path d="M15.684 0H8.316C1.592 0 0 1.592 0 8.316v7.368C0 22.408 1.592 24 8.316 24h7.368C22.408 24 24 22.408 24 15.684V8.316C24 1.592 22.392 0 15.684 0zm3.692 17.123h-1.744c-.66 0-.864-.525-2.05-1.727-1.033-1-1.49-1.135-1.744-1.135-.356 0-.458.102-.458.593v1.575c0 .424-.135.678-1.253.678-1.846 0-3.896-1.118-5.335-3.202C4.624 10.857 4.03 8.57 4.03 8.096c0-.254.102-.491.593-.491h1.744c.44 0 .61.203.78.677.863 2.49 2.303 4.675 2.896 4.675.22 0 .322-.102.322-.66V9.721c-.068-1.186-.695-1.287-.695-1.71 0-.204.17-.407.44-.407h2.743c.372 0 .508.203.508.643v3.473c0 .372.17.508.271.508.22 0 .407-.136.813-.542 1.253-1.406 2.151-3.574 2.151-3.574.119-.254.322-.491.763-.491h1.744c.525 0 .644.27.525.643-.22 1.017-2.354 4.031-2.354 4.031-.186.305-.254.44 0 .78.186.254.796.779 1.203 1.253.745.847 1.32 1.558 1.473 2.05.17.49-.085.745-.576.745z"/></svg></a>
+  <a href="https://ok.ru/inamora" class="social-icon social-ok" target="_blank" rel="noopener" title="Одноклассники"><svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm.041 6.402a2.952 2.952 0 1 1 0 5.904 2.952 2.952 0 0 1 0-5.904zm4.914 7.699c-.51.882-1.35 1.537-2.33 1.814l2.162 2.162a1.066 1.066 0 0 1-1.508 1.508L12 16.306l-3.28 3.28a1.066 1.066 0 0 1-1.507-1.508l2.162-2.162c-.98-.277-1.82-.932-2.33-1.814a1.066 1.066 0 1 1 1.845-1.066c.45.779 1.282 1.26 2.151 1.26h.003c.87 0 1.701-.481 2.151-1.26a1.066 1.066 0 1 1 1.845 1.066h-.04z"/></svg></a>
+</div>
+  </div>
+  <p class="footer-copy" style="margin-top:12px">© Юля Инамора | Life-архитектура | @in.a.mora</p>
 </div></footer>
 <script>
 document.querySelectorAll('.pfaq-q,.faq-q').forEach(btn=>{
