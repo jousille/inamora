@@ -537,6 +537,61 @@ section .container { padding: 0; }
 
 .prod-grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
 
+/* ── BURGER ── */
+.burger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  padding: 4px;
+  background: none;
+  border: none;
+  flex-shrink: 0;
+}
+.burger span {
+  display: block;
+  width: 22px;
+  height: 1.5px;
+  background: var(--accent-lt);
+  border-radius: 2px;
+  transition: transform 0.25s, opacity 0.25s;
+}
+.burger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+.burger.open span:nth-child(2) { opacity: 0; }
+.burger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+.mobile-menu {
+  display: none;
+  flex-direction: column;
+  background: var(--dark);
+  border-top: 1px solid rgba(255,255,255,.06);
+  padding: 12px var(--pad) 16px;
+}
+.mobile-menu.open { display: flex; }
+.mobile-menu a {
+  color: var(--accent-lt);
+  font-size: 0.85rem;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+  transition: color 0.2s;
+}
+.mobile-menu a:last-child { border-bottom: none; }
+.mobile-menu a:hover, .mobile-menu a.active { color: var(--lighter); }
+.mobile-social { display: flex; gap: 14px; padding-top: 14px; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+  .nav-links { display: none; }
+  .burger { display: flex; }
+  .social-icons { display: none; }
+  .prod-grid, .pain-grid, .results-grid, .blog-grid, .reviews-grid { grid-template-columns: 1fr; }
+  .author-inner { flex-direction: column; align-items: center; text-align: center; }
+  .bundle-prices { flex-direction: column; align-items: center; gap: 8px; }
+  .hero-preview { flex-wrap: wrap; }
+}
 </style>
 </head>
 <body>
@@ -546,7 +601,17 @@ section .container { padding: 0; }
   <a href="https://t.me/in.a.mora" class="social-icon social-tg" target="_blank" rel="noopener" title="Telegram"><svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248-1.97 9.289c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.932z"/></svg></a>
   <a href="https://vk.com/inamora" class="social-icon social-vk" target="_blank" rel="noopener" title="ВКонтакте"><svg viewBox="0 0 24 24"><path d="M15.684 0H8.316C1.592 0 0 1.592 0 8.316v7.368C0 22.408 1.592 24 8.316 24h7.368C22.408 24 24 22.408 24 15.684V8.316C24 1.592 22.392 0 15.684 0zm3.692 17.123h-1.744c-.66 0-.864-.525-2.05-1.727-1.033-1-1.49-1.135-1.744-1.135-.356 0-.458.102-.458.593v1.575c0 .424-.135.678-1.253.678-1.846 0-3.896-1.118-5.335-3.202C4.624 10.857 4.03 8.57 4.03 8.096c0-.254.102-.491.593-.491h1.744c.44 0 .61.203.78.677.863 2.49 2.303 4.675 2.896 4.675.22 0 .322-.102.322-.66V9.721c-.068-1.186-.695-1.287-.695-1.71 0-.204.17-.407.44-.407h2.743c.372 0 .508.203.508.643v3.473c0 .372.17.508.271.508.22 0 .407-.136.813-.542 1.253-1.406 2.151-3.574 2.151-3.574.119-.254.322-.491.763-.491h1.744c.525 0 .644.27.525.643-.22 1.017-2.354 4.031-2.354 4.031-.186.305-.254.44 0 .78.186.254.796.779 1.203 1.253.745.847 1.32 1.558 1.473 2.05.17.49-.085.745-.576.745z"/></svg></a>
   <a href="https://ok.ru/inamora" class="social-icon social-ok" target="_blank" rel="noopener" title="Одноклассники"><svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm.041 6.402a2.952 2.952 0 1 1 0 5.904 2.952 2.952 0 0 1 0-5.904zm4.914 7.699c-.51.882-1.35 1.537-2.33 1.814l2.162 2.162a1.066 1.066 0 0 1-1.508 1.508L12 16.306l-3.28 3.28a1.066 1.066 0 0 1-1.507-1.508l2.162-2.162c-.98-.277-1.82-.932-2.33-1.814a1.066 1.066 0 1 1 1.845-1.066c.45.779 1.282 1.26 2.151 1.26h.003c.87 0 1.701-.481 2.151-1.26a1.066 1.066 0 1 1 1.845 1.066h-.04z"/></svg></a>
-</div></div></nav>
+<button class="burger" id="burger" aria-label="Меню" aria-expanded="false">
+  <span></span><span></span><span></span>
+</button></div></nav>
+<div class="mobile-menu" id="mobile-menu">
+<a href="index.html" class="active">Главная</a><a href="products/planer.html">Планер</a><a href="products/kniga.html">Книга</a><a href="products/vorkbuk.html">Воркбук</a><a href="blog.html">Статьи</a><a href="products/free/index.html">Бесплатно</a>
+  <div class="mobile-social"><div class="social-icons">
+  <a href="https://t.me/in.a.mora" class="social-icon social-tg" target="_blank" rel="noopener" title="Telegram"><svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248-1.97 9.289c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.932z"/></svg></a>
+  <a href="https://vk.com/inamora" class="social-icon social-vk" target="_blank" rel="noopener" title="ВКонтакте"><svg viewBox="0 0 24 24"><path d="M15.684 0H8.316C1.592 0 0 1.592 0 8.316v7.368C0 22.408 1.592 24 8.316 24h7.368C22.408 24 24 22.408 24 15.684V8.316C24 1.592 22.392 0 15.684 0zm3.692 17.123h-1.744c-.66 0-.864-.525-2.05-1.727-1.033-1-1.49-1.135-1.744-1.135-.356 0-.458.102-.458.593v1.575c0 .424-.135.678-1.253.678-1.846 0-3.896-1.118-5.335-3.202C4.624 10.857 4.03 8.57 4.03 8.096c0-.254.102-.491.593-.491h1.744c.44 0 .61.203.78.677.863 2.49 2.303 4.675 2.896 4.675.22 0 .322-.102.322-.66V9.721c-.068-1.186-.695-1.287-.695-1.71 0-.204.17-.407.44-.407h2.743c.372 0 .508.203.508.643v3.473c0 .372.17.508.271.508.22 0 .407-.136.813-.542 1.253-1.406 2.151-3.574 2.151-3.574.119-.254.322-.491.763-.491h1.744c.525 0 .644.27.525.643-.22 1.017-2.354 4.031-2.354 4.031-.186.305-.254.44 0 .78.186.254.796.779 1.203 1.253.745.847 1.32 1.558 1.473 2.05.17.49-.085.745-.576.745z"/></svg></a>
+  <a href="https://ok.ru/inamora" class="social-icon social-ok" target="_blank" rel="noopener" title="Одноклассники"><svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm.041 6.402a2.952 2.952 0 1 1 0 5.904 2.952 2.952 0 0 1 0-5.904zm4.914 7.699c-.51.882-1.35 1.537-2.33 1.814l2.162 2.162a1.066 1.066 0 0 1-1.508 1.508L12 16.306l-3.28 3.28a1.066 1.066 0 0 1-1.507-1.508l2.162-2.162c-.98-.277-1.82-.932-2.33-1.814a1.066 1.066 0 1 1 1.845-1.066c.45.779 1.282 1.26 2.151 1.26h.003c.87 0 1.701-.481 2.151-1.26a1.066 1.066 0 1 1 1.845 1.066h-.04z"/></svg></a>
+</div></div>
+</div>
 
 <!-- HERO -->
 <header class="hero">
@@ -822,6 +887,23 @@ document.querySelectorAll('.faq-q').forEach(btn => {
     const isOpen = item.classList.contains('open');
     document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
     if (!isOpen) item.classList.add('open');
+  });
+});
+</script>
+<script>
+const burger = document.getElementById('burger');
+const menu   = document.getElementById('mobile-menu');
+burger.addEventListener('click', () => {
+  const open = menu.classList.toggle('open');
+  burger.classList.toggle('open', open);
+  burger.setAttribute('aria-expanded', open);
+});
+// Close on link click
+menu.querySelectorAll('a').forEach(a => {
+  a.addEventListener('click', () => {
+    menu.classList.remove('open');
+    burger.classList.remove('open');
+    burger.setAttribute('aria-expanded', false);
   });
 });
 </script>
