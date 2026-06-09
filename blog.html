@@ -3,9 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Статьи - Юля Инамора</title>
+<title>Статьи — Юля Инамора</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 
@@ -252,9 +251,12 @@ section{padding:clamp(40px,7vw,80px) var(--pad)}
 .blog-empty{grid-column:1/-1;text-align:center;padding:48px 20px;color:var(--dark-mid);font-size:.9rem}
 
 .social-icons{display:flex;gap:10px;align-items:center}
-.social-icon{display:flex;align-items:center;justify-content:center;color:#B58E8E;transition:color .2s;flex-shrink:0}
-.social-icon:hover{color:#FBF7F7}
-.social-icon svg{flex-shrink:0}
+
+.social-icon:hover{opacity:.8}
+.social-icon svg{width:18px;height:18px;fill:currentColor}
+.social-tg{background:#2AABEE;color:#fff}
+.social-vk{background:#0077FF;color:#fff}
+.social-ok{background:#EE8208;color:#fff}
 
 .nav-inner{gap:12px}
 .prod-format{font-size:.72rem;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
@@ -342,9 +344,12 @@ section{padding:clamp(40px,7vw,80px) var(--pad)}
       </a>
 
       <a href="blog/work-life-balance.html" class="blog-card" data-category="энергия">
-        <div class="blog-cover" style="background-image:url('images/blog/work-life-balance.jpg');background-size:cover;background-position:center"></div>
-        <img src="images/blog/work-life-balance.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" class="blog-cover-img">
-      </div>
+        <div class="blog-cover" style="background:#EDD8D8">
+        <img src="images/blog/placeholder.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0" onerror="this.style.opacity=0" class="blog-cover-img">
+        
+          <div class="blog-cover-bg energy"></div>
+          <span class="blog-cover-label">Энергия и ресурс</span>⚡
+        </div>
         <div class="blog-body">
           <div class="blog-meta"><span class="blog-tag">Энергия и ресурс</span><span class="blog-dot" style="color:var(--accent-lt)">·</span><span class="blog-date">21 февр 2026</span></div>
           <div class="blog-title">Что не так с work-life balance?</div>
