@@ -252,12 +252,9 @@ section{padding:clamp(40px,7vw,80px) var(--pad)}
 .blog-empty{grid-column:1/-1;text-align:center;padding:48px 20px;color:var(--dark-mid);font-size:.9rem}
 
 .social-icons{display:flex;gap:10px;align-items:center}
-
-.social-icon:hover{opacity:.8}
-.social-icon svg{width:18px;height:18px;fill:currentColor}
-.social-tg{background:#2AABEE;color:#fff}
-.social-vk{background:#0077FF;color:#fff}
-.social-ok{background:#EE8208;color:#fff}
+.social-icon{display:flex;align-items:center;justify-content:center;color:#B58E8E;transition:color .2s;flex-shrink:0}
+.social-icon:hover{color:#FBF7F7}
+.social-icon svg{flex-shrink:0}
 
 .nav-inner{gap:12px}
 .prod-format{font-size:.72rem;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
