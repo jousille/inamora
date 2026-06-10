@@ -446,9 +446,13 @@ section .container { padding: 0; }
 .mobile-menu {
   display: none;
   flex-direction: column;
-  background: var(--dark);
+  background: #3D2E2E;
   border-top: 1px solid rgba(255,255,255,.06);
-  padding: 12px var(--pad, 24px) 16px;
+  padding: 12px 24px 16px;
+  position: sticky;
+  top: 56px;
+  z-index: 99;
+  width: 100%;
 }
 .mobile-menu.open { display: flex; }
 .mobile-menu a {
@@ -927,7 +931,7 @@ section .container { padding: 0; }
     <div class="blog-grid">
 
       <a href="blog/nevroz-vremeni.html" class="blog-card" data-category="стиль">
-        <div class="blog-cover" style="background-image:url('images/blog/nevroz-vremeni.jpg');background-size:cover;background-position:center;background-color:#EDD8D8">
+        <div class="blog-cover" style="background-image:url('blog/images/nevroz-vremeni.jpg');background-size:cover;background-position:center;background-color:#EDD8D8">
           <div class="blog-cover-bg energy"></div>
           <span class="blog-cover-label">Стиль жизни</span>
         </div>
@@ -940,7 +944,7 @@ section .container { padding: 0; }
       </a>
 
       <a href="blog/10-veschey-otdykh.html" class="blog-card" data-category="энергия">
-        <div class="blog-cover" style="background-image:url('images/blog/10-veschey-otdykh.jpg');background-size:cover;background-position:center;background-color:#EDD8D8">
+        <div class="blog-cover" style="background-image:url('blog/images/10-veschey-otdykh.jpg');background-size:cover;background-position:center;background-color:#EDD8D8">
           <div class="blog-cover-bg energy"></div>
           <span class="blog-cover-label">Энергия и ресурс</span>
         </div>
@@ -953,33 +957,33 @@ section .container { padding: 0; }
       </a>
 
       <a href="blog/work-life-balance.html" class="blog-card" data-category="энергия">
-        <div class="blog-cover" style="background-image:url('images/blog/work-life-balance.jpg');background-size:cover;background-position:center;background-color:#EDD8D8">
-          <div class="blog-cover-bg energy"></div>
+        <div class="blog-cover" style="background-image:url('blog/images/work-life-balance.jpg');background-size:cover;background-position:center;background-color:#EDD8D8">
+
           <span class="blog-cover-label">Энергия и ресурс</span>
         </div>
         <div class="blog-body">
           <div class="blog-meta"><span class="blog-tag">Энергия и ресурс</span><span class="blog-dot">·</span><span class="blog-date">21 февр 2026</span></div>
           <div class="blog-title">Что не так с work-life balance?</div>
-          <div class="blog-excerpt">Люди стали осознаннее, стараются держать баланс — но тревожности меньше не становится. Даже наоборот. Разбираю, в чём подвох.</div>
+          <div class="blog-excerpt">Люди стали осознаннее: стараются поддержить во всем баланс, но тревожности меньше не становится. Разбираем, в чём подвох...</div>
           <div class="blog-footer-row"><span class="blog-read">Читать →</span><span class="blog-time">3 мин</span></div>
         </div>
       </a>
 
       <a href="blog/lyubov-k-sebe.html" class="blog-card" data-category="личность">
-        <div class="blog-cover" style="background-image:url('images/blog/lyubov-k-sebe.jpg');background-size:cover;background-position:center;background-color:#E8DAEF">
+        <div class="blog-cover" style="background-image:url('blog/images/lyubov-k-sebe.jpg');background-size:cover;background-position:center;background-color:#E8DAEF">
           <div class="blog-cover-bg rel"></div>
           <span class="blog-cover-label">Личность</span>
         </div>
         <div class="blog-body">
           <div class="blog-meta"><span class="blog-tag" style="color:#7A4A6B">Личность</span><span class="blog-dot">·</span><span class="blog-date">14 мая 2025</span></div>
           <div class="blog-title">Любовь к себе: модный тренд или реальный путь к счастью?</div>
-          <div class="blog-excerpt">Инфлюенсеры кричат «люби себя», а большинство даже не понимает, что это на самом деле значит. Говорим честно.</div>
+          <div class="blog-excerpt">Инфлюенсеры призывают «любить себя», а большинство даже не понимает, что это на самом деле значит...</div>
           <div class="blog-footer-row"><span class="blog-read">Читать →</span><span class="blog-time">4 мин</span></div>
         </div>
       </a>
 
       <a href="blog/5-prichin.html" class="blog-card" data-category="личность">
-        <div class="blog-cover" style="background-image:url('images/blog/5-prichin.jpg');background-size:cover;background-position:center;background-color:#D5F5E3">
+        <div class="blog-cover" style="background-image:url('blog/images/5-prichin.jpg');background-size:cover;background-position:center;background-color:#D5F5E3">
           <div class="blog-cover-bg slow"></div>
           <span class="blog-cover-label">Личность</span>
         </div>
@@ -992,14 +996,14 @@ section .container { padding: 0; }
       </a>
 
       <a href="blog/article.html" class="blog-card" data-category="энергия">
-        <div class="blog-cover" style="background-image:url('images/blog/ustalost-bez-prichiny.jpg');background-size:cover;background-position:center;background-color:#EDD8D8">
+        <div class="blog-cover" style="background-image:url('blog/images/ustalost-bez-prichiny.jpg');background-size:cover;background-position:center;background-color:#EDD8D8">
           <div class="blog-cover-bg energy"></div>
           <span class="blog-cover-label">Энергия и ресурс</span>
         </div>
         <div class="blog-body">
           <div class="blog-meta"><span class="blog-tag">Энергия и ресурс</span><span class="blog-dot">·</span><span class="blog-date">15 янв 2025</span></div>
-          <div class="blog-title">Усталость без причины — это миф</div>
-          <div class="blog-excerpt">В один день успеваете горы, в другой — три звонка и пластом. Дело не в лени. Дело в энергетических вампирах.</div>
+          <div class="blog-title">Усталость без причины - это миф</div>
+          <div class="blog-excerpt">В один день успеваете свернуть горы, в другой - сил хватило всего на пару звонков. Дело не в лени, а в «энергетических вампирах».</div>
           <div class="blog-footer-row"><span class="blog-read">Читать →</span><span class="blog-time">5 мин</span></div>
         </div>
       </a>
@@ -1013,8 +1017,8 @@ section .container { padding: 0; }
   <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
     <nav class="footer-nav">
       <a href="products/index.html">Купить</a>
-      <a href="products/free/index.html">Бесплатно</a>
       <a href="blog.html">Блог</a>
+      <a href="products/free/index.html">Бесплатно</a>
       <a href="privacy.html">Политика конфиденциальности</a>
     </nav>
 <div class="social-icons">
