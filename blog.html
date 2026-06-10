@@ -446,13 +446,9 @@ section .container { padding: 0; }
 .mobile-menu {
   display: none;
   flex-direction: column;
-  background: #3D2E2E;
+  background: var(--dark);
   border-top: 1px solid rgba(255,255,255,.06);
-  padding: 12px 24px 16px;
-  position: sticky;
-  top: 56px;
-  z-index: 99;
-  width: 100%;
+  padding: 12px var(--pad, 24px) 16px;
 }
 .mobile-menu.open { display: flex; }
 .mobile-menu a {
@@ -923,11 +919,25 @@ section .container { padding: 0; }
       <span class="filter-tag active">Все</span>
       <span class="filter-tag">Энергия и ресурс</span>
       <span class="filter-tag">Личность</span>
+      <span class="filter-tag">Стиль жизни</span>
       <span class="filter-tag">Отношения</span>
       <span class="filter-tag">Окружение</span>
       <span class="filter-tag">Работа и деньги</span>
     </div>
     <div class="blog-grid">
+
+      <a href="blog/nevroz-vremeni.html" class="blog-card" data-category="стиль">
+        <div class="blog-cover" style="background-image:url('images/blog/nevroz-vremeni.jpg');background-size:cover;background-position:center;background-color:#EDD8D8">
+          <div class="blog-cover-bg energy"></div>
+          <span class="blog-cover-label">Стиль жизни</span>
+        </div>
+        <div class="blog-body">
+          <div class="blog-meta"><span class="blog-tag">Стиль жизни</span><span class="blog-dot">·</span><span class="blog-date">28 февр 2025</span></div>
+          <div class="blog-title">Проверьте, есть ли у вас «невроз времени»</div>
+          <div class="blog-excerpt">В 1982 году врач Ларри Досси описал состояние, когда времени вечно не хватает и нужно всё время ускоряться. Узнаёте себя?</div>
+          <div class="blog-footer-row"><span class="blog-read">Читать →</span><span class="blog-time">5 мин</span></div>
+        </div>
+      </a>
 
       <a href="blog/10-veschey-otdykh.html" class="blog-card" data-category="энергия">
         <div class="blog-cover" style="background-image:url('images/blog/10-veschey-otdykh.jpg');background-size:cover;background-position:center;background-color:#EDD8D8">
@@ -1040,7 +1050,7 @@ section .container { padding: 0; }
 const filterTags = document.querySelectorAll('.filter-tag');
 const blogCards  = document.querySelectorAll('.blog-card');
 const blogGrid   = document.querySelector('.blog-grid');
-const categoryMap = {'Все':'all','Энергия и ресурс':'энергия','Личность':'личность','Отношения':'отношения','Окружение':'окружение','Работа и деньги':'работа'};
+const categoryMap = {'Все':'all','Энергия и ресурс':'энергия','Личность':'личность','Стиль жизни':'стиль','Отношения':'отношения','Окружение':'окружение','Работа и деньги':'работа'};
 filterTags.forEach(tag => {
   tag.addEventListener('click', () => {
     filterTags.forEach(t => t.classList.remove('active'));
