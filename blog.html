@@ -446,9 +446,13 @@ section .container { padding: 0; }
 .mobile-menu {
   display: none;
   flex-direction: column;
-  background: var(--dark);
+  background: #3D2E2E;
   border-top: 1px solid rgba(255,255,255,.06);
-  padding: 12px var(--pad, 24px) 16px;
+  padding: 12px 24px 16px;
+  position: sticky;
+  top: 56px;
+  z-index: 99;
+  width: 100%;
 }
 .mobile-menu.open { display: flex; }
 .mobile-menu a {
