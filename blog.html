@@ -446,13 +446,9 @@ section .container { padding: 0; }
 .mobile-menu {
   display: none;
   flex-direction: column;
-  background: #3D2E2E;
+  background: var(--dark);
   border-top: 1px solid rgba(255,255,255,.06);
-  padding: 12px 24px 16px;
-  position: sticky;
-  top: 56px;
-  z-index: 99;
-  width: 100%;
+  padding: 12px var(--pad, 24px) 16px;
 }
 .mobile-menu.open { display: flex; }
 .mobile-menu a {
@@ -829,7 +825,7 @@ section .container { padding: 0; }
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--accent);
-  margin-bottom: 5px;
+  margin-bottom: 0;
 }
 .blog-title { font-size: 0.88rem; color: var(--dark); line-height: 1.4; margin-bottom: 10px; font-family: var(--serif); font-weight: 500; }
 .blog-link { font-size: 0.75rem; color: var(--accent); margin-top: auto; }
@@ -932,11 +928,11 @@ section .container { padding: 0; }
 
       <a href="blog/nevroz-vremeni.html" class="blog-card" data-category="стиль">
         <div class="blog-cover" style="background-image:url('images/blog/nevroz-vremeni.jpg');background-size:cover;background-position:center;background-color:#EDD8D8">
-
+          <div class="blog-cover-bg energy"></div>
           <span class="blog-cover-label">Стиль жизни</span>
         </div>
         <div class="blog-body">
-          <div class="blog-meta"><span class="blog-tag">Стиль жизни</span><span class="blog-date">28 февр 2025</span></div>
+          <div class="blog-meta"><span class="blog-tag">Стиль жизни</span><span class="blog-dot">·</span><span class="blog-date">28 февр 2025</span></div>
           <div class="blog-title">Проверьте, есть ли у вас «невроз времени»</div>
           <div class="blog-excerpt">В 1982 году врач Ларри Досси описал состояние, когда времени вечно не хватает и нужно всё время ускоряться. Узнаёте себя?</div>
           <div class="blog-footer-row"><span class="blog-read">Читать →</span><span class="blog-time">5 мин</span></div>
@@ -944,7 +940,7 @@ section .container { padding: 0; }
       </a>
 
       <a href="blog/10-veschey-otdykh.html" class="blog-card" data-category="энергия">
-        <div class="blog-cover" style="background-image:url('blog/images/10-veschey-otdykh.jpg');background-size:cover;background-position:center;background-color:#EDD8D8">
+        <div class="blog-cover" style="background-image:url('images/blog/10-veschey-otdykh.jpg');background-size:cover;background-position:center;background-color:#EDD8D8">
           <div class="blog-cover-bg energy"></div>
           <span class="blog-cover-label">Энергия и ресурс</span>
         </div>
@@ -957,7 +953,7 @@ section .container { padding: 0; }
       </a>
 
       <a href="blog/work-life-balance.html" class="blog-card" data-category="энергия">
-        <div class="blog-cover" style="background-image:url('blog/images/work-life-balance.jpg');background-size:cover;background-position:center;background-color:#EDD8D8">
+        <div class="blog-cover" style="background-image:url('images/blog/work-life-balance.jpg');background-size:cover;background-position:center;background-color:#EDD8D8">
           <div class="blog-cover-bg energy"></div>
           <span class="blog-cover-label">Энергия и ресурс</span>
         </div>
@@ -1017,8 +1013,8 @@ section .container { padding: 0; }
   <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
     <nav class="footer-nav">
       <a href="products/index.html">Купить</a>
-      <a href="blog.html">Блог</a>
       <a href="products/free/index.html">Бесплатно</a>
+      <a href="blog.html">Блог</a>
       <a href="privacy.html">Политика конфиденциальности</a>
     </nav>
 <div class="social-icons">
