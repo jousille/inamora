@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Как появляется энергия? — Юля Инамора</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --dark:#3D2E2E;--dark-mid:#6B4E4E;--accent:#B58E8E;--accent-lt:#D4B8B8;
+  --mid:#EDD8D8;--light:#F5ECEC;--lighter:#FBF7F7;--white:#FFFFFF;
+  --serif:'Cormorant Garamond',Georgia,serif;--sans:'Jost',system-ui,sans-serif;
+  --r-sm:6px;--r-md:10px;--r-lg:16px;--max:1100px;--pad:clamp(20px,5vw,80px);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--lighter);color:var(--dark);font-size:16px;line-height:1.7;font-weight:300}
+a{color:inherit;text-decoration:none}
+h1,h2,h3,h4{font-family:var(--serif);font-weight:500;line-height:1.2}
+.label{font-size:.65rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:.5rem;display:block}
+.btn{display:inline-block;background:var(--accent);color:var(--dark);font-family:var(--sans);font-size:.85rem;font-weight:500;letter-spacing:.04em;padding:13px 28px;border-radius:var(--r-sm);border:none;cursor:pointer;transition:background .2s,transform .15s}
+.btn:hover{background:var(--accent-lt);transform:translateY(-1px)}
+.btn-outline{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+.btn-outline:hover{background:rgba(181,142,142,.08)}
+
+/* NAV */
+.nav{background:var(--dark);border-bottom:1px solid rgba(255,255,255,.05)}
+.nav-inner{max-width:var(--max);margin:0 auto;padding:0 var(--pad);height:56px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.nav-logo{font-family:var(--serif);font-size:1.1rem;font-weight:500;color:var(--lighter);letter-spacing:0.02em}
+.nav-links{display:flex;gap:28px}
+.nav-links a{color:var(--accent-lt);font-size:.78rem;font-weight:400;letter-spacing:.06em;text-transform:uppercase;transition:color .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--lighter)}
+.burger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;background:none;border:none;flex-shrink:0}
+.burger span{display:block;width:22px;height:1.5px;background:var(--accent-lt);border-radius:2px;transition:transform .25s,opacity .25s}
+.burger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.burger.open span:nth-child(2){opacity:0}
+.burger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+.mobile-menu{display:none;flex-direction:column;background:var(--dark);border-top:1px solid rgba(255,255,255,.06);padding:12px var(--pad,24px) 16px}
+.mobile-menu.open{display:flex}
+.mobile-menu a{color:var(--accent-lt);font-size:.85rem;font-weight:400;letter-spacing:.06em;text-transform:uppercase;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);transition:color .2s;text-decoration:none}
+.mobile-menu a:last-child{border-bottom:none}
+.mobile-menu a:hover,.mobile-menu a.active{color:#FBF7F7}
+
+/* BREADCRUMB */
+.breadcrumb{padding:14px var(--pad);background:var(--light);border-bottom:1px solid var(--accent-lt)}
+.breadcrumb-inner{max-width:var(--max);margin:0 auto;display:flex;align-items:center;gap:8px;font-size:.75rem;color:var(--dark-mid)}
+.breadcrumb a{color:var(--accent);transition:color .2s}
+.breadcrumb a:hover{color:var(--dark)}
+.breadcrumb .sep{color:var(--accent-lt)}
+
+/* FOOTER */
+.footer{background:var(--dark);padding:32px var(--pad)}
+.footer-inner{max-width:var(--max);margin:0 auto;display:flex;flex-direction:column;gap:16px}
+.footer-nav{display:flex;gap:20px;flex-wrap:wrap}
+.footer-nav a{color:var(--accent);font-size:.78rem;transition:color .2s}
+.footer-nav a:hover{color:var(--lighter)}
+.footer-copy{color:var(--dark-mid);font-size:.72rem}
+
+/* ARTICLE LAYOUT */
+.article-layout{display:grid;grid-template-columns:1fr 280px;gap:40px;align-items:start;max-width:var(--max);margin:0 auto;padding:0 var(--pad)}
+@media(max-width:768px){.article-layout{grid-template-columns:1fr}}
+
+.article-meta{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.article-tag{font-size:.68rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--white);background:var(--accent);padding:3px 10px;border-radius:3px}
+.article-date,.article-read{font-size:.75rem;color:var(--dark-mid)}
+.article-dot{color:var(--accent-lt)}
+.article-title{font-size:clamp(1.6rem,4vw,2.6rem);font-style:italic;font-weight:400;color:var(--dark);line-height:1.2;margin-bottom:16px}
+
+.article-cover{width:100%;height:280px;border-radius:var(--r-lg);margin-bottom:32px;overflow:hidden;position:relative;background:var(--mid);display:flex;align-items:center;justify-content:center;font-size:3rem}
+.article-cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.article-cover-grad{position:absolute;inset:0;background:radial-gradient(circle at 30% 50%,rgba(181,142,142,.3),transparent 70%)}
+
+/* BODY */
+.article-body p{font-size:.94rem;color:var(--dark);line-height:1.9;margin-bottom:16px}
+.article-body p a{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+.article-body p a:hover{color:var(--dark)}
+.article-body blockquote{border-left:3px solid var(--accent);padding:14px 20px;margin:24px 0;background:var(--light);border-radius:0 var(--r-sm) var(--r-sm) 0}
+.article-body blockquote p{color:var(--dark-mid);font-style:italic;font-family:var(--serif);font-size:1.05rem;margin:0;line-height:1.6}
+
+/* Flow diagram */
+.flow{display:flex;align-items:center;justify-content:center;gap:14px;background:var(--dark);border-radius:var(--r-lg);padding:30px 24px;margin:28px 0;flex-wrap:wrap}
+.flow-step{font-family:var(--serif);font-size:1.1rem;font-style:italic;color:var(--lighter);text-align:center;line-height:1.3;background:rgba(255,255,255,.06);border:1px solid rgba(181,142,142,.25);border-radius:var(--r-md);padding:14px 20px;min-width:110px}
+.flow-step small{display:block;font-family:var(--sans);font-style:normal;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-lt);margin-top:5px}
+.flow-arrow{font-family:var(--serif);font-size:1.4rem;color:var(--accent-lt)}
+@media(max-width:560px){.flow{gap:8px;padding:22px 14px}.flow-step{font-size:.92rem;padding:10px 14px;min-width:90px}.flow-arrow{font-size:1.1rem;transform:rotate(90deg)}}
+
+/* Callout */
+.article-callout{background:var(--mid);border-radius:var(--r-md);padding:22px 26px;margin:28px 0;border-left:3px solid var(--accent)}
+.article-callout p{margin:0;font-family:var(--serif);font-style:italic;font-size:1.05rem;color:var(--dark-mid);line-height:1.65}
+
+/* Share */
+.article-share{display:flex;align-items:center;gap:12px;padding:20px 0;border-top:1px solid var(--accent-lt);border-bottom:1px solid var(--accent-lt);margin:32px 0}
+.article-share span{font-size:.82rem;color:var(--dark-mid)}
+.share-btn{padding:6px 14px;border-radius:20px;border:1px solid var(--accent-lt);font-size:.75rem;color:var(--dark-mid);cursor:pointer;transition:all .2s;background:var(--white);text-decoration:none!important}
+.share-btn:hover{background:var(--accent);color:var(--dark);border-color:var(--accent)}
+
+/* Sidebar */
+.article-sidebar{position:sticky;top:72px;display:flex;flex-direction:column;gap:16px}
+.sidebar-card{background:var(--white);border:1px solid var(--accent-lt);border-radius:var(--r-md);padding:20px}
+.sidebar-card h4{font-family:var(--serif);font-size:1rem;color:var(--dark);margin-bottom:10px}
+.sidebar-card p{font-size:.8rem;color:var(--dark-mid);line-height:1.6;margin-bottom:12px}
+.sidebar-price{font-family:var(--serif);font-size:1.3rem;color:var(--dark);margin-bottom:12px;font-weight:500}
+
+/* Related */
+.related{padding:clamp(32px,5vw,60px) var(--pad);background:var(--light)}
+.related-inner{max-width:var(--max);margin:0 auto}
+.related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;margin-top:24px}
+.related-card{background:var(--white);border:1px solid var(--accent-lt);border-radius:var(--r-md);overflow:hidden;transition:transform .2s,border-color .2s;display:flex;flex-direction:column}
+.related-card:hover{transform:translateY(-2px);border-color:var(--accent)}
+.related-body{padding:12px 14px}
+.related-tag{font-size:.62rem;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.related-title{font-family:var(--serif);font-size:.95rem;color:var(--dark);line-height:1.35}
+
+/* Social icons */
+.social-icons{display:flex;gap:10px;align-items:center}
+.social-icon{display:flex;align-items:center;justify-content:center;color:#B58E8E;transition:color .2s;flex-shrink:0}
+.social-icon:hover{color:#FBF7F7}
+
+@media(max-width:640px){
+  .nav-links{display:none}
+  .burger{display:flex}
+  .nav .social-icons{display:none}
+  .related-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div style="position:sticky;top:0;z-index:100">
+<nav class="nav"><div class="nav-inner">
+  <a href="../index.html" class="nav-logo">Юля Инамора</a>
+  <div class="nav-links">
+    <a href="../index.html">Главная</a>
+    <a href="../products/index.html">Купить</a>
+    <a href="../blog.html" class="active">Блог</a>
+    <a href="../products/free/index.html">Бесплатно</a>
+  </div>
+  <div class="social-icons">
+    <a href="https://t.me/in_amora" class="social-icon" target="_blank" rel="noopener" title="Telegram" aria-label="Telegram"><svg viewBox="-2 -2 54 54" width="20" height="20" fill="currentColor"><path d="M25,2c12.703,0,23,10.297,23,23S37.703,48,25,48S2,37.703,2,25S12.297,2,25,2z M32.934,34.375c0.423-1.298,2.405-14.234,2.65-16.783c0.074-0.772-0.17-1.285-0.648-1.514c-0.578-0.278-1.434-0.139-2.427,0.219c-1.362,0.491-18.774,7.884-19.78,8.312c-0.954,0.405-1.856,0.847-1.856,1.487c0,0.45,0.267,0.703,1.003,0.966c0.766,0.273,2.695,0.858,3.834,1.172c1.097,0.303,2.346,0.04,3.046-0.395c0.742-0.461,9.305-6.191,9.92-6.693c0.614-0.502,1.104,0.141,0.602,0.644c-0.502,0.502-6.38,6.207-7.155,6.997c-0.941,0.959-0.273,1.953,0.358,2.351c0.721,0.454,5.906,3.932,6.687,4.49c0.781,0.558,1.573,0.811,2.298,0.811C32.191,36.439,32.573,35.484,32.934,34.375z"/></svg></a>
+    <a href="https://vk.com/inamora" class="social-icon" target="_blank" rel="noopener" title="ВКонтакте" aria-label="ВКонтакте"><svg viewBox="-2 -2 54 54" width="20" height="20" fill="currentColor"><path d="M25,2C12.318,2,2,12.318,2,25s10.318,23,23,23c12.683,0,23-10.318,23-23S37.683,2,25,2z M34.973,29.535c2.237,1.986,2.702,2.695,2.778,2.816C38.678,33.821,36.723,34,36.723,34h-4.12c0,0-1.003,0.011-1.86-0.557c-1.397-0.915-2.86-2.689-3.888-2.381C25.992,31.32,26,32.486,26,33.483C26,33.84,25.693,34,25,34s-0.981,0-1.288,0c-2.257,0-4.706-0.76-7.149-3.313c-3.456-3.609-6.487-10.879-6.487-10.879s-0.179-0.366,0.016-0.589c0.221-0.25,0.822-0.218,0.822-0.218L14.909,19c0,0,0.376,0.071,0.646,0.261c0.223,0.156,0.347,0.454,0.347,0.454s0.671,2.216,1.526,3.629c1.67,2.758,2.447,2.828,3.014,2.531C21.27,25.445,21,22.513,21,22.513s0.037-1.259-0.395-1.82c-0.333-0.434-0.97-0.665-1.248-0.701c-0.225-0.029,0.151-0.423,0.63-0.648C20.627,19.059,21.498,18.986,23,19c1.169,0.011,1.506,0.081,1.962,0.186C26.341,19.504,26,20.343,26,23.289c0,0.944-0.13,2.271,0.582,2.711c0.307,0.19,1.359,0.422,3.231-2.618c0.889-1.442,1.596-3.834,1.596-3.834s0.146-0.263,0.373-0.393c0.232-0.133,0.225-0.13,0.543-0.13S35.832,19,36.532,19c0.699,0,1.355-0.008,1.468,0.402c0.162,0.589-0.516,2.607-2.234,4.797C32.943,27.793,32.63,27.457,34.973,29.535z"/></svg></a>
+    <a href="https://ok.ru/in.a.mora" class="social-icon" target="_blank" rel="noopener" title="Одноклассники" aria-label="Одноклассники"><svg viewBox="0 0 97.75 97.75" width="18" height="18" fill="currentColor"><path d="M48.921,40.507c4.667-0.017,8.384-3.766,8.367-8.443c-0.017-4.679-3.742-8.402-8.411-8.406c-4.708-0.005-8.468,3.787-8.432,8.508C40.48,36.826,44.239,40.524,48.921,40.507z"/><path d="M48.875,0C21.882,0,0,21.883,0,48.875S21.882,97.75,48.875,97.75S97.75,75.867,97.75,48.875S75.868,0,48.875,0z M48.945,14.863c9.52,0.026,17.161,7.813,17.112,17.438c-0.048,9.403-7.814,17.024-17.318,16.992c-9.407-0.032-17.122-7.831-17.066-17.253C31.726,22.515,39.445,14.837,48.945,14.863z M68.227,56.057c-2.105,2.161-4.639,3.725-7.453,4.816c-2.66,1.031-5.575,1.55-8.461,1.896c0.437,0.474,0.642,0.707,0.914,0.979c3.916,3.937,7.851,7.854,11.754,11.802c1.33,1.346,1.607,3.014,0.875,4.577c-0.799,1.71-2.592,2.834-4.351,2.713c-1.114-0.077-1.983-0.63-2.754-1.407c-2.956-2.974-5.968-5.895-8.862-8.925c-0.845-0.882-1.249-0.714-1.994,0.052c-2.973,3.062-5.995,6.075-9.034,9.072c-1.365,1.346-2.989,1.59-4.573,0.82c-1.683-0.814-2.753-2.533-2.671-4.262c0.058-1.166,0.632-2.06,1.434-2.858c3.877-3.869,7.742-7.75,11.608-11.628c0.257-0.257,0.495-0.53,0.868-0.93c-5.273-0.551-10.028-1.849-14.099-5.032c-0.506-0.396-1.027-0.778-1.487-1.222c-1.783-1.711-1.962-3.672-0.553-5.69c1.207-1.728,3.231-2.19,5.336-1.197c0.408,0.191,0.796,0.433,1.168,0.689c7.586,5.213,18.008,5.356,25.624,0.233c0.754-0.576,1.561-1.05,2.496-1.289c1.816-0.468,3.512,0.201,4.486,1.791C69.613,52.874,69.6,54.646,68.227,56.057z"/></svg></a>
+    <a href="https://dzen.ru/inamora" class="social-icon" target="_blank" rel="noopener" title="Дзен" aria-label="Дзен"><svg viewBox="-1 -1 52 52" width="19" height="19" fill="currentColor"><path d="M46.894 23.986c.004 0 .007 0 .011 0 .279 0 .545-.117.734-.322.192-.208.287-.487.262-.769C46.897 11.852 38.154 3.106 27.11 2.1c-.28-.022-.562.069-.77.262-.208.192-.324.463-.321.746C26.193 17.784 28.129 23.781 46.894 23.986zM46.894 26.014c-18.765.205-20.7 6.202-20.874 20.878-.003.283.113.554.321.746.186.171.429.266.679.266.03 0 .061-.001.091-.004 11.044-1.006 19.787-9.751 20.79-20.795.025-.282-.069-.561-.262-.769C47.446 26.128 47.177 26.025 46.894 26.014zM22.823 2.105C11.814 3.14 3.099 11.884 2.1 22.897c-.025.282.069.561.262.769.189.205.456.321.734.321.004 0 .008 0 .012 0 18.703-.215 20.634-6.209 20.81-20.875.003-.283-.114-.555-.322-.747C23.386 2.173 23.105 2.079 22.823 2.105zM3.107 26.013c-.311-.035-.555.113-.746.321-.192.208-.287.487-.262.769.999 11.013 9.715 19.757 20.724 20.792.031.003.063.004.094.004.25 0 .492-.094.678-.265.208-.192.325-.464.322-.747C23.741 32.222 21.811 26.228 3.107 26.013z"/></svg></a>
+  </div>
+  <button class="burger" id="burger" aria-label="Меню" aria-expanded="false"><span></span><span></span><span></span></button>
+</div></nav>
+<div class="mobile-menu" id="mobile-menu">
+  <a href="../index.html">Главная</a>
+  <a href="../products/index.html">Купить</a>
+  <a href="../blog.html" class="active">Блог</a>
+  <a href="../products/free/index.html">Бесплатно</a>
+</div>
+</div>
+
+<div class="breadcrumb"><div class="breadcrumb-inner">
+  <a href="../index.html">Главная</a><span class="sep">›</span>
+  <a href="../blog.html">Статьи</a><span class="sep">›</span>
+  <span>Как появляется энергия?</span>
+</div></div>
+
+<div style="padding:clamp(32px,5vw,56px) 0">
+  <div class="article-layout">
+
+    <main>
+      <div class="article-meta">
+        <span class="article-tag">Энергия и ресурс</span>
+        <span class="article-dot">·</span>
+        <span class="article-date">2024</span>
+        <span class="article-dot">·</span>
+        <span class="article-read">3 мин чтения</span>
+      </div>
+      <h1 class="article-title">Как появляется энергия?</h1>
+
+      <div class="article-cover">
+        <img src="../images/blog/kak-poyavlyaetsya-energiya.jpg" alt="" onerror="this.style.display='none'">
+        <div class="article-cover-grad"></div>
+        <span style="position:relative;z-index:1">✨</span>
+        <span style="position:absolute;bottom:12px;right:12px;font-size:.65rem;color:rgba(255,255,255,.5);background:rgba(0,0,0,.3);padding:3px 8px;border-radius:3px">Юля Инамора</span>
+      </div>
+
+      <div class="article-body">
+
+        <p>Итак, энергия. Та самая, вокруг которой вертится множество женских курсов. Та самая, которая, вопреки уверениям коучей, не образуется сама по себе волшебным образом из космоса и не передаётся от человека к человеку, а <a href="https://t.me/in_amora/136" target="_blank" rel="noopener">генерируется нашим мозгом</a>.</p>
+
+        <p>Следующий важный вопрос: как и когда она генерируется? Тут тоже никакой магии. Энергия появляется в результате яркого впечатления от чего-либо или кого-либо.</p>
+
+        <p>Когда вы под впечатлением, вас переполняет энергия заниматься интересным для вас делом. На него всегда находятся силы и время.</p>
+
+        <div class="flow">
+          <div class="flow-step">Яркое впечатление<small>стимул</small></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">Энергия<small>генерируется мозгом</small></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">Силы и время находятся<small>результат</small></div>
+        </div>
+
+        <p>С людьми точно так же. Встретился вам человек, который произвёл на вас яркое впечатление. Хочется с ним общаться, стать частью его окружения, ближе познакомиться с его интересами, научиться у него чему-то.</p>
+
+        <p>Это ощущается так, словно он вас «зарядил» своей энергией. Но он вам свою энергию не отдаёт — он и его энергия — отдельные структуры. Другой человек может быть стимулом для генерации энергии, но источник энергии всегда вы сами.</p>
+
+        <div class="article-callout">
+          <p>Другой человек может являться стимулом для генерации энергии, но источник энергии всегда вы сами.</p>
+        </div>
+
+        <p>Влиятельные спикеры могут таким образом «заряжать» энергией огромное число людей. Но по сути — просто умеют производить яркое впечатление на массы.</p>
+
+        <p>В этом фишка большинства курсов успешного успеха: не в каких-то уникальных знаниях, а в том, что подача информации генерирует в людях энергию и побуждает что-то делать.</p>
+
+        <blockquote>
+          <p>Часто по окончании курсов энергия сходит на нет — потому что внешнего стимула в виде коуча рядом уже нет, а другого стимула человек так и не нашёл. Если найдёт — ему и коучи не понадобятся.</p>
+        </blockquote>
+
+      </div>
+
+      <div class="article-share">
+        <span>Поделиться:</span>
+        <span class="share-btn" onclick="navigator.clipboard?.writeText(location.href);this.textContent='Скопировано ✓'" style="cursor:pointer">Скопировать ссылку</span>
+        <a href="#" class="share-btn" id="tg-share" target="_blank">Telegram</a>
+      </div>
+    </main>
+
+    <aside class="article-sidebar">
+      <div class="sidebar-card">
+        <p style="font-size:.65rem;color:#B58E8E;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">Бесплатно · PDF для печати</p>
+        <h4>Планер энергетического баланса</h4>
+        <p>Распечатайте и заполняйте от руки. 28 дней наблюдений.</p>
+        <div class="sidebar-price" style="color:#B58E8E">Бесплатно</div>
+        <a href="../products/free/planer.html" style="display:block;width:100%;text-align:center;border:1px solid var(--accent);background:transparent;color:var(--accent);font-size:.85rem;font-weight:500;padding:13px 0;border-radius:var(--r-sm);box-sizing:border-box">Скачать PDF ↓</a>
+      </div>
+      <div class="sidebar-card" style="background:var(--light);border-color:var(--accent)">
+        <p style="font-size:.65rem;color:#B58E8E;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">Google Таблица · 490 ₽</p>
+        <h4>Планер энергетического баланса</h4>
+        <p>Вампиры и доноры автоматически. Работает с телефона.</p>
+        <div class="sidebar-price">490 ₽</div>
+        <a href="../products/planer.html#google" class="btn" style="width:100%;text-align:center;display:block">Купить</a>
+      </div>
+      <div class="sidebar-card" style="background:#3D2E2E;border:1px solid #3D2E2E">
+        <p style="font-size:.65rem;color:#D4B8B8;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">Скоро · PDF · ~80 страниц</p>
+        <h4 style="color:#FBF7F7">Книга «Жизнь в ресурсе»</h4>
+        <p style="color:#D4B8B8">Скрипты «нет», антикризисный протокол, 50 доноров энергии.</p>
+        <div class="sidebar-price" style="color:#EDD8D8">Скоро</div>
+        <a href="https://t.me/in_amora" target="_blank" rel="noopener" style="display:block;width:100%;text-align:center;border:1.5px dashed #B58E8E;background:transparent;color:#D4B8B8;font-size:.85rem;font-weight:500;padding:11px 0;border-radius:var(--r-sm);box-sizing:border-box">✈ Telegram</a>
+      </div>
+    </aside>
+
+  </div>
+</div>
+
+<section class="related">
+  <div class="related-inner">
+    <span class="label">читайте также</span>
+    <h2>Похожие статьи</h2>
+    <div class="related-grid">
+      <a href="chto-takoe-energiya.html" class="related-card">
+        <div class="related-body"><div class="related-tag">Энергия и ресурс</div><div class="related-title">Что такое энергия?</div></div>
+      </a>
+      <a href="ustalost-bez-prichiny.html" class="related-card">
+        <div class="related-body"><div class="related-tag">Энергия и ресурс</div><div class="related-title">Усталость без причины — это миф</div></div>
+      </a>
+      <a href="5-tipov-vampirov.html" class="related-card">
+        <div class="related-body"><div class="related-tag">Окружение</div><div class="related-title">5 типов людей, которые высасывают из вас энергию</div></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<div style="padding:clamp(32px,5vw,56px) var(--pad);background:var(--dark);text-align:center">
+  <h3 style="color:var(--lighter);font-style:italic;font-weight:400;font-family:var(--serif);margin-bottom:6px">Хотите пойти дальше?</h3>
+  <p style="color:var(--accent-lt);font-size:.88rem;margin-bottom:20px">Инструменты, которые помогут разобраться с вашей энергией</p>
+  <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:20px">
+    <div style="background:rgba(255,255,255,.06);border:1px solid rgba(181,142,142,.25);border-radius:var(--r-sm);padding:8px 16px;font-size:.8rem;color:var(--accent-lt)"><strong style="color:var(--lighter);display:block;font-family:var(--serif);font-size:1rem">Планер</strong>28 дней · 490 ₽</div>
+    <div style="background:rgba(255,255,255,.06);border:1px solid rgba(181,142,142,.25);border-radius:var(--r-sm);padding:8px 16px;font-size:.8rem;color:var(--accent-lt)"><strong style="color:var(--lighter);display:block;font-family:var(--serif);font-size:1rem">Книга</strong>Скоро</div>
+    <div style="background:rgba(255,255,255,.06);border:1px solid rgba(181,142,142,.25);border-radius:var(--r-sm);padding:8px 16px;font-size:.8rem;color:var(--accent-lt)"><strong style="color:var(--lighter);display:block;font-family:var(--serif);font-size:1rem">Воркбук</strong>Скоро</div>
+  </div>
+  <a href="../index.html#products" style="display:inline-block;background:var(--accent);color:var(--dark);font-size:.85rem;font-weight:500;padding:13px 28px;border-radius:var(--r-sm)">Выбрать продукт →</a>
+</div>
+
+<footer class="footer"><div class="footer-inner">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
+    <nav class="footer-nav">
+      <a href="../products/index.html">Купить</a>
+      <a href="../products/free/index.html">Бесплатно</a>
+      <a href="../blog.html">Блог</a>
+      <a href="../privacy.html">Политика конфиденциальности</a>
+    </nav>
+    <div class="social-icons">
+      <a href="https://t.me/in_amora" class="social-icon" target="_blank" rel="noopener" title="Telegram" aria-label="Telegram"><svg viewBox="-2 -2 54 54" width="20" height="20" fill="currentColor"><path d="M25,2c12.703,0,23,10.297,23,23S37.703,48,25,48S2,37.703,2,25S12.297,2,25,2z M32.934,34.375c0.423-1.298,2.405-14.234,2.65-16.783c0.074-0.772-0.17-1.285-0.648-1.514c-0.578-0.278-1.434-0.139-2.427,0.219c-1.362,0.491-18.774,7.884-19.78,8.312c-0.954,0.405-1.856,0.847-1.856,1.487c0,0.45,0.267,0.703,1.003,0.966c0.766,0.273,2.695,0.858,3.834,1.172c1.097,0.303,2.346,0.04,3.046-0.395c0.742-0.461,9.305-6.191,9.92-6.693c0.614-0.502,1.104,0.141,0.602,0.644c-0.502,0.502-6.38,6.207-7.155,6.997c-0.941,0.959-0.273,1.953,0.358,2.351c0.721,0.454,5.906,3.932,6.687,4.49c0.781,0.558,1.573,0.811,2.298,0.811C32.191,36.439,32.573,35.484,32.934,34.375z"/></svg></a>
+      <a href="https://vk.com/inamora" class="social-icon" target="_blank" rel="noopener" title="ВКонтакте" aria-label="ВКонтакте"><svg viewBox="-2 -2 54 54" width="20" height="20" fill="currentColor"><path d="M25,2C12.318,2,2,12.318,2,25s10.318,23,23,23c12.683,0,23-10.318,23-23S37.683,2,25,2z M34.973,29.535c2.237,1.986,2.702,2.695,2.778,2.816C38.678,33.821,36.723,34,36.723,34h-4.12c0,0-1.003,0.011-1.86-0.557c-1.397-0.915-2.86-2.689-3.888-2.381C25.992,31.32,26,32.486,26,33.483C26,33.84,25.693,34,25,34s-0.981,0-1.288,0c-2.257,0-4.706-0.76-7.149-3.313c-3.456-3.609-6.487-10.879-6.487-10.879s-0.179-0.366,0.016-0.589c0.221-0.25,0.822-0.218,0.822-0.218L14.909,19c0,0,0.376,0.071,0.646,0.261c0.223,0.156,0.347,0.454,0.347,0.454s0.671,2.216,1.526,3.629c1.67,2.758,2.447,2.828,3.014,2.531C21.27,25.445,21,22.513,21,22.513s0.037-1.259-0.395-1.82c-0.333-0.434-0.97-0.665-1.248-0.701c-0.225-0.029,0.151-0.423,0.63-0.648C20.627,19.059,21.498,18.986,23,19c1.169,0.011,1.506,0.081,1.962,0.186C26.341,19.504,26,20.343,26,23.289c0,0.944-0.13,2.271,0.582,2.711c0.307,0.19,1.359,0.422,3.231-2.618c0.889-1.442,1.596-3.834,1.596-3.834s0.146-0.263,0.373-0.393c0.232-0.133,0.225-0.13,0.543-0.13S35.832,19,36.532,19c0.699,0,1.355-0.008,1.468,0.402c0.162,0.589-0.516,2.607-2.234,4.797C32.943,27.793,32.63,27.457,34.973,29.535z"/></svg></a>
+      <a href="https://ok.ru/in.a.mora" class="social-icon" target="_blank" rel="noopener" title="Одноклассники" aria-label="Одноклассники"><svg viewBox="0 0 97.75 97.75" width="18" height="18" fill="currentColor"><path d="M48.921,40.507c4.667-0.017,8.384-3.766,8.367-8.443c-0.017-4.679-3.742-8.402-8.411-8.406c-4.708-0.005-8.468,3.787-8.432,8.508C40.48,36.826,44.239,40.524,48.921,40.507z"/><path d="M48.875,0C21.882,0,0,21.883,0,48.875S21.882,97.75,48.875,97.75S97.75,75.867,97.75,48.875S75.868,0,48.875,0z M48.945,14.863c9.52,0.026,17.161,7.813,17.112,17.438c-0.048,9.403-7.814,17.024-17.318,16.992c-9.407-0.032-17.122-7.831-17.066-17.253C31.726,22.515,39.445,14.837,48.945,14.863z M68.227,56.057c-2.105,2.161-4.639,3.725-7.453,4.816c-2.66,1.031-5.575,1.55-8.461,1.896c0.437,0.474,0.642,0.707,0.914,0.979c3.916,3.937,7.851,7.854,11.754,11.802c1.33,1.346,1.607,3.014,0.875,4.577c-0.799,1.71-2.592,2.834-4.351,2.713c-1.114-0.077-1.983-0.63-2.754-1.407c-2.956-2.974-5.968-5.895-8.862-8.925c-0.845-0.882-1.249-0.714-1.994,0.052c-2.973,3.062-5.995,6.075-9.034,9.072c-1.365,1.346-2.989,1.59-4.573,0.82c-1.683-0.814-2.753-2.533-2.671-4.262c0.058-1.166,0.632-2.06,1.434-2.858c3.877-3.869,7.742-7.75,11.608-11.628c0.257-0.257,0.495-0.53,0.868-0.93c-5.273-0.551-10.028-1.849-14.099-5.032c-0.506-0.396-1.027-0.778-1.487-1.222c-1.783-1.711-1.962-3.672-0.553-5.69c1.207-1.728,3.231-2.19,5.336-1.197c0.408,0.191,0.796,0.433,1.168,0.689c7.586,5.213,18.008,5.356,25.624,0.233c0.754-0.576,1.561-1.05,2.496-1.289c1.816-0.468,3.512,0.201,4.486,1.791C69.613,52.874,69.6,54.646,68.227,56.057z"/></svg></a>
+      <a href="https://dzen.ru/inamora" class="social-icon" target="_blank" rel="noopener" title="Дзен" aria-label="Дзен"><svg viewBox="-1 -1 52 52" width="19" height="19" fill="currentColor"><path d="M46.894 23.986c.004 0 .007 0 .011 0 .279 0 .545-.117.734-.322.192-.208.287-.487.262-.769C46.897 11.852 38.154 3.106 27.11 2.1c-.28-.022-.562.069-.77.262-.208.192-.324.463-.321.746C26.193 17.784 28.129 23.781 46.894 23.986zM46.894 26.014c-18.765.205-20.7 6.202-20.874 20.878-.003.283.113.554.321.746.186.171.429.266.679.266.03 0 .061-.001.091-.004 11.044-1.006 19.787-9.751 20.79-20.795.025-.282-.069-.561-.262-.769C47.446 26.128 47.177 26.025 46.894 26.014zM22.823 2.105C11.814 3.14 3.099 11.884 2.1 22.897c-.025.282.069.561.262.769.189.205.456.321.734.321.004 0 .008 0 .012 0 18.703-.215 20.634-6.209 20.81-20.875.003-.283-.114-.555-.322-.747C23.386 2.173 23.105 2.079 22.823 2.105zM3.107 26.013c-.311-.035-.555.113-.746.321-.192.208-.287.487-.262.769.999 11.013 9.715 19.757 20.724 20.792.031.003.063.004.094.004.25 0 .492-.094.678-.265.208-.192.325-.464.322-.747C23.741 32.222 21.811 26.228 3.107 26.013z"/></svg></a>
+    </div>
+  </div>
+  <p class="footer-copy" style="margin-top:12px">© Юля Инамора | Life-архитектура</p>
+</div></footer>
+
+<script>
+(function() {
+  var burger = document.getElementById('burger');
+  var menu   = document.getElementById('mobile-menu');
+  if (!burger || !menu) return;
+  burger.addEventListener('click', function() {
+    var open = menu.classList.toggle('open');
+    burger.classList.toggle('open', open);
+    burger.setAttribute('aria-expanded', String(open));
+  });
+  menu.querySelectorAll('a').forEach(function(a) {
+    a.addEventListener('click', function() {
+      menu.classList.remove('open');
+      burger.classList.remove('open');
+      burger.setAttribute('aria-expanded', 'false');
+    });
+  });
+})();
+var tgShare = document.getElementById('tg-share');
+if (tgShare) {
+  tgShare.href = 'https://t.me/share/url?url=' + encodeURIComponent(location.href) + '&text=' + encodeURIComponent('Как появляется энергия?');
+}
+</script>
+</body>
+</html>
