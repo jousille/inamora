@@ -92,8 +92,8 @@ h1,h2,h3,h4{font-family:var(--serif);font-weight:500;line-height:1.2}
 .sidebar-price{font-family:var(--serif);font-size:1.3rem;color:var(--dark);margin-bottom:12px;font-weight:500}
 
 /* Related */
-.related{padding:clamp(32px,5vw,60px) var(--pad);background:var(--light)}
-.related-inner{max-width:var(--max);margin:0 auto}
+.related{padding:clamp(32px,5vw,60px) 0;background:var(--light)}
+.related-inner{max-width:var(--max);margin:0 auto;padding:0 var(--pad)}
 .related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;margin-top:24px}
 .related-card{background:var(--white);border:1px solid var(--accent-lt);border-radius:var(--r-md);overflow:hidden;transition:transform .2s,border-color .2s;display:flex;flex-direction:column}
 .related-card:hover{transform:translateY(-2px);border-color:var(--accent)}
@@ -260,8 +260,8 @@ h1,h2,h3,h4{font-family:var(--serif);font-weight:500;line-height:1.2}
   <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
     <nav class="footer-nav">
       <a href="../products/index.html">Купить</a>
-      <a href="../products/free/index.html">Бесплатно</a>
       <a href="../blog.html">Блог</a>
+      <a href="../products/free/index.html">Бесплатно</a>
       <a href="../privacy.html">Политика конфиденциальности</a>
     </nav>
     <div class="social-icons">
