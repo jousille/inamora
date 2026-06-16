@@ -119,6 +119,9 @@ h1,h2,h3,h4{font-family:var(--serif);font-weight:500;line-height:1.2}
 .social-icon{display:flex;align-items:center;justify-content:center;color:#B58E8E;transition:color .2s;flex-shrink:0}
 .social-icon:hover{color:#FBF7F7}
 
+/* CTA */
+.cta-section h3{font-size:1.4rem}
+
 @media(max-width:640px){
   .nav-links{display:none}
   .burger{display:flex}
@@ -156,7 +159,7 @@ h1,h2,h3,h4{font-family:var(--serif);font-weight:500;line-height:1.2}
 
 <div class="breadcrumb"><div class="breadcrumb-inner">
   <a href="../index.html">Главная</a><span class="sep">›</span>
-  <a href="../blog.html">Статьи</a><span class="sep">›</span>
+  <a href="../blog.html">Блог</a><span class="sep">›</span>
   <span>Почему после генеральной уборки через 3 дня снова бардак?</span>
 </div></div>
 
@@ -167,16 +170,14 @@ h1,h2,h3,h4{font-family:var(--serif);font-weight:500;line-height:1.2}
       <div class="article-meta">
         <span class="article-tag">Пространство</span>
         <span class="article-dot">·</span>
-        <span class="article-date">2024</span>
+        <span class="article-date">20 апреля 2024</span>
         <span class="article-dot">·</span>
         <span class="article-read">2 мин чтения</span>
       </div>
       <h1 class="article-title">Почему после генеральной уборки через 3 дня снова бардак?</h1>
 
       <div class="article-cover">
-        <img src="../images/blog/pochemu-bardak.jpg" alt="" onerror="this.style.display='none'">
-        <div class="article-cover-grad"></div>
-        <span style="position:relative;z-index:1">🧹</span>
+        <img src="../blog/images/pochemu-bardak.jpg" alt="" onerror="this.style.display='none'">
         <span style="position:absolute;bottom:12px;right:12px;font-size:.65rem;color:rgba(255,255,255,.5);background:rgba(0,0,0,.3);padding:3px 8px;border-radius:3px">Юля Инамора</span>
       </div>
 
@@ -257,8 +258,8 @@ h1,h2,h3,h4{font-family:var(--serif);font-weight:500;line-height:1.2}
   </div>
 </section>
 
-<div style="padding:clamp(32px,5vw,56px) var(--pad);background:var(--dark);text-align:center">
-  <h3 style="color:var(--lighter);font-style:italic;font-weight:400;font-family:var(--serif);margin-bottom:6px">Хотите пойти дальше?</h3>
+<div class="cta-section" style="padding:clamp(32px,5vw,56px) var(--pad);background:var(--dark);text-align:center">
+  <h3 style="color:var(--lighter);font-style:italic;font-weight:400;margin-bottom:6px">Хотите пойти дальше?</h3>
   <p style="color:var(--accent-lt);font-size:.88rem;margin-bottom:20px">Инструменты, которые помогут разобраться с вашей энергией</p>
   <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:20px">
     <div style="background:rgba(255,255,255,.06);border:1px solid rgba(181,142,142,.25);border-radius:var(--r-sm);padding:8px 16px;font-size:.8rem;color:var(--accent-lt)"><strong style="color:var(--lighter);display:block;font-family:var(--serif);font-size:1rem">Планер</strong>28 дней · 490 ₽</div>
@@ -272,8 +273,8 @@ h1,h2,h3,h4{font-family:var(--serif);font-weight:500;line-height:1.2}
   <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
     <nav class="footer-nav">
       <a href="../products/index.html">Купить</a>
-      <a href="../products/free/index.html">Бесплатно</a>
       <a href="../blog.html">Блог</a>
+      <a href="../products/free/index.html">Бесплатно</a>
       <a href="../privacy.html">Политика конфиденциальности</a>
     </nav>
     <div class="social-icons">
