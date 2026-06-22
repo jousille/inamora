@@ -92,13 +92,13 @@
 
 | Цвет | Переменная | HEX | Применение |
 |------|------------|-----|------------|
-| 🟫 | `var(--dark)` | `#3D2E2E` | Тёмно-коричневый · фон карточки 3, заголовки |
-| 🟤 | `var(--dark-mid)` | `#6B4E4E` | Средний · основной цвет текста |
-| 🌸 | `var(--accent)` | `#B58E8E` | Розово-бежевый · рамки, кнопки, ссылки |
-| 🌷 | `var(--accent-lt)` | `#D4B8B8` | Светлее accent · кнопка карточки 1 |
-| 🩷 | `var(--mid)` | `#EDD8D8` | Розовый · фоны блоков callout |
-| 🌺 | `var(--light)` | `#F5ECEC` | Светло-розовый · фон карточки 2 |
-| 🤍 | `var(--lighter)` | `#FBF7F7` | Почти белый · фон страницы |
+| ![#3D2E2E](docs/assets/swatch-3D2E2E.svg) | `var(--dark)` | `#3D2E2E` | Тёмно-коричневый · фон карточки 3, заголовки |
+| ![#6B4E4E](docs/assets/swatch-6B4E4E.svg) | `var(--dark-mid)` | `#6B4E4E` | Средний · основной цвет текста |
+| ![#B58E8E](docs/assets/swatch-B58E8E.svg) | `var(--accent)` | `#B58E8E` | Розово-бежевый · рамки, кнопки, ссылки |
+| ![#D4B8B8](docs/assets/swatch-D4B8B8.svg) | `var(--accent-lt)` | `#D4B8B8` | Светлее accent · кнопка карточки 1 |
+| ![#EDD8D8](docs/assets/swatch-EDD8D8.svg) | `var(--mid)` | `#EDD8D8` | Розовый · фоны блоков callout |
+| ![#F5ECEC](docs/assets/swatch-F5ECEC.svg) | `var(--light)` | `#F5ECEC` | Светло-розовый · фон карточки 2 |
+| ![#FBF7F7](docs/assets/swatch-FBF7F7.svg) | `var(--lighter)` | `#FBF7F7` | Почти белый · фон страницы |
 
 ---
 
