@@ -59,7 +59,7 @@ console.log(genToken()); // INAMORA-X7KM3P
 ## Установка на телефон (для покупателя)
 
 **Android:**
-1. Открыть `https://inamora.ru/planer/` в Chrome
+1. Открыть `https://inamora.ru/planner/` в Chrome
 2. Меню → «Добавить на главный экран»
 3. Готово — иконка появится на рабочем столе
 
