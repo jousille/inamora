@@ -296,3 +296,52 @@ a { color: inherit; }
 
 /* ── Утилиты ────────────────────────────────────────────────── */
 .empty-state { text-align: center; padding: 32px 16px; color: var(--acc-lt); font-size: 13px; line-height: 1.6; }
+
+/* ── Переключатель недели в шапке ───────────────────────────── */
+.week-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.week-nav-label {
+  font-size: 11px;
+  color: var(--acc-lt);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  min-width: 70px;
+  text-align: center;
+}
+.week-arrow {
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  background: rgba(255,255,255,.1);
+  color: var(--acc-lt);
+  font-size: 18px;
+  line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s, opacity .15s;
+  border: none;
+}
+.week-arrow:disabled { opacity: .2; pointer-events: none; }
+.week-arrow:not(:disabled):active { background: rgba(255,255,255,.2); }
+
+/* ── Цвет текста: темнее для читаемости ─────────────────────── */
+.section-label       { color: var(--mid-dk); }
+.picker-label        { color: var(--mid-dk); }
+.add-task-text       { color: var(--mid-dk); }
+.energy-strip .es-label { color: var(--dark); }
+.bc-label            { color: var(--mid-dk); }
+.sc-label            { color: var(--mid-dk); }
+.vd-header span      { color: var(--dark); }
+.ins-label           { color: var(--mid-dk); }
+.ref-q               { color: var(--dark); }
+.p-name              { color: var(--mid-dk); }
+.bc-day              { color: var(--mid-dk); }
+.stat-card .sc-sub   { color: var(--mid-dk); }
+.auth-desc           { color: var(--acc-lt); opacity: 1; }
+.week-label          { color: var(--mid-dk); }
+.empty-state         { color: var(--mid-dk); }
+.profile-row .pr-label { color: var(--dark); }
+.vd-name             { color: var(--dark); }
+.task-name           { color: var(--dark); }
