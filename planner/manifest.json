@@ -1,8 +1,8 @@
 {
-  "name": "Дневник энергии",
-  "short_name": "Дневник энергии",
+  "name": "Планер энергетического баланса",
+  "short_name": "Планер энергии",
   "description": "Отслеживай энергию дел и находи свой баланс",
-  "start_url": "/inamora/planner/",
+  "start_url": "/planer/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#3D2E2E",
