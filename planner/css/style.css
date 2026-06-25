@@ -483,3 +483,12 @@ a { color: inherit; }
 }
 .ac-delete:active { background: var(--neg-10-bg); color: var(--neg-10-tx); }
 .ac-delete svg { width: 14px; height: 14px; }
+
+/* ── input[type=date] — не вылезает за блок ─────────────────── */
+input[type="date"].ref-input {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  appearance: none;
+}
