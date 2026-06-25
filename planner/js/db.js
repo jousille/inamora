@@ -1,6 +1,4 @@
 // ── db.js — хранилище данных (localStorage) ──────────────────
-// Структура ключей: planer_{token}_{week}_{day} → массив задач
-// planer_{token}_reflection_{week}_{day} → объект рефлексии
 
 const DB = (() => {
 
@@ -65,30 +63,28 @@ const DB = (() => {
     return total;
   }
 
-  // Все задачи за неделю → топ вампиры (group by name, min score)
+  // ── Вампиры / доноры (исправлено) ───────────────────────────
+
   function getWeekVampires(week, limit = 5) {
-    return _getTop(week, 1, 4, 'min', limit);
+    return _getTopForWeeks(week, week, 'min', limit);
   }
 
   function getWeekDonors(week, limit = 5) {
-    return _getTop(week, 1, 4, 'max', limit);
+    return _getTopForWeeks(week, week, 'max', limit);
   }
 
   function getMonthVampires(limit = 5) {
-    return _getTop(1, 4, 'min', limit, true);
+    return _getTopForWeeks(1, 4, 'min', limit);
   }
 
   function getMonthDonors(limit = 5) {
-    return _getTop(1, 4, 'max', limit, true);
+    return _getTopForWeeks(1, 4, 'max', limit);
   }
 
-  function _getTop(weekFrom, weekTo, mode, limit, isMonth) {
-    // Собираем все задачи
+  function _getTopForWeeks(weekFrom, weekTo, mode, limit) {
     let all = [];
-    const wFrom = isMonth ? 1 : weekFrom;
-    const wTo   = isMonth ? 4 : weekTo;
 
-    for (let w = wFrom; w <= wTo; w++) {
+    for (let w = weekFrom; w <= weekTo; w++) {
       for (let d = 1; d <= 7; d++) {
         getTasks(w, d).forEach(t => {
           if (t.name && t.name.trim() && typeof t.score === 'number' && t.score !== 0) {
@@ -98,27 +94,47 @@ const DB = (() => {
       }
     }
 
-    // Группируем по имени: для вампиров берём min, для доноров max
+    // Группируем по названию: min для вампиров, max для доноров
     const map = {};
     all.forEach(({ name, score }) => {
-      if (!map[name]) { map[name] = score; return; }
+      if (map[name] === undefined) { map[name] = score; return; }
       map[name] = mode === 'min'
         ? Math.min(map[name], score)
         : Math.max(map[name], score);
     });
 
-    // Фильтруем: вампиры score < 0, доноры score > 0
+    // Фильтруем по знаку и сортируем
     const entries = Object.entries(map)
       .map(([name, score]) => ({ name, score }))
       .filter(e => mode === 'min' ? e.score < 0 : e.score > 0);
 
-    // Сортируем
     entries.sort((a, b) => mode === 'min' ? a.score - b.score : b.score - a.score);
 
     return entries.slice(0, limit);
   }
 
-  // ── Метаданные пользователя ──────────────────────────────────
+  // ── Вычислить текущую неделю и день по дате начала ───────────
+
+  function getTodayPosition() {
+    const meta = getMeta();
+    if (!meta.startDate) return { week: 1, day: 1 };
+
+    const start = new Date(meta.startDate);
+    start.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const diffDays = Math.floor((today - start) / (1000 * 60 * 60 * 24));
+
+    if (diffDays < 0) return { week: 1, day: 1 };           // ещё не начался
+    if (diffDays >= 28) return { week: 4, day: 7 };          // закончился
+
+    const week = Math.floor(diffDays / 7) + 1;
+    const day  = (diffDays % 7) + 1;
+    return { week, day };
+  }
+
+  // ── Метаданные ───────────────────────────────────────────────
 
   function getMeta() {
     const raw = localStorage.getItem(key('meta'));
@@ -139,6 +155,7 @@ const DB = (() => {
     getDayScore, getWeekScore,
     getWeekVampires, getWeekDonors,
     getMonthVampires, getMonthDonors,
+    getTodayPosition,
     getMeta, setMeta,
   };
 

@@ -3,12 +3,20 @@
 const DayScreen = (() => {
 
   const SCORES = [-10, -5, -3, 0, 3, 5];
-  const SCORE_LABELS = { '-10': '−10', '-5': '−5', '-3': '−3', '0': '0', '3': '+3', '5': '+5' };
-  const SCORE_CLASSES = { '-10': 'chip-n10', '-5': 'chip-n5', '-3': 'chip-n3', '0': 'chip-0', '3': 'chip-p3', '5': 'chip-p5' };
-  const DAYS_RU = ['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье'];
+  const SCORE_LABELS  = { '-10':'−10', '-5':'−5', '-3':'−3', '0':'0', '3':'+3', '5':'+5' };
+  const SCORE_CLASSES = { '-10':'chip-n10', '-5':'chip-n5', '-3':'chip-n3', '0':'chip-0', '3':'chip-p3', '5':'chip-p5' };
+  const DAYS_RU    = ['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье'];
   const DAYS_SHORT = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
 
   let state = { week: 1, day: 1, selectedTaskId: null };
+
+  // Инициализируем позицию по сегодняшней дате
+  function initToday() {
+    const pos = DB.getTodayPosition();
+    state.week = pos.week;
+    state.day  = pos.day;
+    state.selectedTaskId = null;
+  }
 
   function render() {
     const el = document.getElementById('screen-day');
@@ -21,14 +29,17 @@ const DayScreen = (() => {
     const tasks = DB.getTasks(state.week, state.day);
     const dayScore = DB.getDayScore(state.week, state.day);
 
-    // Энергобар: шкала от -50 до +35 (14 задач × макс балл)
     const maxAbs = 50;
     const fillPct = Math.min(100, Math.max(0, ((dayScore + maxAbs) / (maxAbs * 2)) * 100));
     const scoreDisplay = dayScore > 0 ? `+${dayScore}` : `${dayScore}`;
 
     el.innerHTML = `
       <div class="page-header">
-        <div class="eyebrow">Неделя ${state.week}</div>
+        <div class="week-nav">
+          <button class="week-arrow" id="week-prev" ${state.week === 1 ? 'disabled' : ''}>‹</button>
+          <span class="week-nav-label">Неделя ${state.week}</span>
+          <button class="week-arrow" id="week-next" ${state.week === 4 ? 'disabled' : ''}>›</button>
+        </div>
         <div class="title">${DAYS_RU[state.day - 1]}</div>
         <div class="subtitle">${dateStr}</div>
       </div>
@@ -109,7 +120,21 @@ const DayScreen = (() => {
   }
 
   function bindDayEvents() {
-    // Навигация по дням
+    // Переключение недели стрелками
+    const prevBtn = document.getElementById('week-prev');
+    const nextBtn = document.getElementById('week-next');
+    if (prevBtn) prevBtn.addEventListener('click', () => {
+      state.week = Math.max(1, state.week - 1);
+      state.selectedTaskId = null;
+      render();
+    });
+    if (nextBtn) nextBtn.addEventListener('click', () => {
+      state.week = Math.min(4, state.week + 1);
+      state.selectedTaskId = null;
+      render();
+    });
+
+    // Переключение дней
     document.querySelectorAll('#day-strip .strip-pill').forEach(btn => {
       btn.addEventListener('click', () => {
         state.day = parseInt(btn.dataset.day);
@@ -118,7 +143,7 @@ const DayScreen = (() => {
       });
     });
 
-    // Выбор задачи (открыть пикер)
+    // Выбор задачи → открыть пикер
     document.querySelectorAll('.task-row').forEach(row => {
       row.addEventListener('click', e => {
         if (e.target.classList.contains('task-name')) return;
@@ -140,7 +165,7 @@ const DayScreen = (() => {
       });
     });
 
-    // Пикер оценки
+    // Оценка энергии
     document.querySelectorAll('.picker-opt').forEach(btn => {
       btn.addEventListener('click', () => {
         const score = parseInt(btn.dataset.score);
@@ -159,7 +184,6 @@ const DayScreen = (() => {
         const tasks = DB.getTasks(state.week, state.day);
         state.selectedTaskId = tasks[tasks.length - 1].id;
         render();
-        // Фокус на новую строку
         setTimeout(() => {
           const els = document.querySelectorAll('.task-name[contenteditable]');
           const last = els[els.length - 1];
@@ -168,9 +192,6 @@ const DayScreen = (() => {
       });
     }
   }
-
-  function setWeek(w) { state.week = w; state.day = 1; state.selectedTaskId = null; }
-  function setDay(d)  { state.day = d; state.selectedTaskId = null; }
 
   function moveCursorToEnd(el) {
     const range = document.createRange();
@@ -185,6 +206,6 @@ const DayScreen = (() => {
     return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 
-  return { render, setWeek, setDay, getState: () => state };
+  return { render, initToday, getState: () => state };
 
 })();

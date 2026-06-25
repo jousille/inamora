@@ -34,6 +34,7 @@ const App = (() => {
     document.getElementById('app').classList.add('active');
 
     bindNavEvents();
+    DayScreen.initToday();
     navigateTo('day');
   }
 
