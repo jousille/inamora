@@ -9,6 +9,7 @@ const Auth = (() => {
   // null = бессрочный доступ
   const VALID_TOKENS = {
     'INAMORA-DEMO':  { expires: null },
+    'INAMORA-NINA':  { expires: null },
     // Добавляйте токены для каждого покупателя:
     // 'INAMORA-XXXXX': { expires: null },
   };
