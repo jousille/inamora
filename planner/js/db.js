@@ -154,7 +154,7 @@ const DB = (() => {
     const list = [];
     for (let i = 0; i < current; i++) {
       const m = getMonthMeta(i);
-      list.push({ index: i, ...m });
+      if (!m.deleted) list.push({ index: i, ...m });
     }
     return list.reverse(); // последний сначала
   }
@@ -202,6 +202,21 @@ const DB = (() => {
 
   function getToken() { return _token; }
 
+  // ── Удалить месяц из архива ───────────────────────────────────
+  function deleteArchivedMonth(monthIdx) {
+    const prefix = monthKey(monthIdx, '');
+    const keysToDelete = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith(prefix)) keysToDelete.push(k);
+    }
+    keysToDelete.forEach(k => localStorage.removeItem(k));
+
+    // Обновляем список архива в мете — помечаем как удалённый
+    const meta = getMonthMeta(monthIdx);
+    setMonthMeta({ ...meta, deleted: true }, monthIdx);
+  }
+
   return {
     init, getToken,
     getTasks, saveTasks, addTask, updateTask, deleteTask,
@@ -212,7 +227,7 @@ const DB = (() => {
     getTodayPosition,
     getCurrentMonthIndex,
     getArchiveList, getMonthMeta, setMonthMeta, startNewMonth,
-    getMeta, setMeta,
+    getMeta, setMeta, deleteArchivedMonth,
   };
 
 })();

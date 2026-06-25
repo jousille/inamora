@@ -272,14 +272,35 @@ const ProfileScreen = (() => {
               </div>
               <div class="ac-score ${scoreCls}">${scoreDisp}</div>
               <svg class="ac-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+              <button class="ac-delete" data-delete="${m.index}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+              </button>
             </div>
           `;
         }).join('')}
       </div>
     `;
 
+    content.querySelectorAll('.ac-delete').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        const idx = parseInt(btn.dataset.delete);
+        const m = DB.getMonthMeta(idx);
+        const label = m.startDate
+          ? new Date(m.startDate).toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' })
+          : `Месяц ${idx + 1}`;
+        if (confirm(`Удалить ${label} из архива?
+
+Все данные этого месяца будут удалены.`)) {
+          DB.deleteArchivedMonth(idx);
+          renderArchive();
+        }
+      });
+    });
+
     content.querySelectorAll('.archive-card').forEach(card => {
-      card.addEventListener('click', () => {
+      card.addEventListener('click', e => {
+        if (e.target.closest('.ac-delete')) return;
         const idx = parseInt(card.dataset.month);
         showArchiveMonth(idx);
       });
