@@ -96,10 +96,23 @@ const DB = (() => {
   function getToken()  { return _token; }
 
   async function loadMeta() {
-    _idb = await _openDB();
-    const meta = await _get(_k('meta'));
-    if (meta) _cache['__meta'] = meta;
-    return meta || { startDate: null, currentMonth: 0 };
+    console.log('[DB] loadMeta start, token=', _token);
+    try {
+      _idb = await _openDB();
+      console.log('[DB] IndexedDB opened OK');
+    } catch(e) {
+      console.error('[DB] openDB failed:', e);
+      throw e;
+    }
+    try {
+      const meta = await _get(_k('meta'));
+      console.log('[DB] meta loaded:', meta);
+      if (meta) _cache['__meta'] = meta;
+      return meta || { startDate: null, currentMonth: 0 };
+    } catch(e) {
+      console.error('[DB] get meta failed:', e);
+      throw e;
+    }
   }
 
   function _k(...parts) { return [_token, ...parts].join('::'); }

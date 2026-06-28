@@ -31,12 +31,14 @@ const App = (() => {
       return;
     }
 
+    dbg('Шаг 3: инициализация даты...');
     const meta = DB.getMeta();
     if (!meta.startDate) {
       const today = new Date().toISOString().split('T')[0];
       await DB.setMeta({ startDate: today });
     }
 
+    dbg('Шаг 4: настраиваем навигацию...');
     showLoader(false);
 
     document.getElementById('screen-auth').classList.remove('active');
