@@ -1,9 +1,8 @@
-// ── app.js — главный оркестратор ─────────────────────────────
+// ── app.js ────────────────────────────────────────────────────
 
 const App = (() => {
 
   const SCREENS = ['day', 'week', 'month', 'profile'];
-  let currentScreen = 'day';
 
   async function init() {
     if (Auth.isLoggedIn()) {
@@ -21,50 +20,23 @@ const App = (() => {
 
   async function startApp(token) {
     DB.init(token);
+    await DB.loadMeta();
 
-    showLoader(true);
-    try {
-      await DB.loadMeta();
-    } catch(err) {
-      document.querySelector('.loader-text').textContent = 'Ошибка: ' + err.message;
-      console.error('loadMeta failed:', err);
-      return;
-    }
     const meta = DB.getMeta();
     if (!meta.startDate) {
-      const today = new Date().toISOString().split('T')[0];
-      await DB.setMeta({ startDate: today });
+      await DB.setMeta({ startDate: new Date().toISOString().split('T')[0] });
     }
-    showLoader(false);
 
     document.getElementById('screen-auth').classList.remove('active');
     document.getElementById('app').classList.add('active');
 
     bindNavEvents();
     DayScreen.initToday();
-    await navigateTo('day');
+    navigateTo('day');
 
-    // Проверяем нужен ли автоэкспорт (раз в 7 дней)
     setTimeout(async () => {
-      if (await DB.checkAutoExport()) {
-        showExportPrompt();
-      }
-    }, 2000);
-  }
-
-  function showLoader(show) {
-    let el = document.getElementById('app-loader');
-    if (!el) {
-      el = document.createElement('div');
-      el.id = 'app-loader';
-      el.innerHTML = `<div class="loader-inner"><div class="loader-logo">inamora</div><div class="loader-text">Загружаем планер...</div></div>`;
-      el.style.cssText = 'position:fixed;inset:0;background:var(--dark);display:flex;align-items:center;justify-content:center;z-index:999;flex-direction:column;';
-      el.querySelector('.loader-inner').style.cssText = 'text-align:center;';
-      el.querySelector('.loader-logo').style.cssText = 'font-family:"Cormorant Garamond",serif;font-size:32px;color:var(--lighter);margin-bottom:12px;';
-      el.querySelector('.loader-text').style.cssText = 'font-size:13px;color:var(--acc-lt);letter-spacing:.08em;';
-      document.body.appendChild(el);
-    }
-    el.style.display = show ? 'flex' : 'none';
+      if (await DB.checkAutoExport()) showExportPrompt();
+    }, 3000);
   }
 
   function bindAuthEvents() {
@@ -101,9 +73,8 @@ const App = (() => {
     });
   }
 
-  async function navigateTo(screen) {
+  function navigateTo(screen) {
     if (!SCREENS.includes(screen)) return;
-    currentScreen = screen;
 
     document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active'));
     document.getElementById(`screen-${screen}`).classList.add('active');
@@ -111,14 +82,13 @@ const App = (() => {
       btn.classList.toggle('active', btn.dataset.screen === screen);
     });
 
-    showLoader(true);
+    // Рендер асинхронный но не блокируем UI
     switch (screen) {
-      case 'day':     await DayScreen.render();     break;
-      case 'week':    await WeekScreen.render();    break;
-      case 'month':   await MonthScreen.render();   break;
-      case 'profile': await ProfileScreen.render(); break;
+      case 'day':     DayScreen.render();     break;
+      case 'week':    WeekScreen.render();    break;
+      case 'month':   MonthScreen.render();   break;
+      case 'profile': ProfileScreen.render(); break;
     }
-    showLoader(false);
 
     document.getElementById(`screen-${screen}`).scrollTop = 0;
   }
@@ -136,23 +106,18 @@ const App = (() => {
       <button id="export-no" style="background:transparent;color:var(--acc-lt);border:none;padding:8px;cursor:pointer;font-size:18px;line-height:1">×</button>
     `;
     document.body.appendChild(banner);
-
     document.getElementById('export-yes').addEventListener('click', async () => {
       const json = await DB.exportAllData();
       const blob = new Blob([json], { type: 'application/json' });
       const url  = URL.createObjectURL(blob);
-      const date = new Date().toISOString().split('T')[0];
       const a    = document.createElement('a');
-      a.href = url; a.download = `planer-backup-${date}.json`; a.click();
+      a.href = url; a.download = `planer-backup-${new Date().toISOString().split('T')[0]}.json`; a.click();
       URL.revokeObjectURL(url);
       await DB.markExported();
       banner.remove();
     });
-
     document.getElementById('export-no').addEventListener('click', () => banner.remove());
-
-    // Автоскрытие через 15 секунд
-    setTimeout(() => banner.remove(), 15000);
+    setTimeout(() => { if (banner.parentNode) banner.remove(); }, 15000);
   }
 
   return { init, showAuth, navigateTo };
