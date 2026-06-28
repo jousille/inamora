@@ -1,6 +1,7 @@
 // ── sw.js — Service Worker для PWA ───────────────────────────
+// v4 — обновлено для IndexedDB
 
-const CACHE = 'planer-v1';
+const CACHE = 'planer-v4';
 const ASSETS = [
   './',
   './index.html',
