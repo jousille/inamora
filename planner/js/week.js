@@ -14,19 +14,19 @@ const WeekScreen = (() => {
 
   let state = { week: 1, highlightDay: null };
 
-  async function render() {
+  function render() {
     const el = document.getElementById('screen-week');
 
-    const weekScore = await DB.getWeekScore(state.week);
-    const dayScores = Array.from({ length: 7 }, (_, i) => await DB.getDayScore(state.week, i + 1));
+    const weekScore = DB.getWeekScore(state.week);
+    const dayScores = Array.from({ length: 7 }, (_, i) => DB.getDayScore(state.week, i + 1));
     const maxAbs = Math.max(1, ...dayScores.map(Math.abs));
 
     const bestDayIdx  = dayScores.indexOf(Math.max(...dayScores));
     const worstDayIdx = dayScores.indexOf(Math.min(...dayScores));
 
-    const vampires = await DB.getWeekVampires(state.week, 5);
-    const donors   = await DB.getWeekDonors(state.week, 5);
-    const refl     = await DB.getReflection('week', state.week);
+    const vampires = DB.getWeekVampires(state.week, 5);
+    const donors   = DB.getWeekDonors(state.week, 5);
+    const refl     = DB.getReflection('week', state.week);
 
     const scoreDisp = weekScore > 0 ? `+${weekScore}` : `${weekScore}`;
 
@@ -39,7 +39,7 @@ const WeekScreen = (() => {
 
       <div class="strip" id="week-strip">
         ${[1,2,3,4].map(w => {
-          const s = await DB.getWeekScore(w);
+          const s = DB.getWeekScore(w);
           const cls = s > 0 ? 'pos' : s < 0 ? 'neg' : '';
           const lbl = s > 0 ? `+${s}` : s === 0 ? '·' : `${s}`;
           return `<button class="strip-pill ${w === state.week ? 'active' : ''}" data-week="${w}">
@@ -130,7 +130,7 @@ const WeekScreen = (() => {
   function bindWeekEvents() {
     // Переключение недели
     document.querySelectorAll('#week-strip .strip-pill').forEach(btn => {
-      btn.addEventListener('click', async () => {
+      btn.addEventListener('click', () => {
         state.week = parseInt(btn.dataset.week);
         render();
       });
@@ -138,10 +138,10 @@ const WeekScreen = (() => {
 
     // Автосохранение рефлексии
     document.querySelectorAll('.ref-input[data-key]').forEach(ta => {
-      ta.addEventListener('input', async () => {
-        const refl = await DB.getReflection('week', state.week);
+      ta.addEventListener('input', () => {
+        const refl = DB.getReflection('week', state.week);
         refl[ta.dataset.key] = ta.value;
-        await DB.saveReflection(refl, 'week', state.week);
+        DB.saveReflection(refl, 'week', state.week);
       });
     });
   }

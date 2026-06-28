@@ -4,7 +4,7 @@ const ProfileScreen = (() => {
 
   let _tab = 'profile'; // 'profile' | 'guide' | 'archive'
 
-  async function render() {
+  function render() {
     const el = document.getElementById('screen-profile');
     el.innerHTML = `
       <div class="page-header">
@@ -20,7 +20,7 @@ const ProfileScreen = (() => {
     `;
 
     el.querySelectorAll('.ptab').forEach(btn => {
-      btn.addEventListener('click', async () => {
+      btn.addEventListener('click', () => {
         _tab = btn.dataset.tab;
         render();
       });
@@ -35,10 +35,10 @@ const ProfileScreen = (() => {
 
   // ── Вкладка: Профиль ─────────────────────────────────────────
 
-  async function renderProfile() {
-    const meta   = await DB.getMeta();
-    const token  = await DB.getToken();
-    const pos    = await DB.getTodayPosition();
+  function renderProfile() {
+    const meta   = DB.getMeta();
+    const token  = DB.getToken();
+    const pos    = DB.getTodayPosition();
     const monthN = (meta.currentMonth || 0) + 1;
 
     const startDate = meta.startDate
@@ -118,9 +118,9 @@ const ProfileScreen = (() => {
       </div>
     `;
 
-    document.getElementById('start-date-input').addEventListener('change', async e => {
-      await DB.setMeta({ startDate: e.target.value });
-      await DayScreen.initToday();
+    document.getElementById('start-date-input').addEventListener('change', e => {
+      DB.setMeta({ startDate: e.target.value });
+      DayScreen.initToday();
     });
 
     const newMonthBtn = document.getElementById('start-new-month-btn');
@@ -129,14 +129,14 @@ const ProfileScreen = (() => {
         const dateInput = document.getElementById('new-month-date');
         const newDate = dateInput ? dateInput.value : new Date().toISOString().split('T')[0];
         if (confirm(`Начать новый месяц с ${new Date(newDate).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}?\n\nТекущий месяц сохранится в архиве.`)) {
-          await DB.startNewMonth(newDate);
-          await DayScreen.initToday();
-          await App.navigateTo('day');
+          DB.startNewMonth(newDate);
+          DayScreen.initToday();
+          App.navigateTo('day');
         }
       });
     }
 
-    document.getElementById('export-btn').addEventListener('click', async () => {
+    document.getElementById('export-btn').addEventListener('click', () => {
       await exportData();
     });
 
@@ -173,7 +173,7 @@ const ProfileScreen = (() => {
 
   // ── Вкладка: Инструкция ──────────────────────────────────────
 
-  async function renderGuide() {
+  function renderGuide() {
     const content = document.getElementById('profile-tab-content');
     content.innerHTML = `
       <div class="profile-section">
@@ -239,8 +239,8 @@ const ProfileScreen = (() => {
 
   // ── Вкладка: Архив ───────────────────────────────────────────
 
-  async function renderArchive() {
-    const archive = await DB.getArchiveList();
+  function renderArchive() {
+    const archive = DB.getArchiveList();
     const content = document.getElementById('profile-tab-content');
 
     if (!archive.length) {
@@ -261,7 +261,7 @@ const ProfileScreen = (() => {
           const startStr = m.startDate
             ? new Date(m.startDate).toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' })
             : `Месяц ${m.index + 1}`;
-          const monthScore = [1,2,3,4].reduce((s, w) => s + await DB.getWeekScore(w, m.index), 0);
+          const monthScore = [1,2,3,4].reduce((s, w) => s + DB.getWeekScore(w, m.index), 0);
           const scoreDisp = monthScore > 0 ? `+${monthScore}` : `${monthScore}`;
           const scoreCls  = monthScore >= 0 ? 'pos' : 'neg';
           return `
@@ -285,14 +285,14 @@ const ProfileScreen = (() => {
       btn.addEventListener('click', e => {
         e.stopPropagation();
         const idx = parseInt(btn.dataset.delete);
-        const m = await DB.getMonthMeta(idx);
+        const m = DB.getMonthMeta(idx);
         const label = m.startDate
           ? new Date(m.startDate).toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' })
           : `Месяц ${idx + 1}`;
         if (confirm(`Удалить ${label} из архива?
 
 Все данные этого месяца будут удалены.`)) {
-          await DB.deleteArchivedMonth(idx);
+          DB.deleteArchivedMonth(idx);
           renderArchive();
         }
       });
@@ -307,17 +307,17 @@ const ProfileScreen = (() => {
     });
   }
 
-  async function showArchiveMonth(monthIdx) {
-    const m = await DB.getMonthMeta(monthIdx);
+  function showArchiveMonth(monthIdx) {
+    const m = DB.getMonthMeta(monthIdx);
     const startStr = m.startDate
       ? new Date(m.startDate).toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' })
       : `Месяц ${monthIdx + 1}`;
 
-    const weekScores = [1,2,3,4].map(w => await DB.getWeekScore(w, monthIdx));
+    const weekScores = [1,2,3,4].map(w => DB.getWeekScore(w, monthIdx));
     const monthScore = weekScores.reduce((s, v) => s + v, 0);
     const scoreDisp  = monthScore > 0 ? `+${monthScore}` : `${monthScore}`;
-    const vampires   = await DB.getMonthVampires(5, monthIdx);
-    const donors     = await DB.getMonthDonors(5, monthIdx);
+    const vampires   = DB.getMonthVampires(5, monthIdx);
+    const donors     = DB.getMonthDonors(5, monthIdx);
 
     const content = document.getElementById('profile-tab-content');
     content.innerHTML = `
@@ -370,7 +370,7 @@ const ProfileScreen = (() => {
   // ── Экспорт / Импорт ─────────────────────────────────────────
 
   function exportData() {
-    const token = await DB.getToken();
+    const token = DB.getToken();
     const prefix = `planer_${token}_`;
     const backup = { version: 1, token, exportedAt: new Date().toISOString(), data: {} };
 
@@ -396,7 +396,7 @@ const ProfileScreen = (() => {
     const backup = JSON.parse(jsonStr);
     if (!backup.data || backup.version !== 1) throw new Error('Invalid format');
     Object.entries(backup.data).forEach(([k, v]) => localStorage.setItem(k, v));
-    await DayScreen.initToday();
+    DayScreen.initToday();
   }
 
   function capitalize(str) { return str ? str.charAt(0).toUpperCase() + str.slice(1) : ''; }

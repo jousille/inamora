@@ -18,7 +18,7 @@ const DayScreen = (() => {
     state.selectedTaskId = null;
   }
 
-  async function render() {
+  function render() {
     const el = document.getElementById('screen-day');
     const meta = DB.getMeta();
     const startDate = meta.startDate ? new Date(meta.startDate) : new Date();
@@ -26,8 +26,8 @@ const DayScreen = (() => {
     dayDate.setDate(startDate.getDate() + (state.week - 1) * 7 + (state.day - 1));
 
     const dateStr = dayDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
-    const tasks = await DB.getTasks(state.week, state.day);
-    const dayScore = await DB.getDayScore(state.week, state.day);
+    const tasks = DB.getTasks(state.week, state.day);
+    const dayScore = DB.getDayScore(state.week, state.day);
 
     const maxAbs = 50;
     const fillPct = Math.min(100, Math.max(0, ((dayScore + maxAbs) / (maxAbs * 2)) * 100));
@@ -154,9 +154,9 @@ const DayScreen = (() => {
 
     // Редактирование названия
     document.querySelectorAll('.task-name[contenteditable]').forEach(el => {
-      el.addEventListener('blur', async () => {
+      el.addEventListener('blur', () => {
         const id = parseInt(el.dataset.id);
-        await DB.updateTask(state.week, state.day, id, { name: el.textContent.trim() });
+        DB.updateTask(state.week, state.day, id, { name: el.textContent.trim() });
         render();
       });
       el.addEventListener('keydown', e => {
@@ -166,10 +166,10 @@ const DayScreen = (() => {
 
     // Оценка энергии
     document.querySelectorAll('.picker-opt').forEach(btn => {
-      btn.addEventListener('click', async () => {
+      btn.addEventListener('click', () => {
         const score = parseInt(btn.dataset.score);
         const taskId = parseInt(btn.dataset.task);
-        await DB.updateTask(state.week, state.day, taskId, { score });
+        DB.updateTask(state.week, state.day, taskId, { score });
         state.selectedTaskId = null;
         render();
       });
@@ -178,9 +178,9 @@ const DayScreen = (() => {
     // Добавить задачу
     const addBtn = document.getElementById('add-task-btn');
     if (addBtn) {
-      addBtn.addEventListener('click', async () => {
-        await DB.addTask(state.week, state.day, '', null);
-        const tasks = await DB.getTasks(state.week, state.day);
+      addBtn.addEventListener('click', () => {
+        DB.addTask(state.week, state.day, '', null);
+        const tasks = DB.getTasks(state.week, state.day);
         state.selectedTaskId = tasks[tasks.length - 1].id;
         render();
         setTimeout(() => {

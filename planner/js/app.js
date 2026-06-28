@@ -1,12 +1,13 @@
-// ── app.js ────────────────────────────────────────────────────
+// ── app.js — главный оркестратор ─────────────────────────────
 
 const App = (() => {
 
   const SCREENS = ['day', 'week', 'month', 'profile'];
+  let currentScreen = 'day';
 
-  async function init() {
+  function init() {
     if (Auth.isLoggedIn()) {
-      await startApp(Auth.currentToken());
+      startApp(Auth.currentToken());
     } else {
       showAuth();
     }
@@ -18,13 +19,12 @@ const App = (() => {
     bindAuthEvents();
   }
 
-  async function startApp(token) {
+  function startApp(token) {
     DB.init(token);
-    await DB.loadMeta();
 
     const meta = DB.getMeta();
     if (!meta.startDate) {
-      await DB.setMeta({ startDate: new Date().toISOString().split('T')[0] });
+      DB.setMeta({ startDate: new Date().toISOString().split('T')[0] });
     }
 
     document.getElementById('screen-auth').classList.remove('active');
@@ -33,10 +33,6 @@ const App = (() => {
     bindNavEvents();
     DayScreen.initToday();
     navigateTo('day');
-
-    setTimeout(async () => {
-      if (await DB.checkAutoExport()) showExportPrompt();
-    }, 3000);
   }
 
   function bindAuthEvents() {
@@ -44,21 +40,17 @@ const App = (() => {
     const btn   = document.getElementById('token-submit');
     const errEl = document.getElementById('token-error');
 
-    async function tryLogin() {
+    function tryLogin() {
       const val = input.value.trim();
       if (!val) return;
-      btn.disabled = true;
-      btn.textContent = 'Проверяем...';
       const token = Auth.login(val);
       if (token) {
         errEl.textContent = '';
-        await startApp(token);
+        startApp(token);
       } else {
         errEl.textContent = 'Неверный код доступа';
         input.style.borderColor = 'var(--neg-10-tx)';
         setTimeout(() => { input.style.borderColor = ''; }, 1500);
-        btn.disabled = false;
-        btn.textContent = 'Войти';
       }
     }
 
@@ -75,6 +67,7 @@ const App = (() => {
 
   function navigateTo(screen) {
     if (!SCREENS.includes(screen)) return;
+    currentScreen = screen;
 
     document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active'));
     document.getElementById(`screen-${screen}`).classList.add('active');
@@ -82,7 +75,6 @@ const App = (() => {
       btn.classList.toggle('active', btn.dataset.screen === screen);
     });
 
-    // Рендер асинхронный но не блокируем UI
     switch (screen) {
       case 'day':     DayScreen.render();     break;
       case 'week':    WeekScreen.render();    break;
@@ -91,33 +83,6 @@ const App = (() => {
     }
 
     document.getElementById(`screen-${screen}`).scrollTop = 0;
-  }
-
-  function showExportPrompt() {
-    const banner = document.createElement('div');
-    banner.id = 'export-banner';
-    banner.style.cssText = 'position:fixed;bottom:72px;left:0;right:0;margin:0 16px;z-index:200;background:var(--dark);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 20px rgba(0,0,0,.3)';
-    banner.innerHTML = `
-      <div style="flex:1">
-        <div style="font-size:13px;color:var(--lighter);font-weight:500;margin-bottom:2px;">Сохраните резервную копию</div>
-        <div style="font-size:11px;color:var(--acc-lt);">Прошло 7 дней с последнего сохранения</div>
-      </div>
-      <button id="export-yes" style="background:var(--accent);color:var(--dark);border:none;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap">Сохранить</button>
-      <button id="export-no" style="background:transparent;color:var(--acc-lt);border:none;padding:8px;cursor:pointer;font-size:18px;line-height:1">×</button>
-    `;
-    document.body.appendChild(banner);
-    document.getElementById('export-yes').addEventListener('click', async () => {
-      const json = await DB.exportAllData();
-      const blob = new Blob([json], { type: 'application/json' });
-      const url  = URL.createObjectURL(blob);
-      const a    = document.createElement('a');
-      a.href = url; a.download = `planer-backup-${new Date().toISOString().split('T')[0]}.json`; a.click();
-      URL.revokeObjectURL(url);
-      await DB.markExported();
-      banner.remove();
-    });
-    document.getElementById('export-no').addEventListener('click', () => banner.remove());
-    setTimeout(() => { if (banner.parentNode) banner.remove(); }, 15000);
   }
 
   return { init, showAuth, navigateTo };
