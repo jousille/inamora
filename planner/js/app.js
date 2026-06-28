@@ -22,9 +22,14 @@ const App = (() => {
   async function startApp(token) {
     DB.init(token);
 
-    // Показываем лоадер пока грузим мету из Firebase
     showLoader(true);
-    await DB.loadMeta();
+    try {
+      await DB.loadMeta();
+    } catch(err) {
+      document.querySelector('.loader-text').textContent = 'Ошибка: ' + err.message;
+      console.error('loadMeta failed:', err);
+      return;
+    }
 
     const meta = DB.getMeta();
     if (!meta.startDate) {

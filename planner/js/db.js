@@ -12,7 +12,19 @@ const DB = (() => {
 
   function _openDB() {
     return new Promise((resolve, reject) => {
-      const req = indexedDB.open('inamora_planer', 2);
+      // Таймаут 5 секунд — если IndexedDB не отвечает
+      const timeout = setTimeout(() => {
+        reject(new Error('IndexedDB timeout — попробуйте обычный браузер, не режим инкогнито'));
+      }, 5000);
+
+      let req;
+      try {
+        req = indexedDB.open('inamora_planer', 2);
+      } catch(e) {
+        clearTimeout(timeout);
+        reject(new Error('IndexedDB недоступен: ' + e.message));
+        return;
+      }
 
       req.onupgradeneeded = e => {
         const db = e.target.result;
@@ -21,8 +33,18 @@ const DB = (() => {
         }
       };
 
-      req.onsuccess  = e => resolve(e.target.result);
-      req.onerror    = e => reject(e.target.error);
+      req.onsuccess = e => {
+        clearTimeout(timeout);
+        resolve(e.target.result);
+      };
+      req.onerror = e => {
+        clearTimeout(timeout);
+        reject(new Error('IndexedDB error: ' + (e.target.error?.message || 'unknown')));
+      };
+      req.onblocked = () => {
+        clearTimeout(timeout);
+        reject(new Error('IndexedDB заблокирован — закройте другие вкладки с планером'));
+      };
     });
   }
 
