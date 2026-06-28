@@ -2,9 +2,9 @@
 
 const DayScreen = (() => {
 
-  const SCORES = [-10, -5, -3, 0, 3, 5];
-  const SCORE_LABELS  = { '-10':'−10', '-5':'−5', '-3':'−3', '0':'0', '3':'+3', '5':'+5' };
-  const SCORE_CLASSES = { '-10':'chip-n10', '-5':'chip-n5', '-3':'chip-n3', '0':'chip-0', '3':'chip-p3', '5':'chip-p5' };
+  const SCORES = [-10, -5, -3, 0, 3, 5, 10];
+  const SCORE_LABELS  = { '-10':'−10', '-5':'−5', '-3':'−3', '0':'0', '3':'+3', '5':'+5', '10':'+10' };
+  const SCORE_CLASSES = { '-10':'chip-n10', '-5':'chip-n5', '-3':'chip-n3', '0':'chip-0', '3':'chip-p3', '5':'chip-p5', '10':'chip-p10' };
   const DAYS_RU    = ['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье'];
   const DAYS_SHORT = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
 
@@ -18,7 +18,7 @@ const DayScreen = (() => {
     state.selectedTaskId = null;
   }
 
-  function render() {
+  async function render() {
     const el = document.getElementById('screen-day');
     const meta = DB.getMeta();
     const startDate = meta.startDate ? new Date(meta.startDate) : new Date();
@@ -26,8 +26,8 @@ const DayScreen = (() => {
     dayDate.setDate(startDate.getDate() + (state.week - 1) * 7 + (state.day - 1));
 
     const dateStr = dayDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
-    const tasks = DB.getTasks(state.week, state.day);
-    const dayScore = DB.getDayScore(state.week, state.day);
+    const tasks = await DB.getTasks(state.week, state.day);
+    const dayScore = await DB.getDayScore(state.week, state.day);
 
     const maxAbs = 50;
     const fillPct = Math.min(100, Math.max(0, ((dayScore + maxAbs) / (maxAbs * 2)) * 100));
@@ -45,12 +45,11 @@ const DayScreen = (() => {
       </div>
 
       <div class="strip" id="day-strip">
-        ${DAYS_SHORT.map((d, i) => {
-          const s = DB.getDayScore(state.week, i + 1);
+        ${dayScores.map((s, i) => {
           const cls = s > 0 ? 'pos' : s < 0 ? 'neg' : '';
           const lbl = s > 0 ? `+${s}` : s === 0 ? '·' : `${s}`;
           return `<button class="strip-pill ${i + 1 === state.day ? 'active' : ''}" data-day="${i + 1}">
-            <span class="p-name">${d}</span>
+            <span class="p-name">${DAYS_SHORT[i]}</span>
             <span class="p-score ${cls}">${lbl}</span>
           </button>`;
         }).join('')}
@@ -155,9 +154,9 @@ const DayScreen = (() => {
 
     // Редактирование названия
     document.querySelectorAll('.task-name[contenteditable]').forEach(el => {
-      el.addEventListener('blur', () => {
+      el.addEventListener('blur', async () => {
         const id = parseInt(el.dataset.id);
-        DB.updateTask(state.week, state.day, id, { name: el.textContent.trim() });
+        await DB.updateTask(state.week, state.day, id, { name: el.textContent.trim() });
         render();
       });
       el.addEventListener('keydown', e => {
@@ -167,10 +166,10 @@ const DayScreen = (() => {
 
     // Оценка энергии
     document.querySelectorAll('.picker-opt').forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', async () => {
         const score = parseInt(btn.dataset.score);
         const taskId = parseInt(btn.dataset.task);
-        DB.updateTask(state.week, state.day, taskId, { score });
+        await DB.updateTask(state.week, state.day, taskId, { score });
         state.selectedTaskId = null;
         render();
       });
@@ -179,9 +178,9 @@ const DayScreen = (() => {
     // Добавить задачу
     const addBtn = document.getElementById('add-task-btn');
     if (addBtn) {
-      addBtn.addEventListener('click', () => {
-        DB.addTask(state.week, state.day, '', null);
-        const tasks = DB.getTasks(state.week, state.day);
+      addBtn.addEventListener('click', async () => {
+        await DB.addTask(state.week, state.day, '', null);
+        const tasks = await DB.getTasks(state.week, state.day);
         state.selectedTaskId = tasks[tasks.length - 1].id;
         render();
         setTimeout(() => {

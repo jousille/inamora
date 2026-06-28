@@ -10,10 +10,10 @@ const MonthScreen = (() => {
     { key: 'gratitude',  q: 'За что я благодарна себе в этом месяце?' },
   ];
 
-  function render() {
+  async function render() {
     const el = document.getElementById('screen-month');
 
-    const weekScores = [1,2,3,4].map(w => DB.getWeekScore(w));
+    const weekScores = [1,2,3,4].map(w => await DB.getWeekScore(w));
     const monthScore = weekScores.reduce((s, v) => s + v, 0);
     const totalTasks = (() => { let n = 0; for (let w=1;w<=4;w++) for (let d=1;d<=7;d++) n+=DB.getTasks(w,d).length; return n; })();
 
@@ -21,9 +21,9 @@ const MonthScreen = (() => {
     const worstWeekIdx = weekScores.indexOf(Math.min(...weekScores));
     const maxAbs = Math.max(1, ...weekScores.map(Math.abs));
 
-    const vampires = DB.getMonthVampires(5);
-    const donors   = DB.getMonthDonors(5);
-    const refl     = DB.getReflection('month');
+    const vampires = await DB.getMonthVampires(5);
+    const donors   = await DB.getMonthDonors(5);
+    const refl     = await DB.getReflection('month');
     const meta     = DB.getMeta();
 
     const scoreDisp = monthScore > 0 ? `+${monthScore}` : `${monthScore}`;
@@ -115,10 +115,10 @@ const MonthScreen = (() => {
 
     // Автосохранение рефлексии
     document.querySelectorAll('#screen-month .ref-input[data-key]').forEach(ta => {
-      ta.addEventListener('input', () => {
-        const r = DB.getReflection('month');
+      ta.addEventListener('input', async () => {
+        const r = await DB.getReflection('month');
         r[ta.dataset.key] = ta.value;
-        DB.saveReflection(r, 'month');
+        await DB.saveReflection(r, 'month');
       });
     });
   }
@@ -137,7 +137,7 @@ const MonthScreen = (() => {
           <div class="vd-row">
             <span class="vd-num">${i + 1}</span>
             <span class="vd-name">${escHtml(item.name)}</span>
-            <span class="vd-chip ${type}">${item.score > 0 ? '+' : ''}${item.score}</span>
+            <span class="vd-chip ${item.score === 10 ? 'pos10' : item.score === -10 ? 'neg' : type}">${item.score > 0 ? '+' : ''}${item.score}</span>
           </div>
         `).join('')}
       </div>
