@@ -1,124 +1,21 @@
-// ── db.js — хранилище IndexedDB ───────────────────────────────
-// Данные хранятся в IndexedDB — не удаляются при очистке кэша браузера.
-// Автоэкспорт предлагается раз в неделю для защиты от потери данных.
+// ── db.js — хранилище данных (localStorage) ──────────────────
 
 const DB = (() => {
 
   let _token = null;
-  let _idb   = null;       // IndexedDB connection
-  const _cache = {};       // кэш в памяти для скорости
-
-  // ── IndexedDB инициализация ───────────────────────────────────
-
-  function _openDB() {
-    return new Promise((resolve, reject) => {
-      // Таймаут 5 секунд — если IndexedDB не отвечает
-      const timeout = setTimeout(() => {
-        reject(new Error('IndexedDB timeout — попробуйте обычный браузер, не режим инкогнито'));
-      }, 5000);
-
-      let req;
-      try {
-        req = indexedDB.open('inamora_planer', 2);
-      } catch(e) {
-        clearTimeout(timeout);
-        reject(new Error('IndexedDB недоступен: ' + e.message));
-        return;
-      }
-
-      req.onupgradeneeded = e => {
-        const db = e.target.result;
-        if (!db.objectStoreNames.contains('data')) {
-          db.createObjectStore('data');
-        }
-      };
-
-      req.onsuccess = e => {
-        clearTimeout(timeout);
-        resolve(e.target.result);
-      };
-      req.onerror = e => {
-        clearTimeout(timeout);
-        reject(new Error('IndexedDB error: ' + (e.target.error?.message || 'unknown')));
-      };
-      req.onblocked = () => {
-        clearTimeout(timeout);
-        reject(new Error('IndexedDB заблокирован — закройте другие вкладки с планером'));
-      };
-    });
-  }
-
-  async function _get(key) {
-    if (_cache[key] !== undefined) return _cache[key];
-    return new Promise((resolve, reject) => {
-      const tx   = _idb.transaction('data', 'readonly');
-      const req  = tx.objectStore('data').get(key);
-      req.onsuccess = () => {
-        _cache[key] = req.result ?? null;
-        resolve(_cache[key]);
-      };
-      req.onerror = () => reject(req.error);
-    });
-  }
-
-  async function _set(key, value) {
-    _cache[key] = value;
-    return new Promise((resolve, reject) => {
-      const tx  = _idb.transaction('data', 'readwrite');
-      const req = tx.objectStore('data').put(value, key);
-      req.onsuccess = () => resolve();
-      req.onerror   = () => reject(req.error);
-    });
-  }
-
-  async function _del(key) {
-    delete _cache[key];
-    return new Promise((resolve, reject) => {
-      const tx  = _idb.transaction('data', 'readwrite');
-      const req = tx.objectStore('data').delete(key);
-      req.onsuccess = () => resolve();
-      req.onerror   = () => reject(req.error);
-    });
-  }
-
-  async function _getAllKeys() {
-    return new Promise((resolve, reject) => {
-      const tx  = _idb.transaction('data', 'readonly');
-      const req = tx.objectStore('data').getAllKeys();
-      req.onsuccess = () => resolve(req.result);
-      req.onerror   = () => reject(req.error);
-    });
-  }
-
-  // ── Ключи ─────────────────────────────────────────────────────
+  const _cache = {};
 
   function init(token) { _token = token; }
   function getToken()  { return _token; }
+  function key(...parts) { return ['planer', _token, ...parts].join('_'); }
+  function _mi() { return getMeta().currentMonth || 0; }
 
   async function loadMeta() {
-    console.log('[DB] loadMeta start, token=', _token);
-    try {
-      _idb = await _openDB();
-      console.log('[DB] IndexedDB opened OK');
-    } catch(e) {
-      console.error('[DB] openDB failed:', e);
-      throw e;
-    }
-    try {
-      const meta = await _get(_k('meta'));
-      console.log('[DB] meta loaded:', meta);
-      if (meta) _cache['__meta'] = meta;
-      return meta || { startDate: null, currentMonth: 0 };
-    } catch(e) {
-      console.error('[DB] get meta failed:', e);
-      throw e;
-    }
+    const raw = localStorage.getItem(key('meta'));
+    const meta = raw ? JSON.parse(raw) : { startDate: null, currentMonth: 0 };
+    _cache['__meta'] = meta;
+    return meta;
   }
-
-  function _k(...parts) { return [_token, ...parts].join('::'); }
-  function _mi()        { return getMeta().currentMonth || 0; }
-
-  // ── Мета ──────────────────────────────────────────────────────
 
   function getMeta() {
     return _cache['__meta'] || { startDate: null, currentMonth: 0 };
@@ -127,21 +24,25 @@ const DB = (() => {
   async function setMeta(data) {
     const meta = Object.assign(getMeta(), data);
     _cache['__meta'] = meta;
-    await _set(_k('meta'), meta);
+    localStorage.setItem(key('meta'), JSON.stringify(meta));
   }
 
   // ── Задачи ────────────────────────────────────────────────────
-
   async function getTasks(week, day, monthIdx) {
-    const mi  = monthIdx !== undefined ? monthIdx : _mi();
-    const key = _k('tasks', mi, week, day);
-    const val = await _get(key);
-    return val || [];
+    const mi = monthIdx !== undefined ? monthIdx : _mi();
+    const k  = key('tasks', mi, week, day);
+    if (_cache[k]) return _cache[k];
+    const raw = localStorage.getItem(k);
+    const val = raw ? JSON.parse(raw) : [];
+    _cache[k] = val;
+    return val;
   }
 
   async function saveTasks(week, day, tasks, monthIdx) {
-    const mi  = monthIdx !== undefined ? monthIdx : _mi();
-    await _set(_k('tasks', mi, week, day), tasks);
+    const mi = monthIdx !== undefined ? monthIdx : _mi();
+    const k  = key('tasks', mi, week, day);
+    _cache[k] = tasks;
+    localStorage.setItem(k, JSON.stringify(tasks));
   }
 
   async function addTask(week, day, name, score) {
@@ -166,18 +67,17 @@ const DB = (() => {
   }
 
   // ── Рефлексия ─────────────────────────────────────────────────
-
   async function getReflection(scope, ...parts) {
-    const key = _k('refl', _mi(), scope, ...parts);
-    return (await _get(key)) || {};
+    const k   = key('refl', _mi(), scope, ...parts);
+    const raw = localStorage.getItem(k);
+    return raw ? JSON.parse(raw) : {};
   }
 
   async function saveReflection(data, scope, ...parts) {
-    await _set(_k('refl', _mi(), scope, ...parts), data);
+    localStorage.setItem(key('refl', _mi(), scope, ...parts), JSON.stringify(data));
   }
 
   // ── Агрегация ─────────────────────────────────────────────────
-
   async function getDayScore(week, day, monthIdx) {
     const tasks = await getTasks(week, day, monthIdx);
     return tasks.reduce((s, t) => s + (t.score || 0), 0);
@@ -197,7 +97,6 @@ const DB = (() => {
   async function _top(wFrom, wTo, mode, limit, monthIdx) {
     const mi  = monthIdx !== undefined ? monthIdx : _mi();
     const all = [];
-
     for (let w = wFrom; w <= wTo; w++)
       for (let d = 1; d <= 7; d++)
         (await getTasks(w, d, mi)).forEach(t => {
@@ -219,7 +118,6 @@ const DB = (() => {
   }
 
   // ── Позиция сегодня ───────────────────────────────────────────
-
   function getTodayPosition() {
     const { startDate } = getMeta();
     if (!startDate) return { week: 1, day: 1, isFinished: false };
@@ -232,15 +130,15 @@ const DB = (() => {
   }
 
   // ── Архив ─────────────────────────────────────────────────────
-
   async function getMonthMeta(mi) {
-    return (await _get(_k('monthmeta', mi))) || {};
+    const raw = localStorage.getItem(key('monthmeta', mi));
+    return raw ? JSON.parse(raw) : {};
   }
 
   async function setMonthMeta(data, monthIdx) {
     const mi      = monthIdx !== undefined ? monthIdx : _mi();
     const existing = await getMonthMeta(mi);
-    await _set(_k('monthmeta', mi), { ...existing, ...data });
+    localStorage.setItem(key('monthmeta', mi), JSON.stringify({ ...existing, ...data }));
   }
 
   async function getArchiveList() {
@@ -257,17 +155,11 @@ const DB = (() => {
     const meta = getMeta();
     const cur  = meta.currentMonth || 0;
     const mm   = await getMonthMeta(cur);
-    await setMonthMeta({
-      startDate: mm.startDate || meta.startDate,
-      archivedAt: new Date().toISOString()
-    }, cur);
+    await setMonthMeta({ startDate: mm.startDate || meta.startDate, archivedAt: new Date().toISOString() }, cur);
     const newIdx = cur + 1;
     await setMeta({ currentMonth: newIdx, startDate });
     await setMonthMeta({ startDate }, newIdx);
-    // Сбрасываем кэш задач
-    Object.keys(_cache).forEach(k => {
-      if (k.includes('::tasks::') || k.includes('::refl::')) delete _cache[k];
-    });
+    Object.keys(_cache).forEach(k => { if (k.includes('tasks') || k.includes('refl')) delete _cache[k]; });
   }
 
   async function deleteArchivedMonth(mi) {
@@ -275,55 +167,35 @@ const DB = (() => {
   }
 
   // ── Экспорт / Импорт ─────────────────────────────────────────
-
   async function exportAllData() {
-    const keys   = await _getAllKeys();
-    const myKeys = keys.filter(k => k.startsWith(_token + '::'));
+    const prefix = 'planer_' + _token + '_';
     const data   = {};
-    for (const k of myKeys) {
-      data[k] = await _get(k);
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith(prefix)) data[k] = localStorage.getItem(k);
     }
-    const backup = {
-      version: 3,
-      token: _token,
-      exportedAt: new Date().toISOString(),
-      data,
-    };
-    return JSON.stringify(backup, null, 2);
+    return JSON.stringify({ version: 3, token: _token, exportedAt: new Date().toISOString(), data }, null, 2);
   }
 
   async function importAllData(jsonStr) {
     const backup = JSON.parse(jsonStr);
-    if (!backup.data || backup.version < 3) throw new Error('Неверный формат файла');
-    for (const [k, v] of Object.entries(backup.data)) {
-      await _set(k, v);
-    }
-    // Перезагружаем мету
-    const meta = await _get(_k('meta'));
-    if (meta) _cache['__meta'] = meta;
+    if (!backup.data) throw new Error('Неверный формат файла');
+    Object.entries(backup.data).forEach(([k, v]) => localStorage.setItem(k, v));
+    const raw = localStorage.getItem(key('meta'));
+    if (raw) _cache['__meta'] = JSON.parse(raw);
     Object.keys(_cache).forEach(k => delete _cache[k]);
   }
 
   // ── Автоэкспорт ──────────────────────────────────────────────
-  // Раз в 7 дней предлагает скачать резервную копию.
-
   async function checkAutoExport() {
-    const key      = _k('last_export');
-    const lastRaw  = await _get(key);
-    const lastDate = lastRaw ? new Date(lastRaw) : null;
-    const now      = new Date();
-    const daysSince = lastDate
-      ? Math.floor((now - lastDate) / 86400000)
-      : 999;
-
-    if (daysSince >= 7) {
-      return true; // нужен экспорт
-    }
-    return false;
+    const lastRaw   = localStorage.getItem(key('last_export'));
+    const lastDate  = lastRaw ? new Date(lastRaw) : null;
+    const daysSince = lastDate ? Math.floor((new Date() - lastDate) / 86400000) : 999;
+    return daysSince >= 7;
   }
 
   async function markExported() {
-    await _set(_k('last_export'), new Date().toISOString());
+    localStorage.setItem(key('last_export'), new Date().toISOString());
   }
 
   function getCurrentMonthIndex() { return _mi(); }
