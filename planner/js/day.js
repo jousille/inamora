@@ -102,6 +102,13 @@ const DayScreen = (() => {
         <div class="score-chip ${chipClass}" data-id="${task.id}">${chipLabel}</div>
       </div>
       ${isSelected ? renderPicker(task.id) : ''}
+      ${isSelected ? `
+      <div class="task-delete-row">
+        <button class="task-delete-btn" data-delete="${task.id}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+          Удалить дело
+        </button>
+      </div>` : ''}
     `;
   }
 
@@ -171,6 +178,16 @@ const DayScreen = (() => {
         const score = parseInt(btn.dataset.score);
         const taskId = parseInt(btn.dataset.task);
         DB.updateTask(state.week, state.day, taskId, { score });
+        state.selectedTaskId = null;
+        render();
+      });
+    });
+
+    // Удалить задачу
+    document.querySelectorAll('.task-delete-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = parseInt(btn.dataset.delete);
+        DB.deleteTask(state.week, state.day, id);
         state.selectedTaskId = null;
         render();
       });
