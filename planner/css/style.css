@@ -492,3 +492,21 @@ input[type="date"].ref-input {
   -webkit-appearance: none;
   appearance: none;
 }
+
+/* ── +10 донор ──────────────────────────────────────────────── */
+:root {
+  --pos-10-bg: #C8EDCC; --pos-10-tx: #0D3F11; --pos-10-br: #7DC985;
+}
+.chip-p10    { background: var(--pos-10-bg); color: var(--pos-10-tx); border-color: var(--pos-10-br); }
+.picker-opt.v10 { background: var(--pos-10-bg); color: var(--pos-10-tx); border-color: var(--pos-10-br); }
+.vd-chip.pos10 { background: var(--pos-10-bg); color: var(--pos-10-tx); border-color: var(--pos-10-br); }
+
+/* ── +10 донор ──────────────────────────────────────────────── */
+.chip-p10       { background: #C8EDCC; color: #0D3F11; border-color: #7DC985; }
+.picker-opt.v10 { background: #C8EDCC; color: #0D3F11; border-color: #7DC985; }
+.vd-chip.pos10  { background: #C8EDCC; color: #0D3F11; border-color: #7DC985; }
+
+/* ── +10 донор ──────────────────────────────────────────────── */
+.chip-p10       { background: #C8EDCC; color: #0D3F11; border-color: #7DC985; }
+.picker-opt.v10 { background: #C8EDCC; color: #0D3F11; border-color: #7DC985; }
+.vd-chip.pos10  { background: #C8EDCC; color: #0D3F11; border-color: #7DC985; }
