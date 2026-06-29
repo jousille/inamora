@@ -510,3 +510,19 @@ input[type="date"].ref-input {
 .chip-p10       { background: #C8EDCC; color: #0D3F11; border-color: #7DC985; }
 .picker-opt.v10 { background: #C8EDCC; color: #0D3F11; border-color: #7DC985; }
 .vd-chip.pos10  { background: #C8EDCC; color: #0D3F11; border-color: #7DC985; }
+
+/* ── Удаление дела ──────────────────────────────────────────── */
+.task-delete-row {
+  display: flex;
+  justify-content: flex-end;
+  margin: -4px 0 7px;
+  padding: 0 2px;
+}
+.task-delete-btn {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 12px; color: var(--neg-10-tx);
+  background: var(--neg-10-bg); border: 0.5px solid var(--neg-10-br);
+  border-radius: 8px; padding: 5px 10px; cursor: pointer;
+  transition: opacity .15s;
+}
+.task-delete-btn:active { opacity: .7; }
