@@ -116,7 +116,7 @@ const DB = (() => {
 
     const entries = Object.entries(map)
       .map(([name, score]) => ({ name, score }))
-      .filter(e => mode === 'min' ? e.score < 0 : e.score > 0);
+      .filter(e => mode === 'min' ? e.score <= -3 : e.score >= 3);
 
     entries.sort((a, b) => mode === 'min' ? a.score - b.score : b.score - a.score);
     return entries.slice(0, limit);
