@@ -494,35 +494,28 @@ input[type="date"].ref-input {
 }
 
 /* ── +10 донор ──────────────────────────────────────────────── */
-:root {
-  --pos-10-bg: #C8EDCC; --pos-10-tx: #0D3F11; --pos-10-br: #7DC985;
-}
-.chip-p10    { background: var(--pos-10-bg); color: var(--pos-10-tx); border-color: var(--pos-10-br); }
-.picker-opt.v10 { background: var(--pos-10-bg); color: var(--pos-10-tx); border-color: var(--pos-10-br); }
-.vd-chip.pos10 { background: var(--pos-10-bg); color: var(--pos-10-tx); border-color: var(--pos-10-br); }
-
-/* ── +10 донор ──────────────────────────────────────────────── */
-.chip-p10       { background: #C8EDCC; color: #0D3F11; border-color: #7DC985; }
-.picker-opt.v10 { background: #C8EDCC; color: #0D3F11; border-color: #7DC985; }
-.vd-chip.pos10  { background: #C8EDCC; color: #0D3F11; border-color: #7DC985; }
-
-/* ── +10 донор ──────────────────────────────────────────────── */
 .chip-p10       { background: #C8EDCC; color: #0D3F11; border-color: #7DC985; }
 .picker-opt.v10 { background: #C8EDCC; color: #0D3F11; border-color: #7DC985; }
 .vd-chip.pos10  { background: #C8EDCC; color: #0D3F11; border-color: #7DC985; }
 
 /* ── Удаление дела ──────────────────────────────────────────── */
-.task-delete-row {
-  display: flex;
-  justify-content: flex-end;
-  margin: -4px 0 7px;
-  padding: 0 2px;
-}
+.task-delete-row { display:flex; justify-content:flex-end; margin:-4px 0 7px; padding:0 2px; }
 .task-delete-btn {
-  display: flex; align-items: center; gap: 5px;
-  font-size: 12px; color: var(--neg-10-tx);
-  background: var(--neg-10-bg); border: 0.5px solid var(--neg-10-br);
-  border-radius: 8px; padding: 5px 10px; cursor: pointer;
-  transition: opacity .15s;
+  display:flex; align-items:center; gap:5px;
+  font-size:12px; color:var(--neg-10-tx);
+  background:var(--neg-10-bg); border:0.5px solid var(--neg-10-br);
+  border-radius:8px; padding:5px 10px; cursor:pointer; transition:opacity .15s;
 }
-.task-delete-btn:active { opacity: .7; }
+.task-delete-btn:active { opacity:.7; }
+
+/* ── Экспорт / Импорт в профиле ─────────────────────────────── */
+.data-actions { display:flex; flex-direction:column; gap:8px; margin-bottom:4px; }
+.data-btn {
+  width:100%; padding:12px 16px; border-radius:var(--radius-md);
+  font-size:14px; font-weight:500;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  transition:opacity .15s; cursor:pointer;
+}
+.data-btn:active { opacity:.8; }
+.data-btn.export { background:var(--dark); color:var(--lighter); border:none; }
+.data-btn.import { background:var(--white); color:var(--dark); border:0.5px solid var(--acc-lt); }
