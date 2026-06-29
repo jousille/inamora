@@ -1,35 +1,35 @@
-// ── db.js — хранилище данных (localStorage) ──────────────────
+// ── db.js — хранилище данных ──────────────────────────────────
 
 const DB = (() => {
 
   let _token = null;
 
   function init(token) { _token = token; }
-  function getToken()  { return _token; }
+
   function key(...parts) { return ['planer', _token, ...parts].join('_'); }
-  function _mi() { return getMeta().currentMonth || 0; }
 
-  // ── Мета ──────────────────────────────────────────────────────
-  function getMeta() {
-    const raw = localStorage.getItem(key('meta'));
-    return raw ? JSON.parse(raw) : { startDate: null, currentMonth: 0 };
+  // ── Текущий месяц (индекс) ───────────────────────────────────
+
+  function getCurrentMonthIndex() {
+    const meta = getMeta();
+    return meta.currentMonth || 0; // 0 = первый месяц
   }
 
-  function setMeta(data) {
-    const meta = Object.assign(getMeta(), data);
-    localStorage.setItem(key('meta'), JSON.stringify(meta));
+  function monthKey(monthIdx, ...parts) {
+    return key('m' + monthIdx, ...parts);
   }
 
-  // ── Задачи ────────────────────────────────────────────────────
+  // ── Задачи дня ───────────────────────────────────────────────
+
   function getTasks(week, day, monthIdx) {
-    const mi  = monthIdx !== undefined ? monthIdx : _mi();
-    const raw = localStorage.getItem(key('tasks', mi, week, day));
+    const mi = monthIdx !== undefined ? monthIdx : getCurrentMonthIndex();
+    const raw = localStorage.getItem(monthKey(mi, 'tasks', week, day));
     return raw ? JSON.parse(raw) : [];
   }
 
   function saveTasks(week, day, tasks, monthIdx) {
-    const mi = monthIdx !== undefined ? monthIdx : _mi();
-    localStorage.setItem(key('tasks', mi, week, day), JSON.stringify(tasks));
+    const mi = monthIdx !== undefined ? monthIdx : getCurrentMonthIndex();
+    localStorage.setItem(monthKey(mi, 'tasks', week, day), JSON.stringify(tasks));
   }
 
   function addTask(week, day, name, score) {
@@ -41,7 +41,7 @@ const DB = (() => {
 
   function updateTask(week, day, id, fields) {
     const tasks = getTasks(week, day);
-    const idx   = tasks.findIndex(t => t.id === id);
+    const idx = tasks.findIndex(t => t.id === id);
     if (idx !== -1) Object.assign(tasks[idx], fields);
     saveTasks(week, day, tasks);
     return tasks;
@@ -53,17 +53,21 @@ const DB = (() => {
     return tasks;
   }
 
-  // ── Рефлексия ─────────────────────────────────────────────────
+  // ── Рефлексия ────────────────────────────────────────────────
+
   function getReflection(scope, ...parts) {
-    const raw = localStorage.getItem(key('refl', _mi(), scope, ...parts));
+    const mi = getCurrentMonthIndex();
+    const raw = localStorage.getItem(monthKey(mi, 'reflection', scope, ...parts));
     return raw ? JSON.parse(raw) : {};
   }
 
   function saveReflection(data, scope, ...parts) {
-    localStorage.setItem(key('refl', _mi(), scope, ...parts), JSON.stringify(data));
+    const mi = getCurrentMonthIndex();
+    localStorage.setItem(monthKey(mi, 'reflection', scope, ...parts), JSON.stringify(data));
   }
 
   // ── Агрегация ─────────────────────────────────────────────────
+
   function getDayScore(week, day, monthIdx) {
     return getTasks(week, day, monthIdx).reduce((s, t) => s + (t.score || 0), 0);
   }
@@ -74,104 +78,147 @@ const DB = (() => {
     return total;
   }
 
-  function getWeekVampires(week, limit = 5) { return _top(week, week, 'min', limit); }
-  function getWeekDonors(week,   limit = 5) { return _top(week, week, 'max', limit); }
-  function getMonthVampires(limit = 5, mi)  { return _top(1, 4, 'min', limit, mi); }
-  function getMonthDonors(limit = 5,   mi)  { return _top(1, 4, 'max', limit, mi); }
+  function getWeekVampires(week, limit = 5) {
+    return _getTopForWeeks(week, week, 'min', limit);
+  }
 
-  function _top(wFrom, wTo, mode, limit, monthIdx) {
-    const mi  = monthIdx !== undefined ? monthIdx : _mi();
-    const all = [];
-    for (let w = wFrom; w <= wTo; w++)
-      for (let d = 1; d <= 7; d++)
+  function getWeekDonors(week, limit = 5) {
+    return _getTopForWeeks(week, week, 'max', limit);
+  }
+
+  function getMonthVampires(limit = 5, monthIdx) {
+    return _getTopForWeeks(1, 4, 'min', limit, monthIdx);
+  }
+
+  function getMonthDonors(limit = 5, monthIdx) {
+    return _getTopForWeeks(1, 4, 'max', limit, monthIdx);
+  }
+
+  function _getTopForWeeks(weekFrom, weekTo, mode, limit, monthIdx) {
+    const mi = monthIdx !== undefined ? monthIdx : getCurrentMonthIndex();
+    let all = [];
+
+    for (let w = weekFrom; w <= weekTo; w++) {
+      for (let d = 1; d <= 7; d++) {
         getTasks(w, d, mi).forEach(t => {
-          if (t.name && t.name.trim() && typeof t.score === 'number' && t.score !== 0)
+          if (t.name && t.name.trim() && typeof t.score === 'number' && t.score !== 0) {
             all.push({ name: t.name.trim(), score: t.score });
+          }
         });
+      }
+    }
 
     const map = {};
     all.forEach(({ name, score }) => {
-      map[name] = map[name] === undefined ? score
-        : mode === 'min' ? Math.min(map[name], score) : Math.max(map[name], score);
+      if (map[name] === undefined) { map[name] = score; return; }
+      map[name] = mode === 'min' ? Math.min(map[name], score) : Math.max(map[name], score);
     });
 
-    return Object.entries(map)
+    const entries = Object.entries(map)
       .map(([name, score]) => ({ name, score }))
-      .filter(e => mode === 'min' ? e.score <= -3 : e.score >= 3)
-      .sort((a, b) => mode === 'min' ? a.score - b.score : b.score - a.score)
-      .slice(0, limit);
+      .filter(e => mode === 'min' ? e.score < 0 : e.score > 0);
+
+    entries.sort((a, b) => mode === 'min' ? a.score - b.score : b.score - a.score);
+    return entries.slice(0, limit);
   }
 
   // ── Позиция сегодня ───────────────────────────────────────────
+
   function getTodayPosition() {
-    const { startDate } = getMeta();
-    if (!startDate) return { week: 1, day: 1, isFinished: false };
-    const start = new Date(startDate); start.setHours(0, 0, 0, 0);
-    const today = new Date();          today.setHours(0, 0, 0, 0);
-    const diff  = Math.floor((today - start) / 86400000);
-    if (diff < 0)   return { week: 1, day: 1, isFinished: false };
-    if (diff >= 28) return { week: 4, day: 7, isFinished: true };
-    return { week: Math.floor(diff / 7) + 1, day: (diff % 7) + 1, isFinished: false };
+    const meta = getMeta();
+    if (!meta.startDate) return { week: 1, day: 1, isFinished: false };
+
+    const start = new Date(meta.startDate);
+    start.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const diffDays = Math.floor((today - start) / (1000 * 60 * 60 * 24));
+
+    if (diffDays < 0)  return { week: 1, day: 1, isFinished: false };
+    if (diffDays >= 28) return { week: 4, day: 7, isFinished: true };
+
+    return {
+      week: Math.floor(diffDays / 7) + 1,
+      day:  (diffDays % 7) + 1,
+      isFinished: false,
+    };
   }
 
-  // ── Архив ─────────────────────────────────────────────────────
-  function getMonthMeta(mi) {
-    const raw = localStorage.getItem(key('monthmeta', mi));
-    return raw ? JSON.parse(raw) : {};
-  }
-
-  function setMonthMeta(data, monthIdx) {
-    const mi      = monthIdx !== undefined ? monthIdx : _mi();
-    const existing = getMonthMeta(mi);
-    localStorage.setItem(key('monthmeta', mi), JSON.stringify({ ...existing, ...data }));
-  }
+  // ── Архив месяцев ─────────────────────────────────────────────
 
   function getArchiveList() {
-    const current = _mi();
-    const list    = [];
+    // Возвращает массив индексов прошлых месяцев
+    const meta = getMeta();
+    const current = meta.currentMonth || 0;
+    const list = [];
     for (let i = 0; i < current; i++) {
       const m = getMonthMeta(i);
       if (!m.deleted) list.push({ index: i, ...m });
     }
-    return list.reverse();
+    return list.reverse(); // последний сначала
+  }
+
+  function getMonthMeta(monthIdx) {
+    const raw = localStorage.getItem(monthKey(monthIdx, 'monthmeta'));
+    return raw ? JSON.parse(raw) : {};
+  }
+
+  function setMonthMeta(data, monthIdx) {
+    const mi = monthIdx !== undefined ? monthIdx : getCurrentMonthIndex();
+    const existing = getMonthMeta(mi);
+    localStorage.setItem(monthKey(mi, 'monthmeta'), JSON.stringify({ ...existing, ...data }));
   }
 
   function startNewMonth(startDate) {
     const meta = getMeta();
-    const cur  = meta.currentMonth || 0;
-    const mm   = getMonthMeta(cur);
-    setMonthMeta({ startDate: mm.startDate || meta.startDate, archivedAt: new Date().toISOString() }, cur);
-    const newIdx = cur + 1;
+    const currentIdx = meta.currentMonth || 0;
+
+    // Сохраняем мету текущего месяца в архив
+    const currentMeta = getMonthMeta(currentIdx);
+    if (!currentMeta.startDate) {
+      setMonthMeta({ startDate: meta.startDate, archivedAt: new Date().toISOString() }, currentIdx);
+    } else {
+      setMonthMeta({ archivedAt: new Date().toISOString() }, currentIdx);
+    }
+
+    // Переключаемся на новый месяц
+    const newIdx = currentIdx + 1;
     setMeta({ currentMonth: newIdx, startDate });
     setMonthMeta({ startDate }, newIdx);
   }
 
-  function deleteArchivedMonth(mi) {
-    setMonthMeta({ deleted: true }, mi);
+  // ── Метаданные ────────────────────────────────────────────────
+
+  function getMeta() {
+    const raw = localStorage.getItem(key('meta'));
+    return raw ? JSON.parse(raw) : { startDate: null, currentMonth: 0 };
   }
 
-  // ── Экспорт / Импорт ─────────────────────────────────────────
-  function exportAllData() {
-    const prefix = 'planer_' + _token + '_';
-    const data   = {};
+  function setMeta(data) {
+    const meta = Object.assign(getMeta(), data);
+    localStorage.setItem(key('meta'), JSON.stringify(meta));
+  }
+
+  function getToken() { return _token; }
+
+  // ── Удалить месяц из архива ───────────────────────────────────
+  function deleteArchivedMonth(monthIdx) {
+    const prefix = monthKey(monthIdx, '');
+    const keysToDelete = [];
     for (let i = 0; i < localStorage.length; i++) {
       const k = localStorage.key(i);
-      if (k && k.startsWith(prefix)) data[k] = localStorage.getItem(k);
+      if (k && k.startsWith(prefix)) keysToDelete.push(k);
     }
-    return JSON.stringify({ version: 3, token: _token, exportedAt: new Date().toISOString(), data }, null, 2);
-  }
+    keysToDelete.forEach(k => localStorage.removeItem(k));
 
-  function importAllData(jsonStr) {
-    const backup = JSON.parse(jsonStr);
-    if (!backup.data) throw new Error('Неверный формат файла');
-    Object.entries(backup.data).forEach(([k, v]) => localStorage.setItem(k, v));
+    // Обновляем список архива в мете — помечаем как удалённый
+    const meta = getMonthMeta(monthIdx);
+    setMonthMeta({ ...meta, deleted: true }, monthIdx);
   }
-
-  function getCurrentMonthIndex() { return _mi(); }
 
   return {
     init, getToken,
-    getMeta, setMeta,
     getTasks, saveTasks, addTask, updateTask, deleteTask,
     getReflection, saveReflection,
     getDayScore, getWeekScore,
@@ -179,9 +226,8 @@ const DB = (() => {
     getMonthVampires, getMonthDonors,
     getTodayPosition,
     getCurrentMonthIndex,
-    getArchiveList, getMonthMeta, setMonthMeta,
-    startNewMonth, deleteArchivedMonth,
-    exportAllData, importAllData,
+    getArchiveList, getMonthMeta, setMonthMeta, startNewMonth,
+    getMeta, setMeta, deleteArchivedMonth,
   };
 
 })();

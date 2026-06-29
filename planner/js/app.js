@@ -3,6 +3,7 @@
 const App = (() => {
 
   const SCREENS = ['day', 'week', 'month', 'profile'];
+
   let currentScreen = 'day';
 
   function init() {
@@ -22,9 +23,11 @@ const App = (() => {
   function startApp(token) {
     DB.init(token);
 
+    // Если дата начала не задана — ставим сегодня
     const meta = DB.getMeta();
     if (!meta.startDate) {
-      DB.setMeta({ startDate: new Date().toISOString().split('T')[0] });
+      const today = new Date().toISOString().split('T')[0];
+      DB.setMeta({ startDate: today });
     }
 
     document.getElementById('screen-auth').classList.remove('active');
@@ -36,9 +39,9 @@ const App = (() => {
   }
 
   function bindAuthEvents() {
-    const input = document.getElementById('token-input');
-    const btn   = document.getElementById('token-submit');
-    const errEl = document.getElementById('token-error');
+    const input  = document.getElementById('token-input');
+    const btn    = document.getElementById('token-submit');
+    const errEl  = document.getElementById('token-error');
 
     function tryLogin() {
       const val = input.value.trim();
@@ -69,12 +72,18 @@ const App = (() => {
     if (!SCREENS.includes(screen)) return;
     currentScreen = screen;
 
+    // Скрыть все экраны приложения
     document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active'));
+
+    // Показать нужный
     document.getElementById(`screen-${screen}`).classList.add('active');
+
+    // Обновить нав
     document.querySelectorAll('#bottom-nav .nav-item').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.screen === screen);
     });
 
+    // Отрендерить экран
     switch (screen) {
       case 'day':     DayScreen.render();     break;
       case 'week':    WeekScreen.render();    break;
@@ -82,6 +91,7 @@ const App = (() => {
       case 'profile': ProfileScreen.render(); break;
     }
 
+    // Скролл наверх
     document.getElementById(`screen-${screen}`).scrollTop = 0;
   }
 
@@ -89,4 +99,5 @@ const App = (() => {
 
 })();
 
+// Старт
 document.addEventListener('DOMContentLoaded', () => App.init());

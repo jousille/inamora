@@ -2,9 +2,9 @@
 
 const DayScreen = (() => {
 
-  const SCORES = [-10, -5, -3, 0, 3, 5, 10];
-  const SCORE_LABELS  = { '-10':'−10', '-5':'−5', '-3':'−3', '0':'0', '3':'+3', '5':'+5', '10':'+10' };
-  const SCORE_CLASSES = { '-10':'chip-n10', '-5':'chip-n5', '-3':'chip-n3', '0':'chip-0', '3':'chip-p3', '5':'chip-p5', '10':'chip-p10' };
+  const SCORES = [-10, -5, -3, 0, 3, 5];
+  const SCORE_LABELS  = { '-10':'−10', '-5':'−5', '-3':'−3', '0':'0', '3':'+3', '5':'+5' };
+  const SCORE_CLASSES = { '-10':'chip-n10', '-5':'chip-n5', '-3':'chip-n3', '0':'chip-0', '3':'chip-p3', '5':'chip-p5' };
   const DAYS_RU    = ['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье'];
   const DAYS_SHORT = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
 
@@ -45,11 +45,12 @@ const DayScreen = (() => {
       </div>
 
       <div class="strip" id="day-strip">
-        ${dayScores.map((s, i) => {
+        ${DAYS_SHORT.map((d, i) => {
+          const s = DB.getDayScore(state.week, i + 1);
           const cls = s > 0 ? 'pos' : s < 0 ? 'neg' : '';
           const lbl = s > 0 ? `+${s}` : s === 0 ? '·' : `${s}`;
           return `<button class="strip-pill ${i + 1 === state.day ? 'active' : ''}" data-day="${i + 1}">
-            <span class="p-name">${DAYS_SHORT[i]}</span>
+            <span class="p-name">${d}</span>
             <span class="p-score ${cls}">${lbl}</span>
           </button>`;
         }).join('')}

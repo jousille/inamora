@@ -120,7 +120,7 @@ const WeekScreen = (() => {
           <div class="vd-row">
             <span class="vd-num">${i + 1}</span>
             <span class="vd-name">${escHtml(item.name)}</span>
-            <span class="vd-chip ${item.score === 10 ? 'pos10' : item.score === -10 ? 'neg' : type}">${item.score > 0 ? '+' : ''}${item.score}</span>
+            <span class="vd-chip ${type}">${item.score > 0 ? '+' : ''}${item.score}</span>
           </div>
         `).join('')}
       </div>

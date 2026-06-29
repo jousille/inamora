@@ -137,7 +137,7 @@ const ProfileScreen = (() => {
     }
 
     document.getElementById('export-btn').addEventListener('click', () => {
-      await exportData();
+      exportData();
     });
 
     document.getElementById('import-btn').addEventListener('click', () => {
