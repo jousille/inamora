@@ -2,9 +2,9 @@
 
 const DayScreen = (() => {
 
-  const SCORES = [-10, -5, -3, 0, 3, 5];
-  const SCORE_LABELS  = { '-10':'−10', '-5':'−5', '-3':'−3', '0':'0', '3':'+3', '5':'+5' };
-  const SCORE_CLASSES = { '-10':'chip-n10', '-5':'chip-n5', '-3':'chip-n3', '0':'chip-0', '3':'chip-p3', '5':'chip-p5' };
+  const SCORES = [-10, -5, -3, 0, 3, 5, 10];
+  const SCORE_LABELS  = { '-10':'−10', '-5':'−5', '-3':'−3', '0':'0', '3':'+3', '5':'+5', '10':'+10' };
+  const SCORE_CLASSES = { '-10':'chip-n10', '-5':'chip-n5', '-3':'chip-n3', '0':'chip-0', '3':'chip-p3', '5':'chip-p5', '10':'chip-p10' };
   const DAYS_RU    = ['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье'];
   const DAYS_SHORT = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
 
@@ -26,11 +26,9 @@ const DayScreen = (() => {
     dayDate.setDate(startDate.getDate() + (state.week - 1) * 7 + (state.day - 1));
 
     const dateStr = dayDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
-    // Реальный день недели из даты
-    const realDayOfWeek = dayDate.getDay(); // 0=вс,1=пн,...,6=сб
     const DAYS_REAL = ['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'];
     const DAYS_SHORT_REAL = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
-    const realDayName = DAYS_REAL[realDayOfWeek];
+    const realDayName = DAYS_REAL[dayDate.getDay()];
     const tasks = DB.getTasks(state.week, state.day);
     const dayScore = DB.getDayScore(state.week, state.day);
 
@@ -110,6 +108,13 @@ const DayScreen = (() => {
         <div class="score-chip ${chipClass}" data-id="${task.id}">${chipLabel}</div>
       </div>
       ${isSelected ? renderPicker(task.id) : ''}
+      ${isSelected ? `
+      <div class="task-delete-row">
+        <button class="task-delete-btn" data-delete="${task.id}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+          Удалить дело
+        </button>
+      </div>` : ''}
     `;
   }
 
@@ -179,6 +184,16 @@ const DayScreen = (() => {
         const score = parseInt(btn.dataset.score);
         const taskId = parseInt(btn.dataset.task);
         DB.updateTask(state.week, state.day, taskId, { score });
+        state.selectedTaskId = null;
+        render();
+      });
+    });
+
+    // Удалить задачу
+    document.querySelectorAll('.task-delete-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = parseInt(btn.dataset.delete);
+        DB.deleteTask(state.week, state.day, id);
         state.selectedTaskId = null;
         render();
       });
