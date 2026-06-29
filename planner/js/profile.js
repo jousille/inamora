@@ -105,6 +105,20 @@ const ProfileScreen = (() => {
         <input type="file" id="import-file" accept=".json" style="display:none">
         <div id="import-status" style="font-size:12px; color:var(--mid-dk); text-align:center; min-height:16px; margin-top:4px;"></div>
 
+        <div class="section-label" style="margin-top:20px">Данные</div>
+        <div class="data-actions">
+          <button class="data-btn export" id="export-btn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Сохранить резервную копию
+          </button>
+          <button class="data-btn import" id="import-btn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Восстановить из копии
+          </button>
+        </div>
+        <input type="file" id="import-file" accept=".json" style="display:none">
+        <div id="import-status" style="font-size:12px;color:var(--mid-dk);text-align:center;min-height:16px;margin-top:4px;"></div>
+
         <div class="section-label" style="margin-top:20px">Аккаунт</div>
         <div class="profile-row">
           <span class="pr-label">Код доступа</span>
@@ -168,6 +182,42 @@ const ProfileScreen = (() => {
         Auth.logout();
         App.showAuth();
       }
+    });
+
+    document.getElementById('export-btn').addEventListener('click', () => {
+      const json = DB.exportAllData();
+      const blob = new Blob([json], { type: 'application/json' });
+      const url  = URL.createObjectURL(blob);
+      const date = new Date().toISOString().split('T')[0];
+      const a    = document.createElement('a');
+      a.href = url;
+      a.download = `planer-backup-${date}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      DB.markExported();
+    });
+
+    document.getElementById('import-btn').addEventListener('click', () => {
+      document.getElementById('import-file').click();
+    });
+
+    document.getElementById('import-file').addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        try {
+          DB.importAllData(ev.target.result);
+          document.getElementById('import-status').textContent = '✓ Данные восстановлены';
+          document.getElementById('import-status').style.color = 'var(--pos-5-tx)';
+          setTimeout(() => render(), 1200);
+        } catch (err) {
+          document.getElementById('import-status').textContent = '✗ Ошибка — проверьте файл';
+          document.getElementById('import-status').style.color = 'var(--neg-10-tx)';
+        }
+      };
+      reader.readAsText(file);
+      e.target.value = '';
     });
   }
 

@@ -217,6 +217,36 @@ const DB = (() => {
     setMonthMeta({ ...meta, deleted: true }, monthIdx);
   }
 
+  // ── Автоэкспорт ──────────────────────────────────────────────
+
+  function checkAutoExport() {
+    const lastRaw  = localStorage.getItem(key('last_export'));
+    const lastDate = lastRaw ? new Date(lastRaw) : null;
+    const daysSince = lastDate
+      ? Math.floor((new Date() - lastDate) / 86400000)
+      : 999;
+    return daysSince >= 7;
+  }
+
+  function markExported() {
+    localStorage.setItem(key('last_export'), new Date().toISOString());
+  }
+
+  function exportAllData() {
+    const data = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith('planer_' + _token)) data[k] = localStorage.getItem(k);
+    }
+    return JSON.stringify({ version: 3, token: _token, exportedAt: new Date().toISOString(), data }, null, 2);
+  }
+
+  function importAllData(jsonStr) {
+    const backup = JSON.parse(jsonStr);
+    if (!backup.data) throw new Error('Неверный формат файла');
+    Object.entries(backup.data).forEach(([k, v]) => localStorage.setItem(k, v));
+  }
+
   return {
     init, getToken,
     getTasks, saveTasks, addTask, updateTask, deleteTask,
@@ -228,6 +258,7 @@ const DB = (() => {
     getCurrentMonthIndex,
     getArchiveList, getMonthMeta, setMonthMeta, startNewMonth,
     getMeta, setMeta, deleteArchivedMonth,
+    checkAutoExport, markExported, exportAllData, importAllData,
   };
 
 })();
