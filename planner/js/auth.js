@@ -8,7 +8,8 @@ const Auth = (() => {
   // Формат: 'КОД': { expires: null или 'YYYY-MM-DD' }
   // null = бессрочный доступ
   const VALID_TOKENS = {
-    'INAMORA-DEMO':  { expires: null },
+    'INAMORA':  { expires: null },
+    'NINA':  { expires: null },
     // Добавляйте токены для каждого покупателя:
     // 'INAMORA-XXXXX': { expires: null },
   };
