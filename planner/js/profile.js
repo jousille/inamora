@@ -111,6 +111,9 @@ const ProfileScreen = (() => {
           <span class="pr-value">${token || '—'}</span>
         </div>
 
+        <button class="unlink-btn" id="unlink-btn">Отвязать это устройство</button>
+        <p class="unlink-hint">Используйте при смене телефона — освободит код для нового устройства</p>
+
         <a href="https://inamora.ru" style="display:block; text-align:center; margin-top:16px; font-size:12px; color:var(--accent); text-decoration:none; opacity:.7;">© Юля Инамора | inamora.ru</a>
 
         <button class="logout-btn" id="logout-btn">Выйти из планера</button>
@@ -161,6 +164,30 @@ const ProfileScreen = (() => {
       };
       reader.readAsText(file);
       e.target.value = '';
+    });
+
+    document.getElementById('unlink-btn').addEventListener('click', async () => {
+      if (!confirm('Отвязать это устройство?\n\nКод доступа освободится — сможете использовать его на новом устройстве. Повторная отвязка возможна не раньше чем через 14 дней.')) return;
+
+      const btn = document.getElementById('unlink-btn');
+      btn.disabled = true;
+      btn.textContent = 'Отвязываем...';
+
+      const result = await Auth.unlinkDevice();
+
+      if (result.ok) {
+        alert('Готово! Устройство отвязано. Теперь можете войти с этим кодом на другом устройстве.');
+        Auth.logout();
+        App.showAuth();
+      } else if (result.reason === 'limit') {
+        alert(`Слишком часто. Повторная отвязка возможна через ${result.daysLeft} дн.`);
+        btn.disabled = false;
+        btn.textContent = 'Отвязать это устройство';
+      } else {
+        alert('Не удалось отвязать устройство — проверьте интернет.');
+        btn.disabled = false;
+        btn.textContent = 'Отвязать это устройство';
+      }
     });
 
     document.getElementById('logout-btn').addEventListener('click', () => {

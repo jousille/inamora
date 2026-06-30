@@ -48,17 +48,30 @@ const App = (() => {
     const btn    = document.getElementById('token-submit');
     const errEl  = document.getElementById('token-error');
 
-    function tryLogin() {
+    async function tryLogin() {
       const val = input.value.trim();
       if (!val) return;
-      const token = Auth.login(val);
-      if (token) {
+
+      btn.disabled = true;
+      const origText = btn.textContent;
+      btn.textContent = 'Проверяем...';
+
+      const result = await Auth.login(val);
+
+      if (result.ok) {
         errEl.textContent = '';
-        startApp(token);
+        startApp(val.trim().toUpperCase());
       } else {
-        errEl.textContent = 'Неверный код доступа';
+        let msg = 'Не удалось войти, попробуйте снова';
+        if (result.reason === 'not_found') msg = 'Неверный код доступа';
+        if (result.reason === 'busy')      msg = `Код уже используется на другом устройстве (${result.deviceName}). Отвяжите его в профиле на том устройстве.`;
+        if (result.reason === 'network')   msg = 'Нет связи с сервером — проверьте интернет';
+
+        errEl.textContent = msg;
         input.style.borderColor = 'var(--neg-10-tx)';
         setTimeout(() => { input.style.borderColor = ''; }, 1500);
+        btn.disabled = false;
+        btn.textContent = origText;
       }
     }
 
