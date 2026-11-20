@@ -6,18 +6,35 @@ const App = (() => {
 
   let currentScreen = 'day';
 
-  function init() {
+  async function init() {
     if (Auth.isLoggedIn()) {
+      // Еженедельная фоновая проверка токена в Supabase
+      const verifyResult = await Auth.verify();
+
+      if (verifyResult === 'expired') {
+        showAuth('Срок действия токена истёк. Получи новый токен в боте.');
+        return;
+      }
+      if (verifyResult === 'revoked') {
+        showAuth('Доступ отозван. Обратись к администратору.');
+        return;
+      }
+
       startApp(Auth.currentToken());
     } else {
       showAuth();
     }
   }
 
-  function showAuth() {
+  function showAuth(errorMsg) {
     document.getElementById('screen-auth').classList.add('active');
     document.getElementById('app').classList.remove('active');
     bindAuthEvents();
+
+    if (errorMsg) {
+      const errEl = document.getElementById('token-error');
+      if (errEl) errEl.textContent = errorMsg;
+    }
   }
 
   function startApp(token) {
@@ -64,6 +81,7 @@ const App = (() => {
       } else {
         let msg = 'Не удалось войти, попробуйте снова';
         if (result.reason === 'not_found') msg = 'Неверный код доступа';
+        if (result.reason === 'expired')   msg = 'Срок действия токена истёк. Получи новый токен в боте.';
         if (result.reason === 'busy')      msg = `Код уже используется на другом устройстве (${result.deviceName}). Отвяжите его в профиле на том устройстве.`;
         if (result.reason === 'network')   msg = 'Нет связи с сервером — проверьте интернет';
 

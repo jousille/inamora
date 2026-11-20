@@ -1,13 +1,16 @@
 // ── auth.js — авторизация по токену через Supabase ────────────
 // Токен привязывается к устройству — один токен = один телефон одновременно.
+// Проверка актуальности токена в Supabase — раз в 7 дней.
 
 const Auth = (() => {
 
   const SUPABASE_URL = 'https://lrogbpoacfrkvgxsyjoq.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxyb2dicG9hY2Zya3ZneHN5am9xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3ODQwNjYsImV4cCI6MjA5ODM2MDA2Nn0.CMSzhdFPqmbNfvIO9-8zNGIJYztzowIomgqNKf0ghUI';
 
-  const SESSION_KEY = 'planer_session';
-  const DEVICE_KEY  = 'planer_device_id';
+  const SESSION_KEY      = 'planer_session';
+  const DEVICE_KEY       = 'planer_device_id';
+  const VERIFY_KEY       = 'planer_last_verify';   // timestamp последней проверки
+  const VERIFY_INTERVAL  = 7 * 24 * 60 * 60 * 1000; // 7 дней в мс
 
   // ── REST API запросы к Supabase (без SDK, чистый fetch) ───────
 
@@ -43,6 +46,13 @@ const Auth = (() => {
     return 'Браузер';
   }
 
+  // ── Проверка истечения токена ─────────────────────────────────
+
+  function isExpired(expiresAt) {
+    if (!expiresAt) return false; // null = бессрочный
+    return new Date(expiresAt) < new Date();
+  }
+
   // ── Авторизация ──────────────────────────────────────────────
 
   async function login(tokenInput) {
@@ -58,6 +68,11 @@ const Auth = (() => {
         return { ok: false, reason: 'not_found' };
       }
 
+      // ── Проверка срока действия ───────────────────────────────
+      if (isExpired(data.expires_at)) {
+        return { ok: false, reason: 'expired' };
+      }
+
       if (!data.device_id || data.device_id === deviceId) {
         await sbFetch(`tokens?token=eq.${encodeURIComponent(token)}`, {
           method: 'PATCH',
@@ -70,6 +85,7 @@ const Auth = (() => {
         });
 
         localStorage.setItem(SESSION_KEY, JSON.stringify({ token, deviceId, loginAt: Date.now() }));
+        localStorage.setItem(VERIFY_KEY, Date.now().toString());
         return { ok: true };
       }
 
@@ -79,6 +95,53 @@ const Auth = (() => {
       return { ok: false, reason: 'network' };
     }
   }
+
+  // ── Еженедельная фоновая верификация ─────────────────────────
+  // Вызывается при старте приложения. Если прошло >7 дней —
+  // проверяет в Supabase что токен ещё действителен.
+  // Возвращает: 'skip' | 'ok' | 'expired' | 'revoked' | 'error'
+
+  async function verify() {
+    const session = getSession();
+    if (!session) return 'skip';
+
+    const lastVerify = parseInt(localStorage.getItem(VERIFY_KEY) || '0', 10);
+    const elapsed = Date.now() - lastVerify;
+
+    if (elapsed < VERIFY_INTERVAL) return 'skip'; // ещё рано
+
+    try {
+      const rows = await sbFetch(`tokens?token=eq.${encodeURIComponent(session.token)}&select=expires_at,device_id,used`);
+      const data = rows[0];
+
+      if (!data) {
+        // токен удалён из базы
+        logout();
+        return 'revoked';
+      }
+
+      if (isExpired(data.expires_at)) {
+        logout();
+        return 'expired';
+      }
+
+      // device_id изменился — токен перепривязан к другому устройству
+      if (data.device_id && data.device_id !== session.deviceId) {
+        logout();
+        return 'revoked';
+      }
+
+      // всё в порядке — обновляем метку
+      localStorage.setItem(VERIFY_KEY, Date.now().toString());
+      return 'ok';
+
+    } catch (e) {
+      // сеть недоступна — не выгоняем пользователя, просто пропускаем
+      return 'error';
+    }
+  }
+
+  // ── Отвязка устройства ───────────────────────────────────────
 
   async function unlinkDevice() {
     const session = getSession();
@@ -101,6 +164,7 @@ const Auth = (() => {
       });
 
       localStorage.removeItem(SESSION_KEY);
+      localStorage.removeItem(VERIFY_KEY);
       return { ok: true };
 
     } catch (e) {
@@ -110,6 +174,7 @@ const Auth = (() => {
 
   function logout() {
     localStorage.removeItem(SESSION_KEY);
+    localStorage.removeItem(VERIFY_KEY);
   }
 
   function getSession() {
@@ -126,6 +191,6 @@ const Auth = (() => {
     return !!currentToken();
   }
 
-  return { login, unlinkDevice, logout, currentToken, isLoggedIn, getDeviceId };
+  return { login, verify, unlinkDevice, logout, currentToken, isLoggedIn, getDeviceId };
 
 })();
