@@ -2,7 +2,7 @@
 
 const App = (() => {
 
-  const SCREENS = ['day', 'week', 'month', 'profile'];
+  const SCREENS = ['day', 'habits', 'week', 'month', 'profile'];
 
   let currentScreen = 'day';
 
@@ -52,6 +52,7 @@ const App = (() => {
 
     bindNavEvents();
     DayScreen.initToday();
+    HabitsScreen.init();
     navigateTo('day');
 
     // Автоэкспорт — раз в 7 дней
@@ -122,6 +123,7 @@ const App = (() => {
     // Отрендерить экран
     switch (screen) {
       case 'day':     DayScreen.render();     break;
+      case 'habits':  HabitsScreen.render();  break;
       case 'week':    WeekScreen.render();    break;
       case 'month':   MonthScreen.render();   break;
       case 'profile': ProfileScreen.render(); break;

@@ -217,6 +217,93 @@ const DB = (() => {
     setMonthMeta({ ...meta, deleted: true }, monthIdx);
   }
 
+  // ── Привычки ─────────────────────────────────────────────────
+
+  function getHabits() {
+    const raw = localStorage.getItem(key('habits'));
+    return raw ? JSON.parse(raw) : [];
+  }
+
+  function saveHabits(habits) {
+    localStorage.setItem(key('habits'), JSON.stringify(habits));
+  }
+
+  function addHabit({ name, sphereId, energy }) {
+    const habits = getHabits();
+    habits.push({ id: Date.now(), name, sphereId, energy: energy || 3, createdAt: new Date().toISOString() });
+    saveHabits(habits);
+    return habits;
+  }
+
+  function deleteHabit(id) {
+    saveHabits(getHabits().filter(h => h.id !== id));
+  }
+
+  // Ключ для хранения отметок одной недели
+  // weekOffset: 0 = текущая неделя, -1 = прошлая, итд.
+  // Храним абсолютный ISO-ключ начала недели (понедельник)
+  function _weekKey(weekOffset) {
+    const now = new Date();
+    const dow = now.getDay() || 7;
+    const mon = new Date(now);
+    mon.setDate(now.getDate() - (dow - 1) + weekOffset * 7);
+    mon.setHours(0, 0, 0, 0);
+    return key('comp', mon.toISOString().slice(0, 10));
+  }
+
+  // Возвращает объект { [habitId]: [bool×7] }
+  function getCompletionsForWeek(weekOffset) {
+    const raw = localStorage.getItem(_weekKey(weekOffset));
+    return raw ? JSON.parse(raw) : {};
+  }
+
+  function toggleCompletion(habitId, weekOffset, dayIndex) {
+    const comp = getCompletionsForWeek(weekOffset);
+    if (!comp[habitId]) comp[habitId] = Array(7).fill(false);
+    comp[habitId][dayIndex] = !comp[habitId][dayIndex];
+    localStorage.setItem(_weekKey(weekOffset), JSON.stringify(comp));
+  }
+
+  // Получить выполненные привычки за конкретную дату (для дневника)
+  function getCompletionsForDate(dateStr) {
+    // dateStr = 'YYYY-MM-DD'
+    const date = new Date(dateStr);
+    const dow = date.getDay() || 7;
+    const mon = new Date(date);
+    mon.setDate(date.getDate() - (dow - 1));
+    mon.setHours(0, 0, 0, 0);
+    const wKey = key('comp', mon.toISOString().slice(0, 10));
+    const comp = JSON.parse(localStorage.getItem(wKey) || '{}');
+    const dayIdx = dow - 1; // 0=пн..6=вс
+    const result = {};
+    for (const hId of Object.keys(comp)) {
+      result[hId] = comp[hId][dayIdx] || false;
+    }
+    return result;
+  }
+
+  function toggleCompletionByDate(habitId, dateStr) {
+    const date = new Date(dateStr);
+    const dow = date.getDay() || 7;
+    const mon = new Date(date);
+    mon.setDate(date.getDate() - (dow - 1));
+    mon.setHours(0, 0, 0, 0);
+    const wKey = key('comp', mon.toISOString().slice(0, 10));
+    const comp = JSON.parse(localStorage.getItem(wKey) || '{}');
+    const dayIdx = dow - 1;
+    if (!comp[habitId]) comp[habitId] = Array(7).fill(false);
+    comp[habitId][dayIdx] = !comp[habitId][dayIdx];
+    localStorage.setItem(wKey, JSON.stringify(comp));
+    return comp[habitId][dayIdx]; // новое состояние
+  }
+
+  // Суммарный бонус привычек за дату
+  function getHabitsEnergyForDate(dateStr) {
+    const habits = getHabits();
+    const comp = getCompletionsForDate(dateStr);
+    return habits.reduce((sum, h) => sum + (comp[h.id] ? h.energy : 0), 0);
+  }
+
   // ── Автоэкспорт ──────────────────────────────────────────────
 
   function checkAutoExport() {
@@ -250,6 +337,9 @@ const DB = (() => {
   return {
     init, getToken,
     getTasks, saveTasks, addTask, updateTask, deleteTask,
+    getHabits, saveHabits, addHabit, deleteHabit,
+    getCompletionsForWeek, toggleCompletion,
+    getCompletionsForDate, toggleCompletionByDate, getHabitsEnergyForDate,
     getReflection, saveReflection,
     getDayScore, getWeekScore,
     getWeekVampires, getWeekDonors,

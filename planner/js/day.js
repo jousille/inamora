@@ -30,7 +30,8 @@ const DayScreen = (() => {
     const DAYS_SHORT_REAL = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
     const realDayName = DAYS_REAL[dayDate.getDay()];
     const tasks = DB.getTasks(state.week, state.day);
-    const dayScore = DB.getDayScore(state.week, state.day);
+    const habitsBonus = DB.getHabitsEnergyForDate(dayDate.toISOString().slice(0, 10));
+    const dayScore = DB.getDayScore(state.week, state.day) + habitsBonus;
 
     const maxAbs = 50;
     const fillPct = Math.min(100, Math.max(0, ((dayScore + maxAbs) / (maxAbs * 2)) * 100));
@@ -82,6 +83,8 @@ const DayScreen = (() => {
           </div>
           <span class="add-task-text">Добавить дело</span>
         </button>` : ''}
+
+        ${renderHabitsSection(dayDate.toISOString().slice(0, 10))}
       </div>
     `;
 
@@ -225,10 +228,64 @@ const DayScreen = (() => {
     sel.addRange(range);
   }
 
+  // ── Привычки в дневнике ───────────────────────────────────────
+
+  function renderHabitsSection(dateStr) {
+    const habits = DB.getHabits();
+    if (habits.length === 0) return '';
+
+    const comp = DB.getCompletionsForDate(dateStr);
+
+    const SPHERES = {
+      energy: '🔥', self: '💛', work: '💼', love: '💞',
+      home: '🏡', growth: '🌱', values: '✨'
+    };
+    const SPHERE_NAMES = {
+      energy: 'Энергия и тело', self: 'Я и только я', work: 'Дело и деньги',
+      love: 'Отношения', home: 'Пространство', growth: 'Саморазвитие', values: 'Ценности'
+    };
+
+    const rows = habits.map(h => {
+      const done = comp[h.id] || false;
+      const sphereEmoji = SPHERES[h.sphereId] || '·';
+      const sphereName  = SPHERE_NAMES[h.sphereId] || '';
+      return `
+        <div class="habit-day-row ${done ? 'hab-done' : ''}" data-hab="${h.id}" data-date="${dateStr}">
+          <div class="hab-check" onclick="DayScreen.toggleHabit('${h.id}', '${dateStr}')">
+            ${done
+              ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`
+              : ''}
+          </div>
+          <div class="hab-info">
+            <span class="hab-name">${escHtml(h.name)}</span>
+            <span class="hab-sphere">${sphereEmoji} ${sphereName}</span>
+          </div>
+          <span class="hab-weight ${done ? 'hw-done' : ''}">+${h.energy}</span>
+        </div>`;
+    }).join('');
+
+    return `
+      <div class="section-label" style="margin-top:20px">
+        Привычки
+        <a class="to-habits-link" onclick="App.navigateTo('habits')">все →</a>
+      </div>
+      <div class="habits-day-list" id="habits-day-list">${rows}</div>`;
+  }
+
+  function toggleHabit(habitId, dateStr) {
+    DB.toggleCompletionByDate(habitId, dateStr);
+    render();
+  }
+
+  // Вызывается из HabitsScreen при изменении привычки
+  function refreshHabits() {
+    render();
+  }
+
   function escHtml(str) {
     return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 
-  return { render, initToday, getState: () => state };
+  return { render, initToday, getState: () => state, toggleHabit, refreshHabits };
 
 })();
