@@ -4,7 +4,7 @@ meta:
   toolVersion: 3.11
   projectType: app
 build:
-  requirementsPath: requirements.txt
+  requirementsPath: bot/requirements.txt
 run:
   persistenceMount: /data
-  command: python bot.py
+  command: python bot/bot.py
