@@ -2,13 +2,11 @@ import os, random, string, requests
 from datetime import datetime, timedelta, timezone
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
-from telegram.request import HTTPXRequest
 
 BOT_TOKEN = os.environ['BOT_TOKEN']
 ADMIN_ID = int(os.environ['ADMIN_ID'])
 SUPABASE_URL = os.environ['SUPABASE_URL']
 SUPABASE_KEY = os.environ['SUPABASE_SERVICE_KEY']
-PROXY = "socks5://184.178.172.5:15303"
 
 def sb_headers():
     return {'apikey': SUPABASE_KEY, 'Authorization': f'Bearer {SUPABASE_KEY}',
@@ -90,10 +88,7 @@ async def cmd_revoke(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     sb_delete_token(token)
     await update.message.reply_text(f"🗑 Токен `{token}` удалён", parse_mode='Markdown')
 
-os.environ['PYTHONHTTPSVERIFY'] = '0'
-import ssl; ssl._create_default_https_context = ssl._create_unverified_context
-request = HTTPXRequest(proxy=PROXY)
-app = ApplicationBuilder().token(BOT_TOKEN).request(request).build()
+app = ApplicationBuilder().token(BOT_TOKEN).build()
 app.add_handler(CommandHandler("start", cmd_start))
 app.add_handler(CommandHandler("help", cmd_help))
 app.add_handler(CommandHandler("addtoken", cmd_addtoken))
