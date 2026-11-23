@@ -1,7 +1,9 @@
 ---
 meta:
   environment: python
-  toolVersion: 3.11
+  toolchain:
+    name: pip
+    version: "3.11"
   projectType: app
 build:
   requirementsPath: bot/requirements.txt
