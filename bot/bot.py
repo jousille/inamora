@@ -90,6 +90,8 @@ async def cmd_revoke(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     sb_delete_token(token)
     await update.message.reply_text(f"🗑 Токен `{token}` удалён", parse_mode='Markdown')
 
+os.environ['PYTHONHTTPSVERIFY'] = '0'
+import ssl; ssl._create_default_https_context = ssl._create_unverified_context
 request = HTTPXRequest(proxy=PROXY)
 app = ApplicationBuilder().token(BOT_TOKEN).request(request).build()
 app.add_handler(CommandHandler("start", cmd_start))
