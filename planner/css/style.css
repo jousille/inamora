@@ -560,7 +560,7 @@ input[type="date"].ref-input {
   border: 0.5px solid var(--mid);
 }
 .habit-top     { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
-.habit-name    { font-size:14px; font-weight:500; color:var(--dark); flex:1; }
+.habit-name    { font-size:16px; font-weight:500; color:var(--dark); flex:1; }
 .habit-streak  { font-size:11px; color:var(--mid-dk); background:var(--light); border-radius:20px; padding:2px 8px; white-space:nowrap; flex-shrink:0; }
 
 /* ── Строка точек (дни недели) ───────────────────────────────── */
@@ -734,10 +734,12 @@ input[type="date"].ref-input {
 .hab-content { padding-top: 16px; }
 
 /* Дата в навигации привычек — диапазон вместо «Неделя N» */
+#screen-habits .week-nav { width: auto; display: inline-flex; }
 #screen-habits .week-nav-label {
-  min-width: 140px;
+  min-width: 0;
   text-transform: none;
   letter-spacing: 0;
   font-size: 12px;
   text-align: left;
+  white-space: nowrap;
 }
