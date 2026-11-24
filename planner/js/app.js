@@ -84,7 +84,7 @@ const App = (() => {
         if (result.reason === 'not_found') msg = 'Неверный код доступа';
         if (result.reason === 'expired')   msg = 'Срок действия токена истёк. Получи новый токен в боте.';
         if (result.reason === 'busy')      msg = `Код уже используется на другом устройстве (${result.deviceName}). Отвяжите его в профиле на том устройстве.`;
-        if (result.reason === 'network')   msg = 'Нет связи с сервером — проверьте интернет';
+        if (result.reason === 'network')   msg = 'Нет связи с сервером − проверьте интернет';
 
         errEl.textContent = msg;
         input.style.borderColor = 'var(--neg-10-tx)';
@@ -146,7 +146,7 @@ const App = (() => {
     banner.innerHTML = `
       <div style="flex:1">
         <div style="font-size:13px;color:var(--lighter);font-weight:500;margin-bottom:2px">Сохраните резервную копию</div>
-        <div style="font-size:11px;color:var(--acc-lt)">Прошло 7 дней — скачайте копию данных</div>
+        <div style="font-size:11px;color:var(--acc-lt)">Прошло 7 дней − скачайте копию данных</div>
       </div>
       <button id="export-banner-yes" style="background:var(--accent);color:var(--dark);border:none;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap">Сохранить</button>
       <button id="export-banner-no" style="background:transparent;color:var(--acc-lt);border:none;padding:8px;cursor:pointer;font-size:20px;line-height:1">×</button>

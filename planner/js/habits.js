@@ -31,7 +31,7 @@ const HabitsScreen = (() => {
 
     const mon = getWeekStart(weekOffset);
     const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
-    const range = `${mon.getDate()} ${MONTHS_SHORT[mon.getMonth()]} — ${sun.getDate()} ${MONTHS_SHORT[sun.getMonth()]}`;
+    const range = `${mon.getDate()} ${MONTHS_SHORT[mon.getMonth()]} − ${sun.getDate()} ${MONTHS_SHORT[sun.getMonth()]}`;
     const isPast = weekOffset < 0;
     const todayDow = (new Date().getDay() || 7) - 1; // 0=пн..6=вс
 

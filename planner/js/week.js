@@ -107,7 +107,7 @@ const WeekScreen = (() => {
       : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>`;
 
     if (!items.length) {
-      return `<div class="empty-state" style="padding:16px">Данных пока нет — заполните дни недели</div>`;
+      return `<div class="empty-state" style="padding:16px">Данных пока нет − заполните дни недели</div>`;
     }
 
     return `
@@ -154,7 +154,7 @@ const WeekScreen = (() => {
     const to = new Date(from);
     to.setDate(from.getDate() + 6);
     const fmt = d => d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
-    return `${fmt(from)} — ${fmt(to)}`;
+    return `${fmt(from)} − ${fmt(to)}`;
   }
 
   function countTasks(week) {

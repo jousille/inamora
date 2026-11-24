@@ -81,7 +81,7 @@ const MonthScreen = (() => {
 
     // Центр
     const totals = Object.values(stats).reduce((a,s)=>({done:a.done+s.done,total:a.total+s.total}),{done:0,total:0});
-    const avg = totals.total ? Math.round(100*totals.done/totals.total)+'%' : '—';
+    const avg = totals.total ? Math.round(100*totals.done/totals.total)+'%' : '−';
     html += `<circle cx="${cx}" cy="${cy}" r="${Rmin}" fill="var(--dark)"/>`;
     html += `<text x="${cx}" y="${cy - 4}" text-anchor="middle" font-size="7" fill="#B58E8E" font-family="var(--font-sans)" letter-spacing="1">ВСЕГО</text>`;
     html += `<text x="${cx}" y="${cy + 11}" text-anchor="middle" font-size="15" font-weight="500" fill="var(--lighter)" font-family="var(--font-sans)">${avg}</text>`;
@@ -105,7 +105,7 @@ const MonthScreen = (() => {
           <div class="ssr-body">
             <div class="ssr-top">
               <span class="ssr-name">${s.name}</span>
-              <span class="ssr-pct">${st.total ? st.pct+'%' : '—'}</span>
+              <span class="ssr-pct">${st.total ? st.pct+'%' : '−'}</span>
             </div>
             <div class="ssr-track">
               <div class="ssr-fill" style="width:${st.pct}%; background:${color}"></div>
@@ -238,7 +238,7 @@ const MonthScreen = (() => {
 
   function renderVD(items, type, title) {
     if (!items.length) {
-      return `<div class="empty-state" style="padding:16px">Заполните дни — данные появятся автоматически</div>`;
+      return `<div class="empty-state" style="padding:16px">Заполните дни − данные появятся автоматически</div>`;
     }
     return `
       <div class="vd-card">
