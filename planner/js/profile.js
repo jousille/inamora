@@ -208,7 +208,7 @@ const ProfileScreen = (() => {
       <div class="profile-section">
 
         <div class="guide-hero">
-          <div class="guide-hero-title">Дневник<br>энергии</div>
+          <div class="guide-hero-title">Дневник энергии<br>и привычек</div>
           <div class="guide-hero-sub">Юля Инамора · inamora.ru</div>
         </div>
 
