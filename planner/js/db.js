@@ -356,6 +356,25 @@ const DB = (() => {
     const comp = getCompletionsForDate(dateStr);
     return getHabits().reduce((sum,h)=>sum+(comp[h.id] ? Number(h.energy)||0 : 0),0);
   }
+  function getSpherePresence(monthIdx = getCurrentMonthIndex()) {
+    const stats=Object.fromEntries(SPHERES.map(s=>[s.id,{all:0,tasks:0,habits:0}]));
+    const today=localDate();
+    const meta=monthIdx===getCurrentMonthIndex()?{}:getMonthMeta(monthIdx);
+    const end=meta.archivedAt?localDate(new Date(meta.archivedAt)):today;
+    let days=0;
+    const habits=getHabits();
+    for(let w=1;w<=4;w++) for(let d=1;d<=7;d++){
+      const date=dateForDay(w,d,monthIdx);
+      if(!date||date>today||date>end) continue;
+      days++;
+      const tasks=new Set(getTasks(w,d,monthIdx).filter(t=>String(t.name||'').trim()).map(t=>normalizeSphere(t.sphereId)));
+      const comp=getCompletionsForDate(date);
+      const done=new Set(habits.filter(h=>comp[h.id]).map(h=>normalizeSphere(h.sphereId)));
+      for(const s of SPHERES){const st=stats[s.id];if(tasks.has(s.id))st.tasks++;if(done.has(s.id))st.habits++;if(tasks.has(s.id)||done.has(s.id))st.all++;}
+    }
+    return {days,stats};
+  }
+
   function getHabitsSphereStats(monthIdx = getCurrentMonthIndex()) {
     const stats = {};
     const today = localDate();
@@ -414,7 +433,7 @@ const DB = (() => {
     getCompletionsForDate, toggleCompletionByDate, getHabitsEnergyForDate,
     getHabitsSphereStats,
     getReflection, saveReflection,
-    getDayScore, getWeekScore, getSphereEnergy,
+    getDayScore, getWeekScore, getSphereEnergy, getSpherePresence,
     getWeekVampires, getWeekDonors,
     getMonthVampires, getMonthDonors,
     getTodayPosition,

@@ -18,6 +18,27 @@ const MonthScreen = (() => {
     '#6A8BB8', '#9B6AB8', '#B86A9B',
   ];
 
+  let presenceMode='all', presencePercent=false;
+  function renderPresence(){
+    const {days,stats}=DB.getSpherePresence();
+    const fmt=n=>presencePercent?(days?Math.round(n/days*100)+'%':'−'):n+' из '+days;
+    const pt=(r,i)=>[150+r*Math.sin(i*2*Math.PI/7),145-r*Math.cos(i*2*Math.PI/7)];
+    const points=SPHERES.map((s,i)=>pt(100*stats[s.id][presenceMode]/Math.max(1,days),i).join(',')).join(' ');
+    return '<div class="presence-controls">'+[['all','Всё'],['tasks','Дела'],['habits','Привычки']].map(([k,v])=>'<button type="button" data-presence="'+k+'" aria-pressed="'+(k===presenceMode)+'">'+v+'</button>').join('')+'</div>'+
+      '<div class="wheel-wrap"><svg viewBox="0 0 300 290" class="balance-wheel">'+[25,50,75,100].map(r=>'<circle cx="150" cy="145" r="'+r+'" fill="none" stroke="#B58E8E" stroke-opacity=".35"/>').join('')+
+      SPHERES.map((s,i)=>{const [x,y]=pt(100,i);return '<line x1="150" y1="145" x2="'+x+'" y2="'+y+'" stroke="#B58E8E" stroke-opacity=".35"/>';}).join('')+
+      '<polygon points="'+points+'" fill="#B58E8E" fill-opacity=".25" stroke="#B58E8E" stroke-width="1.5"/>'+
+      SPHERES.map((s,i)=>{const [x,y]=pt(125,i);return '<text x="'+x+'" y="'+y+'" text-anchor="middle" font-size="17">'+s.emoji+'</text><text x="'+x+'" y="'+(y+14)+'" text-anchor="middle" font-size="10" fill="#B58E8E">'+stats[s.id][presenceMode]+' дн.</text>';}).join('')+'</svg></div>'+
+      '<div class="presence-controls"><span>'+days+' дней цикла</span><button type="button" data-presence-unit aria-pressed="'+presencePercent+'">'+(presencePercent?'В днях':'В процентах')+'</button></div>'+
+      SPHERES.map(s=>{const n=stats[s.id][presenceMode];return '<div class="sphere-stat-row"><span class="ssr-emoji">'+s.emoji+'</span><div class="ssr-body"><div class="ssr-top"><span class="ssr-name">'+s.name+'</span><span class="ssr-pct">'+fmt(n)+'</span></div><div class="ssr-track"><div class="ssr-fill" style="background:#B58E8E;width:'+(100*n/Math.max(1,days))+'%"></div></div></div></div>';}).join('');
+  }
+  function bindPresence(){
+    const el=document.getElementById('month-presence');
+    if(!el)return;
+    el.querySelectorAll('[data-presence]').forEach(b=>b.onclick=()=>{presenceMode=b.dataset.presence;el.innerHTML=renderPresence();bindPresence();});
+    el.querySelector('[data-presence-unit]').onclick=()=>{presencePercent=!presencePercent;el.innerHTML=renderPresence();bindPresence();};
+  }
+
   function renderWheel(stats) {
     const N = SPHERES.length;
     const cx = 130, cy = 130;
@@ -196,9 +217,10 @@ const MonthScreen = (() => {
           </div>
         </div>
 
-        <div class="section-label">Колесо привычек</div>
-
-        ${renderWheel(sphereStats)}
+        <div class="section-label">Колесо сфер жизни</div>
+        <div class="sc-sub">В какие дни сферы присутствовали в моей жизни</div>
+        <div id="month-presence">${renderPresence()}</div>
+        <div class="section-label">Регулярность привычек</div>
         ${renderSphereList(sphereStats)}
 
         <div class="section-label">Главные вампиры месяца</div>
@@ -219,6 +241,7 @@ const MonthScreen = (() => {
       </div>
     `;
 
+    bindPresence();
     // Автосохранение рефлексии
     document.querySelectorAll('#screen-month .ref-input[data-key]').forEach(ta => {
       ta.addEventListener('input', () => {

@@ -792,3 +792,5 @@ input[type="date"].ref-input {
 details.sphere-energy-card summary { cursor:pointer; }
 details.sphere-energy-card summary::after { content:'⌄'; }
 details.sphere-energy-card[open] summary::after { content:'⌃'; }
+
+.presence-controls{display:flex;gap:8px;align-items:center;justify-content:space-between;margin:12px 0;color:#B58E8E;font-size:12px}.presence-controls button{flex:1;padding:8px;border:1px solid #B58E8E66;border-radius:10px;background:transparent;color:inherit;font:inherit;cursor:pointer}.presence-controls button[aria-pressed=true]{background:#B58E8E33;border-color:#B58E8E}.presence-controls span{flex:1}

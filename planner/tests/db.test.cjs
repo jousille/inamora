@@ -85,3 +85,24 @@ test('sphere analytics reconcile with total including legacy tasks and archived 
  db.startNewMonth('2020-12-21');
  assert.equal(db.getSphereEnergy(1,4,0).reduce((a,r)=>a+r.total,0),1);
 });
+
+test('sphere presence counts unique days, neutral tasks, archived habits and union',()=>{
+ const {db}=setup();
+ db.saveTasks(1,1,[{name:'Walk',sphereId:'energy',score:0},{name:'Run',sphereId:'energy',score:-5},{name:'Dinner',sphereId:'love',score:null},{name:'',sphereId:'work',score:null}]);
+ db.saveTasks(1,2,[{name:'Dinner',sphereId:'love',score:3}]);
+ db.toggleCompletionByDate(1,'2020-11-23');
+ db.archiveHabit(1);
+ const p=db.getSpherePresence();
+ assert.equal(p.days,28);
+ assert.equal(p.stats.energy.all,1);
+ assert.equal(p.stats.energy.tasks,1);
+ assert.equal(p.stats.energy.habits,1);
+ assert.equal(p.stats.love.all,2);
+ assert.equal(p.stats.work.all,0);
+ db.startNewMonth('2020-12-21');
+ assert.equal(db.getSpherePresence(0).stats.love.all,2);
+ db.setMeta({...db.getMeta(),startDate:db.localDate()});
+ db.saveTasks(1,2,[{name:'Future',sphereId:'love',score:3}]);
+ assert.equal(db.getSpherePresence().days,1);
+ assert.equal(db.getSpherePresence().stats.love.all,0);
+});
