@@ -88,13 +88,13 @@ const HabitsScreen = (() => {
       : '';
 
     el.innerHTML = `
-      <div class="hab-header">
-        <div class="hab-nav">
-          <button class="hab-arrow" onclick="HabitsScreen.shiftWeek(-1)">‹</button>
-          <span class="hab-range">${range}</span>
-          <button class="hab-arrow" onclick="HabitsScreen.shiftWeek(1)" ${weekOffset >= 0 ? 'disabled' : ''}>›</button>
+      <div class="page-header">
+        <div class="week-nav">
+          <button class="week-arrow" onclick="HabitsScreen.shiftWeek(-1)">‹</button>
+          <span class="week-nav-label">${range}</span>
+          <button class="week-arrow" onclick="HabitsScreen.shiftWeek(1)" ${weekOffset >= 0 ? 'disabled' : ''}>›</button>
         </div>
-        <h2 class="hab-title">Привычки</h2>
+        <div class="title">Привычки</div>
       </div>
 
       <div class="page-content hab-content">
@@ -110,7 +110,7 @@ const HabitsScreen = (() => {
         ${emptyState}
         ${habitSections}
 
-        ${!isPast ? `<button class="add-habit-btn" onclick="HabitsScreen.openModal()">+ добавить привычку</button>` : ''}
+        ${!isPast ? `<button class="add-habit-btn" onclick="HabitsScreen.openModal()">+ Добавить привычку</button>` : ''}
 
       </div>
     `;
@@ -138,18 +138,20 @@ const HabitsScreen = (() => {
       <div class="habit-card">
         <div class="habit-top">
           <span class="habit-name">${escHtml(habit.name)}</span>
-          <div class="habit-top-right">
-            ${streak > 1 ? `<span class="habit-streak">🔥 ${streak} дн.</span>` : ''}
-            ${!isPast ? `<button class="habit-del" onclick="HabitsScreen.confirmDelete(${habit.id})" title="Удалить привычку">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
-            </button>` : ''}
-          </div>
+          ${streak > 1 ? `<span class="habit-streak">🔥 ${streak} дн.</span>` : ''}
         </div>
         <div class="dots-row">${dots}</div>
         <div class="habit-progress">
           <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
           <div class="progress-label"><span>${doneDays} из ${totalDays} дней</span><span>${pct}%</span></div>
         </div>
+        ${!isPast ? `
+        <div class="habit-del-row">
+          <button class="habit-del-btn" onclick="HabitsScreen.confirmDelete(${habit.id})">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+            Удалить привычку
+          </button>
+        </div>` : ''}
       </div>`;
   }
 
@@ -265,7 +267,7 @@ const HabitsScreen = (() => {
   function confirmDelete(habitId) {
     const habit = DB.getHabits().find(h => h.id === habitId);
     if (!habit) return;
-    if (!confirm(`Удалить привычку «${habit.name}»?\nВся история отметок сохранится.`)) return;
+    if (!confirm(`Удалить привычку «${habit.name}»?`)) return;
     DB.deleteHabit(habitId);
     render();
     if (typeof DayScreen !== 'undefined') DayScreen.refreshHabits();
