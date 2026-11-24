@@ -28,56 +28,66 @@ const MonthScreen = (() => {
 
   function renderWheel(stats) {
     const N = SPHERES.length;
-    const cx = 110, cy = 110, R = 90, r = 36; // внешний и внутренний радиус
-    const angleStep = (2 * Math.PI) / N;
-    const startAngle = -Math.PI / 2; // начинаем сверху
+    const cx = 130, cy = 130;
+    const Rmax = 80, Rmin = 20;
+    const Rlabel = 100;
+    const step = (2 * Math.PI) / N;
+    const offset = -Math.PI / 2;
 
-    let sectors = '';
-    let labels  = '';
+    function pt(r, i) {
+      const a = offset + i * step;
+      return [cx + r * Math.cos(a), cy + r * Math.sin(a)];
+    }
 
-    SPHERES.forEach((sphere, i) => {
-      const pct   = (stats[sphere.id]?.pct ?? 0) / 100;
-      const rFill = r + (R - r) * Math.max(0.04, pct); // минимум чуть виден
+    let html = '';
 
-      const a1 = startAngle + i * angleStep;
-      const a2 = startAngle + (i + 1) * angleStep - 0.04; // небольшой gap
-      const color = SPHERE_COLORS[i];
-
-      // Сектор кольца: внешняя дуга + внутренняя дуга (donut)
-      const x1o = cx + R    * Math.cos(a1), y1o = cy + R    * Math.sin(a1);
-      const x2o = cx + R    * Math.cos(a2), y2o = cy + R    * Math.sin(a2);
-      const x1i = cx + r    * Math.cos(a2), y1i = cy + r    * Math.sin(a2);
-      const x2i = cx + r    * Math.cos(a1), y2i = cy + r    * Math.sin(a1);
-
-      // Заполненная часть
-      const x1f = cx + rFill * Math.cos(a1), y1f = cy + rFill * Math.sin(a1);
-      const x2f = cx + rFill * Math.cos(a2), y2f = cy + rFill * Math.sin(a2);
-
-      const large = (a2 - a1) > Math.PI ? 1 : 0;
-
-      // Фоновый сектор (пустой)
-      sectors += `<path d="M${x1o},${y1o} A${R},${R} 0 ${large},1 ${x2o},${y2o} L${x1i},${y1i} A${r},${r} 0 ${large},0 ${x2i},${y2i} Z"
-        fill="${color}" opacity="0.15"/>`;
-
-      // Заполненный сектор
-      sectors += `<path d="M${x1f},${y1f} A${rFill},${rFill} 0 ${large},1 ${x2f},${y2f} L${x1i},${y1i} A${r},${r} 0 ${large},0 ${x2i},${y2i} Z"
-        fill="${color}" opacity="0.9"/>`;
-
-      // Эмодзи по центру сектора
-      const aMid = (a1 + a2) / 2;
-      const rLbl = r + (R - r) * 0.5 + (R - r) * 0.35;
-      const ex = cx + rLbl * Math.cos(aMid);
-      const ey = cy + rLbl * Math.sin(aMid);
-      labels += `<text x="${ex.toFixed(1)}" y="${(ey + 5).toFixed(1)}" text-anchor="middle" font-size="14">${sphere.emoji}</text>`;
+    // Концентрические сетки
+    [0.25, 0.5, 0.75, 1].forEach(frac => {
+      const r = Rmin + (Rmax - Rmin) * frac;
+      const pts = Array.from({length: N}, (_, i) => pt(r, i));
+      const d = pts.map((p, i) => (i === 0 ? 'M' : 'L') + p[0].toFixed(2) + ',' + p[1].toFixed(2)).join(' ') + 'Z';
+      html += `<path d="${d}" fill="none" stroke="rgba(213,184,184,${frac === 1 ? '.25' : '.1'})" stroke-width="${frac === 1 ? 1 : 0.5}"/>`;
     });
+
+    // Радиусные линии
+    for (let i = 0; i < N; i++) {
+      const [x1, y1] = pt(Rmin, i), [x2, y2] = pt(Rmax, i);
+      html += `<line x1="${x1.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${x2.toFixed(2)}" y2="${y2.toFixed(2)}" stroke="rgba(213,184,184,.12)" stroke-width="0.5"/>`;
+    }
+
+    // Заполненная область
+    const fillPts = SPHERES.map((s, i) => {
+      const pct = (stats[s.id]?.pct ?? 0) / 100;
+      const r = Rmin + (Rmax - Rmin) * Math.max(0.03, pct);
+      return pt(r, i);
+    });
+    const fillD = fillPts.map((p, i) => (i === 0 ? 'M' : 'L') + p[0].toFixed(2) + ',' + p[1].toFixed(2)).join(' ') + 'Z';
+    html += `<path d="${fillD}" fill="rgba(181,142,142,.2)" stroke="rgba(181,142,142,.7)" stroke-width="1.5"/>`;
+
+    // Точки на вершинах
+    SPHERES.forEach((s, i) => {
+      const pct = (stats[s.id]?.pct ?? 0) / 100;
+      const r = Rmin + (Rmax - Rmin) * Math.max(0.03, pct);
+      const [x, y] = pt(r, i);
+      html += `<circle cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="4" fill="${SPHERE_COLORS[i]}" stroke="var(--dark)" stroke-width="1.5"/>`;
+    });
+
+    // Эмодзи снаружи
+    SPHERES.forEach((s, i) => {
+      const [x, y] = pt(Rlabel, i);
+      html += `<text x="${x.toFixed(1)}" y="${(y + 5).toFixed(1)}" text-anchor="middle" font-size="15">${s.emoji}</text>`;
+    });
+
+    // Центр
+    const avg = Math.round(SPHERES.reduce((sum, s) => sum + (stats[s.id]?.pct ?? 0), 0) / N);
+    html += `<circle cx="${cx}" cy="${cy}" r="${Rmin}" fill="var(--dark)"/>`;
+    html += `<text x="${cx}" y="${cy - 4}" text-anchor="middle" font-size="7" fill="#B58E8E" font-family="var(--font-sans)" letter-spacing="1">ВСЕГО</text>`;
+    html += `<text x="${cx}" y="${cy + 11}" text-anchor="middle" font-size="15" font-weight="500" fill="var(--lighter)" font-family="var(--font-sans)">${avg}%</text>`;
 
     return `
       <div class="wheel-wrap">
-        <svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" class="balance-wheel">
-          <circle cx="${cx}" cy="${cy}" r="${r}" fill="var(--lighter)" opacity="0.08"/>
-          ${sectors}
-          ${labels}
-          <circle cx="${cx}" cy="${cy}" r="${r - 2}" fill="var(--dark)"/>
+        <svg viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg" class="balance-wheel">
+          ${html}
         </svg>
       </div>
     `;
@@ -150,12 +160,7 @@ const MonthScreen = (() => {
 
       <div class="page-content">
 
-        <div class="section-label">Колесо привычек</div>
-
-        ${renderWheel(sphereStats)}
-        ${renderSphereList(sphereStats)}
-
-        <div class="section-label" style="margin-top:24px">Баланс месяца</div>
+        <div class="section-label">Баланс месяца</div>
 
         <div class="stat-grid">
           <div class="stat-card">
@@ -196,6 +201,11 @@ const MonthScreen = (() => {
             }).join('')}
           </div>
         </div>
+
+        <div class="section-label">Колесо привычек</div>
+
+        ${renderWheel(sphereStats)}
+        ${renderSphereList(sphereStats)}
 
         <div class="section-label">Главные вампиры месяца</div>
         ${renderVD(vampires, 'neg', 'Забирали энергию чаще всего')}

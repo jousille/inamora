@@ -751,7 +751,7 @@ input[type="date"].ref-input {
   padding: 16px 0 8px;
 }
 .balance-wheel {
-  width: 200px; height: 200px;
+  width: 240px; height: 240px;
 }
 
 /* Список сфер под колесом */
