@@ -1,0 +1,24 @@
+name: Planner tests
+on:
+  push:
+    branches: ['fix/planner-habits-energy']
+  pull_request:
+    paths: ['planner/**', '.github/workflows/planner-tests.yml']
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        timezone: [UTC, Asia/Almaty, Europe/Kaliningrad, America/New_York]
+    env:
+      TZ: ${{ matrix.timezone }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          for f in planner/js/*.js planner/sw.js; do node --check "$f" || exit 1; done
+          node --test planner/tests/*.test.cjs
