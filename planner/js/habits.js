@@ -88,15 +88,13 @@ const HabitsScreen = (() => {
       : '';
 
     el.innerHTML = `
-      <div class="page-header">
-        <div class="week-nav">
-          <button class="week-arrow" id="hab-prev" onclick="HabitsScreen.shiftWeek(-1)">‹</button>
-          <div class="week-info">
-            <div class="w-label">${range}</div>
-          </div>
-          <button class="week-arrow" id="hab-next" onclick="HabitsScreen.shiftWeek(1)" ${weekOffset >= 0 ? 'disabled' : ''}>›</button>
+      <div class="hab-header">
+        <div class="hab-nav">
+          <button class="hab-arrow" onclick="HabitsScreen.shiftWeek(-1)">‹</button>
+          <span class="hab-range">${range}</span>
+          <button class="hab-arrow" onclick="HabitsScreen.shiftWeek(1)" ${weekOffset >= 0 ? 'disabled' : ''}>›</button>
         </div>
-        <h2 class="page-title">Привычки</h2>
+        <h2 class="hab-title">Привычки</h2>
       </div>
 
       <div class="page-content hab-content">
@@ -140,7 +138,12 @@ const HabitsScreen = (() => {
       <div class="habit-card">
         <div class="habit-top">
           <span class="habit-name">${escHtml(habit.name)}</span>
-          ${streak > 1 ? `<span class="habit-streak">🔥 ${streak} дн.</span>` : ''}
+          <div class="habit-top-right">
+            ${streak > 1 ? `<span class="habit-streak">🔥 ${streak} дн.</span>` : ''}
+            ${!isPast ? `<button class="habit-del" onclick="HabitsScreen.confirmDelete(${habit.id})" title="Удалить привычку">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+            </button>` : ''}
+          </div>
         </div>
         <div class="dots-row">${dots}</div>
         <div class="habit-progress">
@@ -257,10 +260,21 @@ const HabitsScreen = (() => {
     render();
   }
 
+  // ── Удаление привычки ─────────────────────────────────────────
+
+  function confirmDelete(habitId) {
+    const habit = DB.getHabits().find(h => h.id === habitId);
+    if (!habit) return;
+    if (!confirm(`Удалить привычку «${habit.name}»?\nВся история отметок сохранится.`)) return;
+    DB.deleteHabit(habitId);
+    render();
+    if (typeof DayScreen !== 'undefined') DayScreen.refreshHabits();
+  }
+
   function escHtml(s) {
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 
-  return { init, render, shiftWeek, toggleDot, openModal, closeModal, selectSphere, selectEnergy, saveHabit };
+  return { init, render, shiftWeek, toggleDot, openModal, closeModal, selectSphere, selectEnergy, saveHabit, confirmDelete };
 
 })();

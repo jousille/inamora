@@ -676,3 +676,44 @@ input[type="date"].ref-input {
 .bottom-nav { display:flex; }
 .nav-item   { flex:1; }
 .nav-item span { font-size:10px; }
+
+/* ── Шапка экрана привычек (отдельная от page-header) ────────── */
+.hab-header {
+  background: var(--dark);
+  padding: 16px 16px 14px;
+  flex-shrink: 0;
+}
+.hab-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px;
+}
+.hab-arrow {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: rgba(255,255,255,.08); border: none;
+  color: var(--acc-lt); font-size: 22px; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background .15s; flex-shrink: 0;
+}
+.hab-arrow:disabled { opacity: .25; cursor: default; }
+.hab-arrow:not(:disabled):active { background: rgba(255,255,255,.16); }
+.hab-range {
+  font-size: 14px; color: var(--lighter); font-family: var(--font-sans);
+  font-weight: 400; text-align: center;
+}
+.hab-title {
+  font-family: var(--font-serif); font-size: 26px; font-weight: 500;
+  color: var(--lighter); letter-spacing: .01em;
+}
+
+/* ── Удаление привычки ───────────────────────────────────────── */
+.habit-top-right {
+  display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+}
+.habit-del {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: var(--light); border: 0.5px solid var(--mid);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--acc-lt); cursor: pointer; transition: background .15s, color .15s;
+  flex-shrink: 0;
+}
+.habit-del:active { background: var(--neg-10-bg); color: var(--neg-10-tx); border-color: var(--neg-10-br); }
