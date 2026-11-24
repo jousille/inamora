@@ -743,3 +743,31 @@ input[type="date"].ref-input {
   text-align: left;
   white-space: nowrap;
 }
+
+/* ── Колесо баланса (экран Месяц) ───────────────────────────── */
+.wheel-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 16px 0 8px;
+}
+.balance-wheel {
+  width: 200px; height: 200px;
+}
+
+/* Список сфер под колесом */
+.sphere-stat-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--mid);
+}
+.sphere-stat-row:last-child { border-bottom: none; }
+.ssr-emoji { font-size: 20px; padding-top: 2px; flex-shrink: 0; }
+.ssr-body  { flex: 1; min-width: 0; }
+.ssr-top   { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 5px; }
+.ssr-name  { font-size: 13px; color: var(--dark); font-weight: 500; }
+.ssr-pct   { font-size: 13px; color: var(--accent); font-weight: 600; }
+.ssr-track { height: 4px; background: var(--mid); border-radius: 4px; margin-bottom: 4px; }
+.ssr-fill  { height: 100%; border-radius: 4px; transition: width .4s; }
+.ssr-sub   { font-size: 11px; color: var(--mid-dk); }

@@ -10,6 +10,101 @@ const MonthScreen = (() => {
     { key: 'gratitude',  q: 'За что я благодарна себе в этом месяце?' },
   ];
 
+  const SPHERES = [
+    { id: 'energy', emoji: '🔥', name: 'Энергия и тело' },
+    { id: 'self',   emoji: '💛', name: 'Я и только я' },
+    { id: 'work',   emoji: '💼', name: 'Дело и деньги' },
+    { id: 'love',   emoji: '💞', name: 'Отношения' },
+    { id: 'home',   emoji: '🏡', name: 'Пространство' },
+    { id: 'growth', emoji: '🌱', name: 'Саморазвитие' },
+    { id: 'values', emoji: '✨', name: 'Ценности' },
+  ];
+
+  // Цвета секторов — тёплая палитра в тоне приложения
+  const SPHERE_COLORS = [
+    '#C97B7B', '#D4A56A', '#B8C46A', '#6AB8A5',
+    '#6A8BB8', '#9B6AB8', '#B86A9B',
+  ];
+
+  function renderWheel(stats) {
+    const N = SPHERES.length;
+    const cx = 110, cy = 110, R = 90, r = 36; // внешний и внутренний радиус
+    const angleStep = (2 * Math.PI) / N;
+    const startAngle = -Math.PI / 2; // начинаем сверху
+
+    let sectors = '';
+    let labels  = '';
+
+    SPHERES.forEach((sphere, i) => {
+      const pct   = (stats[sphere.id]?.pct ?? 0) / 100;
+      const rFill = r + (R - r) * Math.max(0.04, pct); // минимум чуть виден
+
+      const a1 = startAngle + i * angleStep;
+      const a2 = startAngle + (i + 1) * angleStep - 0.04; // небольшой gap
+      const color = SPHERE_COLORS[i];
+
+      // Сектор кольца: внешняя дуга + внутренняя дуга (donut)
+      const x1o = cx + R    * Math.cos(a1), y1o = cy + R    * Math.sin(a1);
+      const x2o = cx + R    * Math.cos(a2), y2o = cy + R    * Math.sin(a2);
+      const x1i = cx + r    * Math.cos(a2), y1i = cy + r    * Math.sin(a2);
+      const x2i = cx + r    * Math.cos(a1), y2i = cy + r    * Math.sin(a1);
+
+      // Заполненная часть
+      const x1f = cx + rFill * Math.cos(a1), y1f = cy + rFill * Math.sin(a1);
+      const x2f = cx + rFill * Math.cos(a2), y2f = cy + rFill * Math.sin(a2);
+
+      const large = (a2 - a1) > Math.PI ? 1 : 0;
+
+      // Фоновый сектор (пустой)
+      sectors += `<path d="M${x1o},${y1o} A${R},${R} 0 ${large},1 ${x2o},${y2o} L${x1i},${y1i} A${r},${r} 0 ${large},0 ${x2i},${y2i} Z"
+        fill="${color}" opacity="0.15"/>`;
+
+      // Заполненный сектор
+      sectors += `<path d="M${x1f},${y1f} A${rFill},${rFill} 0 ${large},1 ${x2f},${y2f} L${x1i},${y1i} A${r},${r} 0 ${large},0 ${x2i},${y2i} Z"
+        fill="${color}" opacity="0.9"/>`;
+
+      // Эмодзи по центру сектора
+      const aMid = (a1 + a2) / 2;
+      const rLbl = r + (R - r) * 0.5 + (R - r) * 0.35;
+      const ex = cx + rLbl * Math.cos(aMid);
+      const ey = cy + rLbl * Math.sin(aMid);
+      labels += `<text x="${ex.toFixed(1)}" y="${(ey + 5).toFixed(1)}" text-anchor="middle" font-size="14">${sphere.emoji}</text>`;
+    });
+
+    return `
+      <div class="wheel-wrap">
+        <svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" class="balance-wheel">
+          <circle cx="${cx}" cy="${cy}" r="${r}" fill="var(--lighter)" opacity="0.08"/>
+          ${sectors}
+          ${labels}
+          <circle cx="${cx}" cy="${cy}" r="${r - 2}" fill="var(--dark)"/>
+        </svg>
+      </div>
+    `;
+  }
+
+  function renderSphereList(stats) {
+    return SPHERES.map((s, i) => {
+      const st  = stats[s.id] || { done: 0, total: 0, pct: 0 };
+      const color = SPHERE_COLORS[i];
+      return `
+        <div class="sphere-stat-row">
+          <span class="ssr-emoji">${s.emoji}</span>
+          <div class="ssr-body">
+            <div class="ssr-top">
+              <span class="ssr-name">${s.name}</span>
+              <span class="ssr-pct">${st.pct}%</span>
+            </div>
+            <div class="ssr-track">
+              <div class="ssr-fill" style="width:${st.pct}%; background:${color}"></div>
+            </div>
+            <div class="ssr-sub">${st.done} из ${st.total} отметок</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
   function render() {
     const el = document.getElementById('screen-month');
 
@@ -21,10 +116,11 @@ const MonthScreen = (() => {
     const worstWeekIdx = weekScores.indexOf(Math.min(...weekScores));
     const maxAbs = Math.max(1, ...weekScores.map(Math.abs));
 
-    const vampires = DB.getMonthVampires(5);
-    const donors   = DB.getMonthDonors(5);
-    const refl     = DB.getReflection('month');
-    const meta     = DB.getMeta();
+    const vampires   = DB.getMonthVampires(5);
+    const donors     = DB.getMonthDonors(5);
+    const refl       = DB.getReflection('month');
+    const meta       = DB.getMeta();
+    const sphereStats = DB.getHabitsSphereStats();
 
     const scoreDisp = monthScore > 0 ? `+${monthScore}` : `${monthScore}`;
 
@@ -54,7 +150,12 @@ const MonthScreen = (() => {
 
       <div class="page-content">
 
-        <div class="section-label">Баланс месяца</div>
+        <div class="section-label">Колесо привычек</div>
+
+        ${renderWheel(sphereStats)}
+        ${renderSphereList(sphereStats)}
+
+        <div class="section-label" style="margin-top:24px">Баланс месяца</div>
 
         <div class="stat-grid">
           <div class="stat-card">

@@ -311,6 +311,44 @@ const DB = (() => {
     return habits.reduce((sum, h) => sum + (comp[h.id] ? h.energy : 0), 0);
   }
 
+  // ── Статистика привычек по сферам за месяц ───────────────────
+  // Возвращает { [sphereId]: { done, total, pct } }
+  function getHabitsSphereStats() {
+    const habits = getHabits(); // все, включая архивные
+    const today = new Date();
+    today.setHours(0,0,0,0);
+
+    // Собираем все даты текущего месяца до сегодня включительно
+    const year  = today.getFullYear();
+    const month = today.getMonth();
+    const days  = [];
+    for (let d = 1; d <= today.getDate(); d++) {
+      const dt = new Date(year, month, d);
+      days.push(dt.toISOString().slice(0, 10));
+    }
+
+    const stats = {};
+    habits.forEach(h => {
+      if (!stats[h.sphereId]) stats[h.sphereId] = { done: 0, total: 0 };
+      days.forEach(dateStr => {
+        // Привычка считается активной в этот день если она не архивирована
+        // ИЛИ архивирована но уже была в этот день (createdAt <= dateStr)
+        const created = h.createdAt ? h.createdAt.slice(0,10) : '2000-01-01';
+        if (created > dateStr) return; // ещё не была добавлена
+        const comp = getCompletionsForDate(dateStr);
+        stats[h.sphereId].total++;
+        if (comp[h.id]) stats[h.sphereId].done++;
+      });
+    });
+
+    Object.keys(stats).forEach(id => {
+      const s = stats[id];
+      s.pct = s.total > 0 ? Math.round(s.done / s.total * 100) : 0;
+    });
+
+    return stats;
+  }
+
   // ── Автоэкспорт ──────────────────────────────────────────────
 
   function checkAutoExport() {
@@ -347,6 +385,7 @@ const DB = (() => {
     getHabits, saveHabits, addHabit, deleteHabit, archiveHabit,
     getCompletionsForWeek, toggleCompletion,
     getCompletionsForDate, toggleCompletionByDate, getHabitsEnergyForDate,
+    getHabitsSphereStats,
     getReflection, saveReflection,
     getDayScore, getWeekScore,
     getWeekVampires, getWeekDonors,
