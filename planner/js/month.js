@@ -10,15 +10,7 @@ const MonthScreen = (() => {
     { key: 'gratitude',  q: 'За что я благодарна себе в этом месяце?' },
   ];
 
-  const SPHERES = [
-    { id: 'energy', emoji: '🔥', name: 'Энергия и тело' },
-    { id: 'self',   emoji: '💛', name: 'Я и только я' },
-    { id: 'work',   emoji: '💼', name: 'Дело и деньги' },
-    { id: 'love',   emoji: '💞', name: 'Отношения' },
-    { id: 'home',   emoji: '🏡', name: 'Пространство' },
-    { id: 'growth', emoji: '🌱', name: 'Саморазвитие' },
-    { id: 'values', emoji: '✨', name: 'Ценности' },
-  ];
+  const SPHERES = DB.SPHERES;
 
   // Цвета секторов — тёплая палитра в тоне приложения
   const SPHERE_COLORS = [
@@ -215,6 +207,7 @@ const MonthScreen = (() => {
         <div class="section-label">Главные доноры месяца</div>
         ${renderVD(donors, 'pos', 'Давали энергию чаще всего')}
 
+        ${renderSphereEnergy(DB.getSphereEnergy(), true)}
         <div class="section-label">Выводы о себе</div>
         ${MONTH_QUESTIONS.map(({ key, q }) => `
           <div class="reflection-card">
@@ -263,6 +256,16 @@ const MonthScreen = (() => {
     return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 
-  return { render };
+  function renderSphereEnergy(rows, detailed=false) {
+    const fmt=n=>n>0?'+'+n:n<0?'−'+Math.abs(n):'0';
+    const max=Math.max(1,...rows.map(r=>Math.abs(r.total)));
+    return '<div class="section-label">Энергия по сферам</div>'+(!rows.length?'<div class="empty-state">Данных пока нет</div>':rows.map(r=>{
+      const balance='<span class="sphere-energy-value '+(r.total<0?'neg':'pos')+'">'+fmt(r.total)+'</span>';
+      const title='<span>'+r.emoji+' '+r.name+'</span>'+balance;
+      if(!detailed)return '<div class="sphere-energy-card"><div class="sphere-energy-head">'+title+'</div><div class="sphere-energy-track"><div class="sphere-energy-bar '+(r.total<0?'neg':'pos')+'" style="width:'+Math.abs(r.total)/max*100+'%"></div></div></div>';
+      return '<details class="sphere-energy-card"><summary class="sphere-energy-head">'+title+'</summary><div class="sphere-energy-meta">Получено +'+r.positive+' · Потрачено −'+r.negative+'</div><div class="sphere-energy-items">'+r.items.map(i=>'<div class="sphere-energy-head"><span>'+escHtml(i.name)+' <small>'+ (i.kind==='habit'?'Привычка':'Дело')+' · '+i.count+'</small></span><span>'+fmt(i.score)+'</span></div>').join('')+'</div></details>';
+    }).join(''));
+  }
+  return { render, renderSphereEnergy };
 
 })();

@@ -404,6 +404,7 @@ const ProfileScreen = (() => {
 
         <div class="section-label">Доноры</div>
         ${renderArchiveVD(donors, 'pos')}
+        ${MonthScreen.renderSphereEnergy(DB.getSphereEnergy(1,4,monthIdx),true)}
       </div>
     `;
 

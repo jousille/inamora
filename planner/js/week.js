@@ -87,6 +87,7 @@ const WeekScreen = (() => {
         <div class="section-label">Доноры недели</div>
         ${renderVD(donors, 'pos', 'Давали энергию')}
 
+        ${MonthScreen.renderSphereEnergy(DB.getSphereEnergy(state.week,state.week))}
         <div class="section-label">Рефлексия</div>
         ${WEEK_QUESTIONS.map(({ key, q }) => `
           <div class="reflection-card">

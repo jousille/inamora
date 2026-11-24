@@ -102,6 +102,27 @@ const DB = (() => {
     return getDayBreakdown(week,day,monthIdx).total;
   }
 
+  function getSphereEnergy(weekFrom=1,weekTo=4,monthIdx=getCurrentMonthIndex()) {
+    const rows = new Map([...SPHERES,{id:null,name:'Без категории',emoji:''}].map(s=>[s.id,{...s,positive:0,negative:0,total:0,count:0,items:[]}]));
+    function add(entry,kind) {
+      const row=rows.get(normalizeSphere(entry.sphereId));
+      const score=Number(entry.score)||0;
+      row.positive+=Math.max(0,score); row.negative+=Math.max(0,-score);
+      row.total+=score; row.count++;
+      const name=entry.name||'Без названия';
+      let item=row.items.find(i=>i.name===name && i.kind===kind);
+      if(!item){item={name,kind,score:0,count:0};row.items.push(item);}
+      item.score+=score;item.count++;
+    }
+    const habits=getHabits();
+    for(let w=weekFrom;w<=weekTo;w++) for(let d=1;d<=7;d++){
+      getTasks(w,d,monthIdx).forEach(t=>add(t,'task'));
+      const date=dateForDay(w,d,monthIdx);
+      if(date){const comp=getCompletionsForDate(date);habits.filter(h=>comp[h.id]).forEach(h=>add({...h,score:h.energy},'habit'));}
+    }
+    return [...rows.values()].filter(r=>r.count);
+  }
+
   function getWeekScore(week, monthIdx) {
     let total = 0;
     for (let d = 1; d <= 7; d++) total += getDayScore(week, d, monthIdx);
@@ -393,7 +414,7 @@ const DB = (() => {
     getCompletionsForDate, toggleCompletionByDate, getHabitsEnergyForDate,
     getHabitsSphereStats,
     getReflection, saveReflection,
-    getDayScore, getWeekScore,
+    getDayScore, getWeekScore, getSphereEnergy,
     getWeekVampires, getWeekDonors,
     getMonthVampires, getMonthDonors,
     getTodayPosition,

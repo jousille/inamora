@@ -71,3 +71,17 @@ test('task categories are optional, validated and preserve old records',()=>{
  assert.equal(db.getTasks(1,1)[1].sphereId,'growth');
  assert.equal(db.getDayScore(1,1),-2);
 });
+
+test('sphere analytics reconcile with total including legacy tasks and archived habits',()=>{
+ const {db}=setup();
+ db.saveTasks(1,1,[{id:1,name:'Work',score:-5,sphereId:'work'},{id:2,name:'Old',score:3}]);
+ db.toggleCompletionByDate(1,'2020-11-23');
+ db.archiveHabit(1);
+ const rows=db.getSphereEnergy(1,1);
+ assert.equal(rows.reduce((a,r)=>a+r.total,0),db.getWeekScore(1));
+ assert.equal(rows.find(r=>r.id==='energy').positive,3);
+ assert.equal(rows.find(r=>r.id==='work').negative,5);
+ assert.equal(rows.find(r=>r.id===null).total,3);
+ db.startNewMonth('2020-12-21');
+ assert.equal(db.getSphereEnergy(1,4,0).reduce((a,r)=>a+r.total,0),1);
+});

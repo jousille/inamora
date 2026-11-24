@@ -776,3 +776,19 @@ input[type="date"].ref-input {
 .task-info { flex:1; min-width:0; }
 .task-sphere { font-size:11px; color:var(--acc-lt); margin-top:3px; }
 .task-sphere-select { display:block; width:100%; box-sizing:border-box; font:inherit; color:inherit; background:transparent; border:1px solid var(--acc-lt); border-radius:8px; padding:8px; margin:6px 0 12px; }
+
+.sphere-energy-card { border:1px solid rgba(181,142,142,.25); border-radius:10px; padding:12px; margin-bottom:8px; }
+.sphere-energy-head { display:flex; justify-content:space-between; align-items:center; gap:12px; font-size:14px; }
+.sphere-energy-head span:first-child { min-width:0; overflow-wrap:anywhere; }
+.sphere-energy-value.pos { color:var(--pos-5-tx); }
+.sphere-energy-value.neg { color:var(--accent); }
+.sphere-energy-track { height:5px; margin-top:8px; background:rgba(181,142,142,.12); border-radius:4px; overflow:hidden; }
+.sphere-energy-bar { height:100%; background:#9CB7A3; }
+.sphere-energy-bar.neg { background:#C99494; }
+.sphere-energy-meta,.sphere-energy-items small { font-size:11px; opacity:.75; }
+.sphere-energy-meta { margin-top:8px; }
+.sphere-energy-items { margin-top:10px; }
+.sphere-energy-items .sphere-energy-head { padding:7px 0; border-top:1px solid rgba(181,142,142,.15); }
+details.sphere-energy-card summary { cursor:pointer; }
+details.sphere-energy-card summary::after { content:'⌄'; }
+details.sphere-energy-card[open] summary::after { content:'⌃'; }
