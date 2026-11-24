@@ -1,6 +1,6 @@
 // ── sw.js — Service Worker для PWA ───────────────────────────
 
-const CACHE = 'planner-v5-habits';
+const CACHE = 'planner-v6-habits';
 const ASSETS = [
   './',
   './index.html',

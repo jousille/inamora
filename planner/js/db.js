@@ -253,7 +253,7 @@ const DB = (() => {
 
   function addHabit({ name, sphereId, energy }) {
     const habits = getHabits();
-    habits.push({ id: Date.now(), name, sphereId, energy: energy || 3, createdAt: new Date().toISOString(), createdOn: localDate() });
+    habits.push({ id: Date.now(), name, sphereId, energy: energy ?? 3, createdAt: new Date().toISOString(), createdOn: localDate() });
     saveHabits(habits);
     return habits;
   }

@@ -216,11 +216,12 @@ const HabitsScreen = (() => {
     ).join('');
 
     const energyChips = [
+      { val: 0, label: '0', hint: 'нейтрально' },
       { val: 1, label: '+1', hint: 'чуть-чуть' },
       { val: 3, label: '+3', hint: 'хорошо' },
       { val: 5, label: '+5', hint: 'мощно' },
     ].map((e, i) =>
-      `<div class="energy-chip ${i === 1 ? 'selected' : ''}" data-val="${e.val}" onclick="HabitsScreen.selectEnergy(this)">${e.label} <span>${e.hint}</span></div>`
+      `<div class="energy-chip ${e.val === 3 ? 'selected' : ''}" data-val="${e.val}" onclick="HabitsScreen.selectEnergy(this)">${e.label} <span>${e.hint}</span></div>`
     ).join('');
 
     const wrap = document.createElement('div');
