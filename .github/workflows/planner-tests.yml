@@ -1,7 +1,7 @@
 name: Planner tests
 on:
   push:
-    branches: ['fix/planner-habits-energy']
+    branches: ['main', 'fix/planner-habits-energy', 'release/**']
   pull_request:
     paths: ['planner/**', '.github/workflows/planner-tests.yml']
 permissions:
