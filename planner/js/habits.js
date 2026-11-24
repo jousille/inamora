@@ -227,7 +227,7 @@ const HabitsScreen = (() => {
       <div class="modal">
         <h3>Новая привычка</h3>
         <label>Название</label>
-        <input type="text" id="hab-name-input" placeholder="например: вечерняя прогулка" autocomplete="off">
+        <input type="text" id="hab-name-input" placeholder="Например: Вечерняя прогулка" autocomplete="off">
         <label>Сфера жизни</label>
         <div class="sphere-chips" id="hab-sphere-chips">${sphereChips}</div>
         <label>Энергия за выполнение</label>
