@@ -1,6 +1,6 @@
 // ── sw.js — Service Worker для PWA ───────────────────────────
 
-const CACHE = 'planner-v9-habits';
+const CACHE = 'planner-v10-habits';
 const ASSETS = [
   './',
   './index.html',
@@ -27,7 +27,7 @@ self.addEventListener('install', e => {
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k.startsWith('planner-') && k !== CACHE).map(k => caches.delete(k)))
+      Promise.all(keys.filter(k => k.startsWith('planner-') && !k.startsWith('planner-test-') && k !== CACHE).map(k => caches.delete(k)))
     )
   );
   self.clients.claim();
@@ -35,6 +35,6 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   e.respondWith(
-    caches.match(e.request).then(cached => cached || fetch(e.request))
+    caches.open(CACHE).then(cache => cache.match(e.request)).then(cached => cached || fetch(e.request))
   );
 });
