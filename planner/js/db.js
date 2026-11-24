@@ -327,17 +327,38 @@ const DB = (() => {
       days.push(dt.toISOString().slice(0, 10));
     }
 
+    // Кешируем completions по неделям чтобы не читать localStorage каждый раз
+    const weekCache = {};
+    function getWeekComp(dateStr) {
+      const date = new Date(dateStr);
+      const dow = date.getDay() || 7;
+      const mon = new Date(date);
+      mon.setDate(date.getDate() - (dow - 1));
+      mon.setHours(0,0,0,0);
+      const wKey = key('comp', mon.toISOString().slice(0,10));
+      if (!weekCache[wKey]) {
+        weekCache[wKey] = JSON.parse(localStorage.getItem(wKey) || '{}');
+      }
+      const dayIdx = dow - 1;
+      const raw = weekCache[wKey];
+      const result = {};
+      // id может быть числом — приводим к строке для сравнения
+      for (const hId of Object.keys(raw)) {
+        result[hId] = raw[hId][dayIdx] || false;
+      }
+      return result;
+    }
+
     const stats = {};
     habits.forEach(h => {
       if (!stats[h.sphereId]) stats[h.sphereId] = { done: 0, total: 0 };
+      const hIdStr = String(h.id); // ключи в localStorage всегда строки
       days.forEach(dateStr => {
-        // Привычка считается активной в этот день если она не архивирована
-        // ИЛИ архивирована но уже была в этот день (createdAt <= dateStr)
         const created = h.createdAt ? h.createdAt.slice(0,10) : '2000-01-01';
-        if (created > dateStr) return; // ещё не была добавлена
-        const comp = getCompletionsForDate(dateStr);
+        if (created > dateStr) return;
+        const comp = getWeekComp(dateStr);
         stats[h.sphereId].total++;
-        if (comp[h.id]) stats[h.sphereId].done++;
+        if (comp[hIdStr]) stats[h.sphereId].done++;
       });
     });
 
