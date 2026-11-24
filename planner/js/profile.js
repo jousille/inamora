@@ -37,6 +37,7 @@ const ProfileScreen = (() => {
 
   function renderProfile() {
     const meta   = DB.getMeta();
+    const settings=DB.settings();
     const token  = DB.getToken();
     const pos    = DB.getTodayPosition();
     const monthN = (meta.currentMonth || 0) + 1;
@@ -54,6 +55,10 @@ const ProfileScreen = (() => {
     content.innerHTML = `
       <div class="profile-section">
 
+        <div class="section-label">Настройка дневника</div>
+        <div class="review-card"><div class="settings-intro"><strong>Выберите, что хотите вести.</strong><span>Отключение не удаляет записи.</span></div>
+        ${[['tasks','Дела и события'],['habits','Трекер привычек'],['energy','Учёт энергии'],['spheres','Сферы жизни'],['reflection','Заметки и рефлексия']].map(([k,v])=>'<label class="setting-row"><span>'+v+'</span><input type="checkbox" data-setting="'+k+'" '+(settings[k]?'checked':'')+'></label>').join('')}
+        <label class="setting-row"><span>Стартовый экран</span><select id="settings-start">${[['day','Дневник'],['habits','Привычки'],['week','Неделя'],['month','Месяц']].filter(([k])=>k!=='day'||settings.tasks).filter(([k])=>k!=='habits'||settings.habits).map(([k,v])=>'<option value="'+k+'" '+(settings.start===k?'selected':'')+'>'+v+'</option>').join('')}</select></label></div>
         <div class="section-label">Текущий месяц</div>
         <div class="profile-row">
           <span class="pr-label">Месяц</span>
@@ -64,7 +69,7 @@ const ProfileScreen = (() => {
           <span class="pr-value">${startDate}</span>
         </div>
         <div class="profile-row">
-          <span class="pr-label">Дел записано</span>
+          <span class="pr-label">Записей за период</span>
           <span class="pr-value">${totalTasks}</span>
         </div>
         <div class="profile-row">
@@ -121,6 +126,8 @@ const ProfileScreen = (() => {
       </div>
     `;
 
+    content.querySelectorAll('[data-setting]').forEach(input=>input.onchange=()=>{const s=DB.settings();s[input.dataset.setting]=input.checked;if(!s.tasks&&!s.habits){input.checked=true;alert('Оставьте хотя бы один раздел для записей.');return;}if(s.start==='day'&&!s.tasks)s.start='habits';if(s.start==='habits'&&!s.habits)s.start='day';DB.setMeta({settings:s});App.refreshNav();renderProfile();});
+    content.querySelector('#settings-start').onchange=e=>DB.setMeta({settings:{...DB.settings(),start:e.target.value}});
     document.getElementById('start-date-input').addEventListener('change', e => {
       DB.setMeta({ startDate: e.target.value });
       DayScreen.initToday();
@@ -215,13 +222,13 @@ const ProfileScreen = (() => {
         <div class="guide-block">
           <div class="guide-step-num">01</div>
           <div class="guide-step-title">Что это такое?</div>
-          <div class="guide-step-text">Планер помогает отслеживать, какие дела забирают вашу энергию, а какие восполняют. За месяц вы увидите закономерности и сможете осознанно управлять своим ресурсом.</div>
+          <div class="guide-step-text">Планер помогает отслеживать, какие дела и события забирают вашу энергию, а какие восполняют. За месяц вы увидите закономерности и сможете осознанно управлять своим ресурсом.</div>
         </div>
 
         <div class="guide-block">
           <div class="guide-step-num">02</div>
           <div class="guide-step-title">Шкала энергии</div>
-          <div class="guide-step-text">После каждого дела оцените как оно повлияло на вашу энергию:</div>
+          <div class="guide-step-text">После каждого дела или события оцените, как оно повлияло на вашу энергию:</div>
           <div class="guide-scores">
             <div class="gs-row"><span class="gs-chip chip-n10">−10</span><span class="gs-label">Полностью опустошило</span></div>
             <div class="gs-row"><span class="gs-chip chip-n5">−5</span><span class="gs-label">Заметно истощило</span></div>
@@ -236,7 +243,7 @@ const ProfileScreen = (() => {
         <div class="guide-block">
           <div class="guide-step-num">03</div>
           <div class="guide-step-title">Как заполнять</div>
-          <div class="guide-step-text">Каждый день записывайте дела которые занимали ваше время и внимание − встречи, задачи, активности, бытовые дела. Не обязательно всё, только значимое. Оценивайте честно − не как «должно быть», а как было на самом деле. Энергия дня складывается из энергии дел и выполненных привычек; обе составляющие показаны отдельно.</div>
+          <div class="guide-step-text">Каждый день записывайте дела и события, которые занимали ваше время и внимание − встречи, задачи, активности, бытовые дела. Не обязательно всё, только значимое. Оценивайте честно − не как «должно быть», а как было на самом деле. Энергия дня складывается из энергии дел и выполненных привычек; обе составляющие показаны отдельно.</div>
         </div>
 
         <div class="guide-block">
@@ -404,6 +411,7 @@ const ProfileScreen = (() => {
 
         <div class="section-label">Доноры</div>
         ${renderArchiveVD(donors, 'pos')}
+        ${MonthScreen.renderSphereEnergy(DB.getSphereEnergy(1,4,monthIdx),true)}
       </div>
     `;
 
@@ -453,9 +461,7 @@ const ProfileScreen = (() => {
   }
 
   function importData(jsonStr) {
-    const backup = JSON.parse(jsonStr);
-    if (!backup.data || backup.version !== 1) throw new Error('Invalid format');
-    Object.entries(backup.data).forEach(([k, v]) => localStorage.setItem(k, v));
+    DB.importAllData(jsonStr);
     DayScreen.initToday();
   }
 

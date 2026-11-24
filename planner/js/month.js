@@ -10,15 +10,7 @@ const MonthScreen = (() => {
     { key: 'gratitude',  q: 'За что я благодарна себе в этом месяце?' },
   ];
 
-  const SPHERES = [
-    { id: 'energy', emoji: '🔥', name: 'Энергия и тело' },
-    { id: 'self',   emoji: '💛', name: 'Я и только я' },
-    { id: 'work',   emoji: '💼', name: 'Дело и деньги' },
-    { id: 'love',   emoji: '💞', name: 'Отношения' },
-    { id: 'home',   emoji: '🏡', name: 'Пространство' },
-    { id: 'growth', emoji: '🌱', name: 'Саморазвитие' },
-    { id: 'values', emoji: '✨', name: 'Ценности' },
-  ];
+  const SPHERES = DB.SPHERES;
 
   // Цвета секторов — тёплая палитра в тоне приложения
   const SPHERE_COLORS = [
@@ -26,100 +18,59 @@ const MonthScreen = (() => {
     '#6A8BB8', '#9B6AB8', '#B86A9B',
   ];
 
-  function renderWheel(stats) {
-    const N = SPHERES.length;
-    const cx = 130, cy = 130;
-    const Rmax = 80, Rmin = 20;
-    const Rlabel = 100;
-    const step = (2 * Math.PI) / N;
-    const offset = -Math.PI / 2;
-
-    function pt(r, i) {
-      const a = offset + i * step;
-      return [cx + r * Math.cos(a), cy + r * Math.sin(a)];
+  function collect(){
+    const s=DB.settings(), entries=[], recorded=new Set(), spheres=new Map(SPHERES.map(x=>[x.id,{...x,dates:new Set(),scores:[]}]));
+    const habits=s.habits?DB.getHabits():[];
+    for(let w=1;w<=4;w++)for(let d=1;d<=7;d++){
+      const date=DB.dateForDay(w,d);if(!date||date>DB.localDate())continue;
+      const comp=DB.getCompletionsForDate(date);
+      const rows=(s.tasks?DB.getTasks(w,d).map(t=>({...t,kind:'task'})):[]).concat(habits.filter(h=>comp[h.id]).map(h=>({...h,kind:'habit',score:h.energy})));
+      for(const t of rows){const name=String(t.name||'').trim();if(!name)continue;recorded.add(date);const score=s.energy&&typeof t.score==='number'&&Number.isFinite(t.score)?t.score:null;entries.push({name,kind:t.kind,date,score,sphereId:t.sphereId});const row=spheres.get(t.sphereId);if(row){row.dates.add(date);if(score!==null)row.scores.push(score);}}
     }
-
-    let html = '';
-
-    // Концентрические сетки
-    [0.25, 0.5, 0.75, 1].forEach(frac => {
-      const r = Rmin + (Rmax - Rmin) * frac;
-      const pts = Array.from({length: N}, (_, i) => pt(r, i));
-      const d = pts.map((p, i) => (i === 0 ? 'M' : 'L') + p[0].toFixed(2) + ',' + p[1].toFixed(2)).join(' ') + 'Z';
-      html += `<path d="${d}" fill="none" stroke="rgba(213,184,184,${frac === 1 ? '.25' : '.1'})" stroke-width="${frac === 1 ? 1 : 0.5}"/>`;
-    });
-
-    // Радиусные линии
-    for (let i = 0; i < N; i++) {
-      const [x1, y1] = pt(Rmin, i), [x2, y2] = pt(Rmax, i);
-      html += `<line x1="${x1.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${x2.toFixed(2)}" y2="${y2.toFixed(2)}" stroke="rgba(213,184,184,.12)" stroke-width="0.5"/>`;
+    return {entries,recorded,spheres:[...spheres.values()]};
+  }
+  function observations(p,data){
+    const s=DB.settings(), out=[], groups=new Map();
+    for(const e of data.entries){if(e.score===null)continue;const key=e.kind+':'+e.name.toLocaleLowerCase('ru');if(!groups.has(key))groups.set(key,{name:e.name,rows:[]});groups.get(key).rows.push(e);}
+    const g=[...groups.values()].filter(x=>new Set(x.rows.map(e=>e.date)).size>=3);
+    for(const sign of [1,-1]){
+      const candidates=g.map(x=>({...x,n:x.rows.filter(e=>e.score*sign>0).length,sum:x.rows.reduce((a,e)=>a+e.score,0)})).filter(x=>x.n/x.rows.length>=.75&&x.sum*sign>0).sort((a,b)=>sign*(b.sum-a.sum));
+      if(candidates.length){const x=candidates[0];out.push([sign>0?'Что наполняет':'Что истощает',x.name+': '+x.n+' из '+x.rows.length+' оценок '+(sign>0?'положительные':'отрицательные')+'.','Баланс '+fmt(x.sum)+'; оценки минимум в 3 разных дня.']);}
     }
-
-    // Заполненная область
-    const fillPts = SPHERES.map((s, i) => {
-      const pct = (stats[s.id]?.pct ?? 0) / 100;
-      const r = Rmin + (Rmax - Rmin) * Math.max(0.03, pct);
-      return pt(r, i);
-    });
-    const fillD = fillPts.map((p, i) => (i === 0 ? 'M' : 'L') + p[0].toFixed(2) + ',' + p[1].toFixed(2)).join(' ') + 'Z';
-    html += `<path d="${fillD}" fill="rgba(181,142,142,.2)" stroke="rgba(181,142,142,.7)" stroke-width="1.5"/>`;
-
-    // Точки на вершинах
-    SPHERES.forEach((s, i) => {
-      if (!stats[s.id]?.total) return;
-      const pct = (stats[s.id]?.pct ?? 0) / 100;
-      const r = Rmin + (Rmax - Rmin) * Math.max(0.03, pct);
-      const [x, y] = pt(r, i);
-      html += `<circle cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="4" fill="${SPHERE_COLORS[i]}" stroke="var(--dark)" stroke-width="1.5"/>`;
-    });
-
-    // Эмодзи снаружи
-    SPHERES.forEach((s, i) => {
-      const [x, y] = pt(Rlabel, i);
-      html += `<text x="${x.toFixed(1)}" y="${(y + 5).toFixed(1)}" text-anchor="middle" font-size="15">${s.emoji}</text>`;
-    });
-
-    // Центр
-    const totals = Object.values(stats).reduce((a,s)=>({done:a.done+s.done,total:a.total+s.total}),{done:0,total:0});
-    const avg = totals.total ? Math.round(100*totals.done/totals.total)+'%' : '−';
-    html += `<circle cx="${cx}" cy="${cy}" r="${Rmin}" fill="var(--dark)"/>`;
-    html += `<text x="${cx}" y="${cy - 4}" text-anchor="middle" font-size="7" fill="#B58E8E" font-family="var(--font-sans)" letter-spacing="1">ВСЕГО</text>`;
-    html += `<text x="${cx}" y="${cy + 11}" text-anchor="middle" font-size="15" font-weight="500" fill="var(--lighter)" font-family="var(--font-sans)">${avg}</text>`;
-
-    return `
-      <div class="wheel-wrap">
-        <svg viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg" class="balance-wheel">
-          ${html}
-        </svg>
-      </div>
-    `;
+    if(s.energy){const a=period(1,2),b=period(3,4);if(a.dates.length===14&&b.dates.length===14&&a.days.length>=7&&b.days.length>=7){const x=a.total/a.days.length,y=b.total/b.days.length;if(Math.abs(y-x)>=1)out.push(['Динамика энергии','Средний баланс оценённых дней '+(y>x?'вырос':'снизился')+' с '+fmt(Math.round(x*10)/10)+' до '+fmt(Math.round(y*10)/10)+'.','Первая и вторая половины цикла: '+a.days.length+' и '+b.days.length+' оценённых дней.']);}}
+    if(s.habits&&p.dates.length>=14){const rows=p.rows.filter(h=>h.total>=4);const best=rows.filter(h=>h.pct>=80).sort((a,b)=>b.pct-a.pct)[0],low=rows.filter(h=>h.pct<=40).sort((a,b)=>a.pct-b.pct)[0];if(best)out.push(['Регулярность привычек',best.name+': выполнено '+best.done+' из '+best.total+' запланированных выполнений.','Регулярность '+best.pct+'%.']);if(low)out.push(['График привычек',low.name+': выполнено '+low.done+' из '+low.total+' запланированных выполнений.','Можно пересмотреть удобство графика; регулярность '+low.pct+'%.']);}
+    if(s.spheres){const dates=new Set(data.spheres.flatMap(x=>[...x.dates]));if(dates.size>=7){const rows=data.spheres.filter(x=>x.dates.size).sort((a,b)=>b.dates.size-a.dates.size);const top=rows.filter(x=>x.dates.size===rows[0].dates.size);out.push(['Моё внимание',top.map(x=>x.name).join(', ')+' − чаще всего в записях: '+top[0].dates.size+' дн.','Учитываются уникальные дни, а не количество записей.']);}}
+    return out.slice(0,5);
   }
-
-  function renderSphereList(stats) {
-    return SPHERES.map((s, i) => {
-      const st  = stats[s.id] || { done: 0, total: 0, pct: 0 };
-      const color = SPHERE_COLORS[i];
-      return `
-        <div class="sphere-stat-row">
-          <span class="ssr-emoji">${s.emoji}</span>
-          <div class="ssr-body">
-            <div class="ssr-top">
-              <span class="ssr-name">${s.name}</span>
-              <span class="ssr-pct">${st.total ? st.pct+'%' : '−'}</span>
-            </div>
-            <div class="ssr-track">
-              <div class="ssr-fill" style="width:${st.pct}%; background:${color}"></div>
-            </div>
-            <div class="ssr-sub">${st.total ? `${st.done} из ${st.total} отметок` : 'Нет данных'}</div>
-          </div>
-        </div>
-      `;
-    }).join('');
+  function sphereList(data){
+    const s=DB.settings();
+    return '<div class="month-spheres '+(s.energy?'':'no-energy')+'"><div class="month-sphere-row month-sphere-head"><span>Сфера</span><span>Дни</span>'+(s.energy?'<span>Энергия</span>':'')+'</div>'+data.spheres.map(x=>{const n=x.scores.length?x.scores.reduce((a,b)=>a+b,0):null;return '<div class="month-sphere-row"><span class="month-sphere-name"><span>'+x.emoji+'</span><span>'+escHtml(x.name)+'</span></span><span>'+x.dates.size+'</span>'+(s.energy?'<span class="'+(n>0?'review-pos':n<0?'review-neg':'')+'">'+fmt(n)+'</span>':'')+'</div>';}).join('')+'</div><div class="sc-sub">Дни присутствия в записях, не оценка качества жизни.</div>';
   }
-
+  function period(from=1,to=4){
+    const days=[],dates=[];let tasks=0,marks=0,positive=0,negative=0;
+    const settings=DB.settings();const habits=settings.habits?DB.getHabits():[];
+    for(let w=from;w<=to;w++)for(let d=1;d<=7;d++){
+      const date=DB.dateForDay(w,d);if(!date||date>DB.localDate())continue;
+      dates.push(date);const entries=(settings.tasks?DB.getTasks(w,d):[]).filter(t=>String(t.name||'').trim());tasks+=entries.length;
+      const comp=DB.getCompletionsForDate(date),done=habits.filter(h=>comp[h.id]);marks+=done.length;
+      const scores=entries.filter(t=>t.score!==null&&t.score!==undefined).map(t=>Number(t.score)||0).concat(done.map(h=>Number(h.energy)||0));
+      if(scores.length){const total=scores.reduce((a,b)=>a+b,0);days.push({w,d,date,total});for(const n of scores){positive+=Math.max(0,n);negative+=Math.max(0,-n);}}
+    }
+    const rows=habits.map(h=>({name:h.name,...DB.habitProgress(h,dates)})).filter(h=>h.total);
+    const done=rows.reduce((a,h)=>a+h.done,0),target=rows.reduce((a,h)=>a+h.total,0);
+    return {days,dates,tasks,marks,positive,negative,total:positive-negative,rows,done,target,pct:target?Math.round(done/target*100):null};
+  }
+  function fmt(n){return n===null?'−':n>0?'+'+n:n<0?'−'+Math.abs(n):'0';}
+  function balance(p){return '<div class="review-card review-center"><div class="sc-label">Баланс энергии</div><div class="review-big '+(p.total<0?'review-neg':'review-pos')+'">'+fmt(p.days.length?p.total:null)+'</div><div class="review-pair"><span class="review-pos">Получено '+fmt(p.positive)+'</span><span class="review-neg">Потрачено '+fmt(-p.negative)+'</span></div><div class="review-track"><i style="width:'+(100*p.positive/Math.max(1,p.positive+p.negative))+'%"></i><b style="width:'+(100*p.negative/Math.max(1,p.positive+p.negative))+'%"></b></div><div class="sc-sub">Дней с оценками: '+p.days.length+' из '+p.dates.length+'</div></div>';}
+  function chart(values,labels){
+    const max=Math.max(1,...values.filter(n=>typeof n==='number').map(Math.abs)),step=280/values.length;
+    return '<div class="review-card"><svg viewBox="0 0 320 150" width="100%" role="img" aria-label="Динамика энергии"><line x1="12" y1="70" x2="308" y2="70" stroke="#D4B8B8"/>'+values.map((n,i)=>{const x=20+step*(i+.5),h=n==null?0:Math.abs(n)/max*48;return (n==null||n===0?'': '<rect x="'+(x-10)+'" y="'+(n>=0?70-h:70)+'" width="20" height="'+Math.max(1,h)+'" rx="3" fill="'+(n>=0?'#8DA787':'#C99489')+'"/>')+'<text x="'+x+'" y="'+(n==null?65:n>=0?65-h:82+h)+'" text-anchor="middle" font-size="10" fill="#6B4E4E">'+ (n===undefined?'':fmt(n))+'</text><text x="'+x+'" y="145" text-anchor="middle" font-size="10" fill="#6B4E4E">'+labels[i]+'</text>';}).join('')+'</svg>'+(values.includes(null)?'<div class="sc-sub">'+(values.length===7?'Дни':'Недели')+' без оценок обозначены прочерком</div>':'')+'</div>';
+  }
+  function habitsReview(p){return '<div class="review-card"><div class="review-big">'+(p.pct===null?'−':p.pct+'%')+'</div><div class="sc-sub">'+p.done+' из '+p.target+' запланированных выполнений</div>'+p.rows.map(h=>'<div class="review-habit"><span>'+escHtml(h.name)+'</span><span>'+h.done+'/'+h.total+'</span></div><div class="ssr-track"><div class="ssr-fill" style="width:'+h.pct+'%;background:#B58E8E"></div></div>').join('')+'</div>';}
   function render() {
     const el = document.getElementById('screen-month');
 
+    const p=period(), data=collect(), insights=observations(p,data), settings=DB.settings();
     const weekScores = [1,2,3,4].map(w => DB.getWeekScore(w));
     const monthScore = weekScores.reduce((s, v) => s + v, 0);
     const totalTasks = (() => { let n = 0; for (let w=1;w<=4;w++) for (let d=1;d<=7;d++) n+=DB.getTasks(w,d).length; return n; })();
@@ -128,8 +79,8 @@ const MonthScreen = (() => {
     const worstWeekIdx = weekScores.indexOf(Math.min(...weekScores));
     const maxAbs = Math.max(1, ...weekScores.map(Math.abs));
 
-    const vampires   = DB.getMonthVampires(5);
-    const donors     = DB.getMonthDonors(5);
+    const vampires   = DB.getActiveSources(1,4,'min');
+    const donors     = DB.getActiveSources(1,4,'max');
     const refl       = DB.getReflection('month');
     const meta       = DB.getMeta();
     const sphereStats = DB.getHabitsSphereStats();
@@ -145,86 +96,31 @@ const MonthScreen = (() => {
       <div class="page-header">
         <div class="eyebrow">Итоги</div>
         <div class="title">${capitalize(monthName)}</div>
-        <div class="subtitle">${totalTasks} дел · 4 недели</div>
-      </div>
-
-      <div class="strip">
-        ${[1,2,3,4].map(w => {
-          const s = weekScores[w-1];
-          const cls = s > 0 ? 'pos' : s < 0 ? 'neg' : '';
-          const lbl = s > 0 ? `+${s}` : s === 0 ? '·' : `${s}`;
-          return `<div class="strip-pill">
-            <span class="p-name">Нед ${w}</span>
-            <span class="p-score ${cls}">${lbl}</span>
-          </div>`;
-        }).join('')}
+        <div class="subtitle">${data.recorded.size} дней с записями · 4 недели</div>
       </div>
 
       <div class="page-content">
-
-        <div class="section-label">Баланс месяца</div>
-
+        <div class="section-label">Главное за месяц</div>
         <div class="stat-grid">
-          <div class="stat-card">
-            <div class="sc-label">Итог месяца</div>
-            <div class="sc-value ${monthScore >= 0 ? 'pos' : 'neg'}">${scoreDisp}</div>
-            <div class="sc-sub">${totalTasks} дел записано</div>
-          </div>
-          <div class="stat-card">
-            <div class="sc-label">Дел в среднем</div>
-            <div class="sc-value">${totalTasks > 0 ? Math.round(totalTasks / 28) : 0}</div>
-            <div class="sc-sub">в день</div>
-          </div>
+        ${settings.energy?'<div class="stat-card"><div class="sc-label">Баланс энергии</div><div class="sc-value '+(p.days.length&&p.total>0?'review-pos':p.days.length&&p.total<0?'review-neg':'')+'">'+fmt(p.days.length?p.total:null)+'</div></div>':''}
+        ${settings.habits?'<div class="stat-card"><div class="sc-label">Регулярность привычек</div><div class="sc-value">'+(p.pct===null?'−':p.pct+'%')+'</div></div>':''}
         </div>
-
-        <div class="stat-grid">
-          <div class="stat-card">
-            <div class="sc-label">Лучшая неделя</div>
-            <div class="sc-value" style="font-size:18px; padding-top:4px">Нед ${bestWeekIdx + 1}</div>
-            <div class="sc-sub">${weekScores[bestWeekIdx] > 0 ? '+' : ''}${weekScores[bestWeekIdx]} энергии</div>
-          </div>
-          <div class="stat-card">
-            <div class="sc-label">Тяжёлая неделя</div>
-            <div class="sc-value" style="font-size:18px; padding-top:4px">Нед ${worstWeekIdx + 1}</div>
-            <div class="sc-sub">${weekScores[worstWeekIdx] > 0 ? '+' : ''}${weekScores[worstWeekIdx]} энергии</div>
-          </div>
+        <div class="sc-sub">Записи в ${data.recorded.size} из ${p.dates.length} дней</div>
+        <div class="section-label">Что я узнала о себе</div>
+        <div class="review-card">${insights.length?insights.map(([title,body,proof])=>'<div class="month-insight"><div class="sc-label">'+escHtml(title)+'</div><p>'+escHtml(body)+'</p><details><summary>На основании чего?</summary><div class="sc-sub">'+escHtml(proof)+'</div></details></div>').join(''):'<p>Пока недостаточно записей для устойчивых наблюдений.</p>'}</div>
+        <div class="section-label">Подробнее о моём месяце</div>
+        ${settings.energy?'<details class="review-card"><summary>Энергия</summary>'+balance(p)+chart([1,2,3,4].map(w=>{const x=period(w,w);return !x.dates.length?undefined:x.days.length?x.total:null;}),['Нед 1','Нед 2','Нед 3','Нед 4'])+(donors.length?renderVD(donors,'pos','Что наполняло'):'')+(vampires.length?renderVD(vampires,'neg','Что истощало'):'')+'</details>':''}
+        ${settings.spheres?'<details class="review-card"><summary>Сферы жизни</summary>'+sphereList(data)+'</details>':''}
+        ${settings.habits?'<details class="review-card"><summary>Привычки</summary>'+habitsReview(p)+'</details>':''}
+        <div ${DB.settings().reflection?'':'hidden'}>
+        <div class="section-label">Завершая месяц</div>
+        ${[{key:'insight_v2',q:'Что я поняла о себе?'},{key:'more_less_v2',q:'Чего хочется больше, а чего меньше?'},{key:'focus_v2',q:'Мой фокус на следующий месяц'}].map(({key,q})=>'<div class="reflection-card"><div class="ref-q">'+q+'</div><textarea class="ref-input" data-key="'+key+'" placeholder="Можно оставить пустым">'+escHtml(refl[key]||'')+'</textarea></div>').join('')}
+        ${MONTH_QUESTIONS.some(q=>refl[q.key])?'<details class="review-card"><summary>Предыдущие ответы</summary>'+MONTH_QUESTIONS.filter(q=>refl[q.key]).map(q=>'<div class="ref-q">'+q.q+'</div><textarea class="ref-input" data-key="'+q.key+'">'+escHtml(refl[q.key])+'</textarea>').join('')+'</details>':''}
         </div>
-
-        <div class="bar-chart">
-          <div class="bc-label">Энергия по неделям</div>
-          <div class="bc-bars">
-            ${weekScores.map((s, i) => {
-              const pct = maxAbs > 0 ? Math.round((Math.abs(s) / maxAbs) * 100) : 0;
-              const cls = s > 0 ? 'pos' : s < 0 ? 'neg' : 'zero';
-              return `<div class="bc-col">
-                <div class="bc-outer"><div class="bc-bar ${cls}" style="height:${Math.max(3, pct)}%"></div></div>
-                <span class="bc-day">Нед ${i + 1}</span>
-              </div>`;
-            }).join('')}
-          </div>
-        </div>
-
-        <div class="section-label">Колесо привычек</div>
-
-        ${renderWheel(sphereStats)}
-        ${renderSphereList(sphereStats)}
-
-        <div class="section-label">Главные вампиры месяца</div>
-        ${renderVD(vampires, 'neg', 'Забирали энергию чаще всего')}
-
-        <div class="section-label">Главные доноры месяца</div>
-        ${renderVD(donors, 'pos', 'Давали энергию чаще всего')}
-
-        <div class="section-label">Выводы о себе</div>
-        ${MONTH_QUESTIONS.map(({ key, q }) => `
-          <div class="reflection-card">
-            <div class="ref-q">${q}</div>
-            <textarea class="ref-input" data-key="${key}" placeholder="Ваш вывод...">${refl[key] || ''}</textarea>
-          </div>
-        `).join('')}
 
       </div>
     `;
+
 
     // Автосохранение рефлексии
     document.querySelectorAll('#screen-month .ref-input[data-key]').forEach(ta => {
@@ -263,6 +159,16 @@ const MonthScreen = (() => {
     return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 
-  return { render };
+  function renderSphereEnergy(rows, detailed=false) {
+    const fmt=n=>n>0?'+'+n:n<0?'−'+Math.abs(n):'0';
+    const max=Math.max(1,...rows.map(r=>Math.abs(r.total)));
+    return '<div class="section-label">Энергия по сферам</div>'+(!rows.length?'<div class="empty-state">Данных пока нет</div>':rows.map(r=>{
+      const balance='<span class="sphere-energy-value '+(r.total<0?'neg':'pos')+'">'+fmt(r.total)+'</span>';
+      const title='<span>'+r.emoji+' '+r.name+'</span>'+balance;
+      if(!detailed)return '<div class="sphere-energy-card"><div class="sphere-energy-head">'+title+'</div><div class="sphere-energy-track"><div class="sphere-energy-bar '+(r.total<0?'neg':'pos')+'" style="width:'+Math.abs(r.total)/max*100+'%"></div></div></div>';
+      return '<details class="sphere-energy-card"><summary class="sphere-energy-head">'+title+'</summary><div class="sphere-energy-meta">Получено +'+r.positive+' · Потрачено −'+r.negative+'</div><div class="sphere-energy-items">'+r.items.map(i=>'<div class="sphere-energy-head"><span>'+escHtml(i.name)+' <small>'+ (i.kind==='habit'?'Привычка':'Запись')+' · '+i.count+'</small></span><span>'+fmt(i.score)+'</span></div>').join('')+'</div></details>';
+    }).join(''));
+  }
+  return { render, renderSphereEnergy, period, balance, chart, habitsReview, fmt };
 
 })();

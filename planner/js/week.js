@@ -17,6 +17,7 @@ const WeekScreen = (() => {
   function render() {
     const el = document.getElementById('screen-week');
 
+    const p=MonthScreen.period(state.week,state.week);
     const weekScore = DB.getWeekScore(state.week);
     const dayScores = Array.from({ length: 7 }, (_, i) => DB.getDayScore(state.week, i + 1));
     const maxAbs = Math.max(1, ...dayScores.map(Math.abs));
@@ -24,8 +25,8 @@ const WeekScreen = (() => {
     const bestDayIdx  = dayScores.indexOf(Math.max(...dayScores));
     const worstDayIdx = dayScores.indexOf(Math.min(...dayScores));
 
-    const vampires = DB.getWeekVampires(state.week, 5);
-    const donors   = DB.getWeekDonors(state.week, 5);
+    const vampires = DB.getActiveSources(state.week,state.week,'min');
+    const donors   = DB.getActiveSources(state.week,state.week,'max');
     const refl     = DB.getReflection('week', state.week);
 
     const scoreDisp = weekScore > 0 ? `+${weekScore}` : `${weekScore}`;
@@ -51,49 +52,31 @@ const WeekScreen = (() => {
 
       <div class="page-content">
 
-        <div class="section-label">Общая картина</div>
+        <div ${DB.settings().energy?'':'hidden'}>
+        <div class="section-label">Энергия недели</div>
+        ${MonthScreen.balance(p)}
+        <div class="section-label">Как прошла неделя</div>
+        ${MonthScreen.chart(Array.from({length:7},(_,i)=>DB.dateForDay(state.week,i+1)>DB.localDate()?undefined:(p.days.find(d=>d.d===i+1)?.total??null)),Array.from({length:7},(_,i)=>DB.parseDate(DB.dateForDay(state.week,i+1)).toLocaleDateString('ru-RU',{weekday:'short'})))}
+        ${vampires.length?'<div class="section-label">Что истощало</div>'+renderVD(vampires,'neg','Забирали энергию'):''}
+        ${donors.length?'<div class="section-label">Что наполняло</div>'+renderVD(donors,'pos','Давали энергию'):''}
 
-        <div class="stat-grid">
-          <div class="stat-card">
-            <div class="sc-label">Баланс недели</div>
-            <div class="sc-value ${weekScore >= 0 ? 'pos' : 'neg'}">${scoreDisp}</div>
-            <div class="sc-sub">${countTasks(state.week)} дел записано</div>
-          </div>
-          <div class="stat-card">
-            <div class="sc-label">Лучший день</div>
-            <div class="sc-value" style="font-size:18px; padding-top:4px">${DAYS_SHORT[bestDayIdx]}</div>
-            <div class="sc-sub">${dayScores[bestDayIdx] > 0 ? '+' : ''}${dayScores[bestDayIdx]} энергии</div>
-          </div>
         </div>
-
-        <div class="bar-chart">
-          <div class="bc-label">Энергия по дням</div>
-          <div class="bc-bars">
-            ${dayScores.map((s, i) => {
-              const pct = maxAbs > 0 ? Math.round((Math.abs(s) / maxAbs) * 100) : 0;
-              const cls = s > 0 ? 'pos' : s < 0 ? 'neg' : 'zero';
-              const hi  = state.highlightDay === i + 1 ? 'hi' : '';
-              return `<div class="bc-col">
-                <div class="bc-outer"><div class="bc-bar ${cls} ${hi}" style="height:${pct}%"></div></div>
-                <span class="bc-day">${DAYS_SHORT[i]}</span>
-              </div>`;
-            }).join('')}
-          </div>
+        <div ${DB.settings().habits?'':'hidden'}>
+        <div class="section-label">Мои привычки</div>
+        ${MonthScreen.habitsReview(p)}
         </div>
-
-        <div class="section-label">Вампиры недели</div>
-        ${renderVD(vampires, 'neg', 'Забирали энергию')}
-
-        <div class="section-label">Доноры недели</div>
-        ${renderVD(donors, 'pos', 'Давали энергию')}
-
-        <div class="section-label">Рефлексия</div>
-        ${WEEK_QUESTIONS.map(({ key, q }) => `
-          <div class="reflection-card">
-            <div class="ref-q">${q}</div>
-            <textarea class="ref-input" data-key="${key}" placeholder="Напишите своё наблюдение...">${refl[key] || ''}</textarea>
-          </div>
-        `).join('')}
+        <div ${DB.settings().energy&&DB.settings().spheres&&DB.settings().tasks&&DB.settings().habits?'':'hidden'}>
+        <details class="review-card"><summary>Подробнее по сферам жизни</summary>${MonthScreen.renderSphereEnergy(DB.getSphereEnergy(state.week,state.week),true)}</details>
+        </div>
+        <div ${DB.settings().energy?'':'hidden'}>
+        <div class="section-label">Наблюдения недели</div>
+        <div class="review-card">${observations(p,donors,vampires)}</div>
+        </div>
+        <div ${DB.settings().reflection?'':'hidden'}>
+        <div class="section-label">Заметка недели · необязательно</div>
+        <div class="reflection-card"><textarea class="ref-input" data-key="note" placeholder="Что хочется запомнить об этой неделе?">${escHtml(refl.note||'')}</textarea></div>
+        ${WEEK_QUESTIONS.some(q=>refl[q.key])?'<details class="review-card"><summary>Предыдущие ответы</summary>'+WEEK_QUESTIONS.filter(q=>refl[q.key]).map(q=>'<div class="ref-q">'+q.q+'</div><textarea class="ref-input" data-key="'+q.key+'">'+escHtml(refl[q.key])+'</textarea>').join('')+'</details>':''}
+        </div>
 
       </div>
     `;
@@ -101,6 +84,13 @@ const WeekScreen = (() => {
     bindWeekEvents();
   }
 
+  function observations(p,donors,vampires){
+    const lines=[];
+    if(state.week>1){const prev=MonthScreen.period(state.week-1,state.week-1);if(p.days.length>=3&&prev.days.length===p.days.length&&p.dates.length===prev.dates.length){const delta=p.total-prev.total;lines.push('Баланс энергии относительно предыдущей недели: '+MonthScreen.fmt(delta)+' баллов.');}}
+    if(p.days.length>=2&&donors.length)lines.push('Главный источник положительной энергии: '+escHtml(donors[0].name)+' ('+MonthScreen.fmt(donors[0].score)+').');
+    if(p.days.length>=2&&vampires.length)lines.push('Наибольшая потеря энергии: '+escHtml(vampires[0].name)+' ('+MonthScreen.fmt(vampires[0].score)+').');
+    return lines.length?lines.map(x=>'<p>'+x+'</p>').join(''):'<p>Наблюдения появятся, когда будет больше оценок энергии.</p>';
+  }
   function renderVD(items, type, title) {
     const icon = type === 'neg'
       ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/><line x1="3" y1="3" x2="21" y2="21" style="display:${type==='neg'?'block':'none'}"/></svg>`

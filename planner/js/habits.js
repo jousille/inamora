@@ -2,15 +2,7 @@
 
 const HabitsScreen = (() => {
 
-  const SPHERES = [
-    { id: 'energy',  emoji: '🔥', name: 'Энергия и тело' },
-    { id: 'self',    emoji: '💛', name: 'Я и только я' },
-    { id: 'work',    emoji: '💼', name: 'Дело и деньги' },
-    { id: 'love',    emoji: '💞', name: 'Отношения' },
-    { id: 'home',    emoji: '🏡', name: 'Пространство' },
-    { id: 'growth',  emoji: '🌱', name: 'Саморазвитие' },
-    { id: 'values',  emoji: '✨', name: 'Ценности' },
-  ];
+  const SPHERES = DB.SPHERES;
 
   const DAYS_SHORT = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
   const MONTHS_SHORT = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
@@ -56,12 +48,8 @@ const HabitsScreen = (() => {
         const sHabits = bySphere[s.id];
         let total = 0, done = 0;
         sHabits.forEach(h => {
-          for (let i = 0; i < 7; i++) {
-            const isFuture = weekOffset === 0 && i > todayDow;
-            const dt = new Date(mon); dt.setDate(dt.getDate()+i);
-            const marked = Boolean(completions[h.id]?.[i]);
-            if (!isFuture && (marked || DB.isHabitEligible(h,DB.localDate(dt)))) { total++; if(marked) done++; }
-          }
+          const dates=Array.from({length:7},(_,i)=>{const dt=new Date(mon);dt.setDate(dt.getDate()+i);return DB.localDate(dt);});
+          const p=DB.habitProgress(h,dates);total+=p.total;done+=p.done;
         });
         const pct = total ? Math.round(done / total * 100) : 0;
         return `
@@ -125,18 +113,17 @@ const HabitsScreen = (() => {
     const done = completions[habit.id] || Array(7).fill(false);
     const mon = getWeekStart(weekOffset);
     const eligible = done.map((marked,i)=>{const d=new Date(mon);d.setDate(d.getDate()+i);return (isPast || i<=todayDow) && (marked || DB.isHabitEligible(habit,DB.localDate(d)));});
-    const totalDays = eligible.filter(Boolean).length;
-    const doneDays = done.filter((v,i)=>v && eligible[i]).length;
-    const pct = totalDays ? Math.round(doneDays / totalDays * 100) : 0;
+    const dates=Array.from({length:7},(_,i)=>{const d=new Date(mon);d.setDate(d.getDate()+i);return DB.localDate(d);});
+    const {total:totalDays,done:doneDays,pct}=DB.habitProgress(habit,dates);
 
     // Серия подряд
-    const streak = calcStreak(habit.id);
+    const streak = !habit.schedule || habit.schedule==='daily' ? calcStreak(habit.id) : 0;
 
     const dots = DAYS_SHORT.map((d, i) => {
       const isFuture = !isPast && i > todayDow;
       const isDone = done[i];
       const isToday = !isPast && i === todayDow;
-      return `<div class="dot ${isDone ? 'done' : ''} ${isToday ? 'today-dot' : ''} ${isFuture ? 'future-dot' : ''}"
+      return `<div class="dot ${isDone ? 'done' : ''} ${isToday ? 'today-dot' : ''} ${isFuture ? 'future-dot' : ''} ${!eligible[i] && !isFuture ? 'unscheduled-dot' : ''}"
         ${!isFuture && !isPast && eligible[i] ? `onclick="HabitsScreen.toggleDot('${habit.id}', ${i})"` : ''}
         title="${d}">${d[0]}</div>`;
     }).join('');
@@ -150,7 +137,7 @@ const HabitsScreen = (() => {
         <div class="dots-row">${dots}</div>
         <div class="habit-progress">
           <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
-          <div class="progress-label"><span>${doneDays} из ${totalDays} дней</span><span>${pct}%</span></div>
+          <div class="progress-label"><span>${doneDays} из ${totalDays} ${habit.schedule==='weekly'?'выполнений':'дней'}</span><span>${pct}%</span></div>
         </div>
         ${!isPast ? `
         <div class="habit-del-row">
@@ -230,17 +217,29 @@ const HabitsScreen = (() => {
     wrap.innerHTML = `
       <div class="modal">
         <h3>Новая привычка</h3>
-        <label>Название</label>
+        <button type="button" class="library-open" id="hab-library">Выбрать из библиотеки</button><div id="hab-library-panel" hidden></div><label>Название</label>
         <input type="text" id="hab-name-input" placeholder="Например: Вечерняя прогулка" autocomplete="off">
         <label>Сфера жизни</label>
         <div class="sphere-chips" id="hab-sphere-chips">${sphereChips}</div>
-        <label>Энергия за выполнение</label>
+        <label>Периодичность</label>
+        <select id="hab-schedule"><option value="daily">Каждый день</option><option value="days">В определённые дни недели</option><option value="weekly">Несколько раз в неделю</option></select>
+        <div id="hab-weekdays" hidden class="schedule-days">${DAYS_SHORT.map((d,i)=>'<label><input type="checkbox" value="'+i+'">'+d+'</label>').join('')}</div>
+        <div id="hab-target-wrap" hidden><label>Раз в неделю</label><select id="hab-target">${Array.from({length:7},(_,i)=>'<option '+(i===2?'selected':'')+' value="'+(i+1)+'">'+(i+1)+'</option>').join('')}</select></div>
+        <label>Дата начала</label><input type="date" id="hab-start" value="${DB.localDate()}" min="${DB.localDate()}">
+        <label class="energy-detail">Энергия за выполнение</label>
         <div class="energy-chips" id="hab-energy-chips">${energyChips}</div>
         <button class="modal-btn" onclick="HabitsScreen.saveHabit()">Добавить</button>
       </div>`;
     wrap.addEventListener('click', e => { if (e.target === wrap) closeModal(); });
     document.body.appendChild(wrap);
-    setTimeout(() => document.getElementById('hab-name-input').focus(), 100);
+    wrap.querySelector('#hab-schedule').onchange=e=>{wrap.querySelector('#hab-weekdays').hidden=e.target.value!=='days';wrap.querySelector('#hab-target-wrap').hidden=e.target.value!=='weekly';};
+    const panel=wrap.querySelector('#hab-library-panel');
+    wrap.querySelector('#hab-library').onclick=()=>{panel.hidden=!panel.hidden;if(!panel.hidden)showLibrary(SPHERES[0].id);};
+    function showLibrary(id){
+      panel.innerHTML='<select aria-label="Сфера библиотеки">'+SPHERES.map(s=>'<option value="'+s.id+'" '+(s.id===id?'selected':'')+'>'+s.emoji+' '+s.name+'</option>').join('')+'</select><div class="library-list"></div>';
+      panel.querySelector('select').onchange=e=>showLibrary(e.target.value);
+      for(const name of DB.LIBRARY[id][0]){const b=document.createElement('button');b.type='button';b.textContent=name+' +';b.onclick=()=>{wrap.querySelector('#hab-name-input').value=name;selectSphere(wrap.querySelector('[data-sphere="'+id+'"]'));panel.hidden=true;};panel.querySelector('.library-list').appendChild(b);}
+    }
   }
 
   function closeModal() {
@@ -264,8 +263,13 @@ const HabitsScreen = (() => {
     const sphereEl = document.querySelector('#hab-sphere-chips .sphere-chip.selected');
     const energyEl = document.querySelector('#hab-energy-chips .energy-chip.selected');
     const sphereId = sphereEl ? sphereEl.dataset.sphere : SPHERES[0].id;
-    const energy   = energyEl ? parseInt(energyEl.dataset.val) : 3;
-    DB.addHabit({ name, sphereId, energy });
+    const energy   = DB.settings().energy?(energyEl ? parseInt(energyEl.dataset.val) : 3):0;
+    const schedule=document.getElementById('hab-schedule').value;
+    const weekdays=[...document.querySelectorAll('#hab-weekdays input:checked')].map(x=>Number(x.value));
+    if(schedule==='days'&&!weekdays.length){alert('Выберите хотя бы один день недели');return;}
+    const startDate=document.getElementById('hab-start').value;
+    if(!startDate||startDate<DB.localDate()){alert('Выберите дату начала не раньше сегодняшней');return;}
+    DB.addHabit({name,sphereId,energy,schedule,weekdays,weeklyTarget:Number(document.getElementById('hab-target').value),startDate});
     closeModal();
     render();
   }

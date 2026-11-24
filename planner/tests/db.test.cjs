@@ -50,6 +50,24 @@ test('archive uses its own cycle start',()=>{
  assert.equal(db.getDayScore(1,1),0);
 });
 
+test('test backup round-trip preserves task and completion',()=>{
+  const {db,store}=setup();
+  db.toggleCompletionByDate(1,'2020-11-23');
+  const backup=db.exportAllData();
+  const old=store.get('planer_TEST_comp_v2_2020-11-23');
+  store.delete('planer_TEST_comp_v2_2020-11-23');
+  assert.equal(db.getHabitsEnergyForDate('2020-11-23'),0);
+  db.importAllData(backup);
+  assert.equal(store.get('planer_TEST_comp_v2_2020-11-23'),old);
+  assert.equal(db.getHabitsEnergyForDate('2020-11-23'),3);
+});
+test('malformed import does not mutate data',()=>{
+  const {db,store}=setup();
+  const snapshot=JSON.stringify([...store.entries()]);
+  assert.throws(()=>db.importAllData('{"version":3,"data":{}}'));
+  assert.equal(JSON.stringify([...store.entries()]),snapshot);
+});
+
 test('zero energy habit is saved and counted without changing energy',()=>{
  const {db}=setup();
  db.addHabit({name:'Neutral',sphereId:'energy',energy:0});
@@ -59,3 +77,52 @@ test('zero energy habit is saved and counted without changing energy',()=>{
  assert.equal(db.getCompletionsForDate(db.localDate())[h.id],true);
  assert.equal(db.getHabitsEnergyForDate(db.localDate()),0);
 });
+
+test('task categories are optional, validated and preserve old records',()=>{
+ const {db}=setup();
+ db.saveTasks(1,1,[{id:1,name:'Old',score:-5}]);
+ db.updateTask(1,1,1,{sphereId:'work'});
+ assert.equal(db.getTasks(1,1)[0].sphereId,'work');
+ db.updateTask(1,1,1,{sphereId:''});
+ assert.equal(db.getTasks(1,1)[0].sphereId,null);
+ db.addTask(1,1,'New',3,'growth');
+ assert.equal(db.getTasks(1,1)[1].sphereId,'growth');
+ assert.equal(db.getDayScore(1,1),-2);
+});
+
+test('sphere analytics reconcile with total including legacy tasks and archived habits',()=>{
+ const {db}=setup();
+ db.saveTasks(1,1,[{id:1,name:'Work',score:-5,sphereId:'work'},{id:2,name:'Old',score:3}]);
+ db.toggleCompletionByDate(1,'2020-11-23');
+ db.archiveHabit(1);
+ const rows=db.getSphereEnergy(1,1);
+ assert.equal(rows.reduce((a,r)=>a+r.total,0),db.getWeekScore(1));
+ assert.equal(rows.find(r=>r.id==='energy').positive,3);
+ assert.equal(rows.find(r=>r.id==='work').negative,5);
+ assert.equal(rows.find(r=>r.id===null).total,3);
+ db.startNewMonth('2020-12-21');
+ assert.equal(db.getSphereEnergy(1,4,0).reduce((a,r)=>a+r.total,0),1);
+});
+
+test('sphere presence counts unique days, neutral tasks, archived habits and union',()=>{
+ const {db}=setup();
+ db.saveTasks(1,1,[{name:'Walk',sphereId:'energy',score:0},{name:'Run',sphereId:'energy',score:-5},{name:'Dinner',sphereId:'love',score:null},{name:'',sphereId:'work',score:null}]);
+ db.saveTasks(1,2,[{name:'Dinner',sphereId:'love',score:3}]);
+ db.toggleCompletionByDate(1,'2020-11-23');
+ db.archiveHabit(1);
+ const p=db.getSpherePresence();
+ assert.equal(p.days,28);
+ assert.equal(p.stats.energy.all,1);
+ assert.equal(p.stats.energy.tasks,1);
+ assert.equal(p.stats.energy.habits,1);
+ assert.equal(p.stats.love.all,2);
+ assert.equal(p.stats.work.all,0);
+ db.startNewMonth('2020-12-21');
+ assert.equal(db.getSpherePresence(0).stats.love.all,2);
+ db.setMeta({...db.getMeta(),startDate:db.localDate()});
+ db.saveTasks(1,2,[{name:'Future',sphereId:'love',score:3}]);
+ assert.equal(db.getSpherePresence().days,1);
+ assert.equal(db.getSpherePresence().stats.love.all,0);
+});
+
+test('scheduled habits respect weekdays and weekly caps',()=>{const {db}=setup();const dates=['2020-11-23','2020-11-24','2020-11-25','2020-11-26'];const h={id:1,createdOn:dates[0],schedule:'days',weekdays:[0,2]};db.saveHabits([h]);assert.equal(db.isHabitEligible(h,dates[1]),false);db.toggleCompletionByDate(1,dates[0]);assert.equal(db.habitProgress(h,dates).total,2);assert.equal(db.habitProgress(h,dates).done,1);const w={...h,schedule:'weekly',weeklyTarget:2};db.saveHabits([w]);db.toggleCompletionByDate(1,dates[1]);db.toggleCompletionByDate(1,dates[2]);assert.equal(db.habitProgress(w,dates).pct,100);assert.equal(db.habitProgress(w,dates).done,2);});

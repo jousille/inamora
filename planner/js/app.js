@@ -53,7 +53,7 @@ const App = (() => {
     bindNavEvents();
     DayScreen.initToday();
     HabitsScreen.init();
-    navigateTo('day');
+    navigateTo(DB.settings().start);
 
     // Автоэкспорт — раз в 7 дней
     setTimeout(() => {
@@ -78,7 +78,7 @@ const App = (() => {
 
       if (result.ok) {
         errEl.textContent = '';
-        startApp(val.trim().toUpperCase());
+        startApp(Auth.currentToken());
       } else {
         let msg = 'Не удалось войти, попробуйте снова';
         if (result.reason === 'not_found') msg = 'Неверный код доступа';
@@ -105,7 +105,9 @@ const App = (() => {
     });
   }
 
+  function refreshNav(){const s=DB.settings();document.querySelectorAll('#bottom-nav .nav-item').forEach(b=>{b.hidden=(b.dataset.screen==='day'&&!s.tasks)||(b.dataset.screen==='habits'&&!s.habits);});document.getElementById('app').dataset.energy=s.energy?'on':'off';document.getElementById('app').dataset.spheres=s.spheres?'on':'off';}
   function navigateTo(screen) {
+    refreshNav();const s=DB.settings();if(screen==='day'&&!s.tasks||screen==='habits'&&!s.habits)screen=s.tasks?'day':s.habits?'habits':'profile';
     if (!SCREENS.includes(screen)) return;
     currentScreen = screen;
 
@@ -173,7 +175,7 @@ const App = (() => {
     setTimeout(() => { if (banner.parentNode) banner.remove(); }, 15000);
   }
 
-  return { init, showAuth, navigateTo };
+  return { init, showAuth, navigateTo, refreshNav };
 
 })();
 

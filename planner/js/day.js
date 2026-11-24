@@ -30,7 +30,7 @@ const DayScreen = (() => {
     const DAYS_SHORT_REAL = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
     const realDayName = DAYS_REAL[dayDate.getDay()];
     const tasks = DB.getTasks(state.week, state.day);
-    const breakdown = DB.getDayBreakdown(state.week, state.day);
+    const breakdown = DB.getDayBreakdown(state.week, state.day); if(!DB.settings().habits){breakdown.habits=0;breakdown.total=breakdown.tasks;}
     const dayScore = breakdown.total;
 
     const maxAbs = 50;
@@ -53,7 +53,7 @@ const DayScreen = (() => {
           const pillDate = new Date(startDate);
           pillDate.setDate(startDate.getDate() + (state.week - 1) * 7 + i);
           const pillDay = DAYS_SHORT_REAL[pillDate.getDay()];
-          const s = DB.getDayScore(state.week, i + 1);
+          const b=DB.getDayBreakdown(state.week,i+1);const s=DB.settings().habits?b.total:b.tasks;
           const cls = s > 0 ? 'pos' : s < 0 ? 'neg' : '';
           const lbl = s > 0 ? `+${s}` : s === 0 ? '·' : `${s}`;
           return `<button class="strip-pill ${i + 1 === state.day ? 'active' : ''}" data-day="${i + 1}">
@@ -72,8 +72,8 @@ const DayScreen = (() => {
       </div>
 
       <div class="page-content">
-        <div class="section-label">Дела: ${breakdown.tasks > 0 ? "+" : ""}${breakdown.tasks} · Привычки: +${breakdown.habits}</div>
-        <div class="section-label">Дела дня</div>
+        <div class="section-label energy-detail">Дела и события: ${breakdown.tasks > 0 ? "+" : ""}${breakdown.tasks} ${DB.settings().habits?'· Привычки: +'+breakdown.habits:''}</div>
+        <div class="section-label">Дела и события</div>
         <div class="task-list" id="task-list">
           ${renderTasks(tasks)}
         </div>
@@ -82,10 +82,11 @@ const DayScreen = (() => {
           <div class="add-task-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           </div>
-          <span class="add-task-text">Добавить дело</span>
+          <span class="add-task-text">Добавить запись</span>
         </button>` : ''}
 
-        ${renderHabitsSection(DB.localDate(dayDate))}
+        ${tasks.length < 14 ? '<button type="button" class="library-open" id="task-library">Выбрать из библиотеки</button>' : ''}
+        ${DB.settings().habits?renderHabitsSection(DB.localDate(dayDate)):''}
       </div>
     `;
 
@@ -94,7 +95,7 @@ const DayScreen = (() => {
 
   function renderTasks(tasks) {
     if (tasks.length === 0) {
-      return `<div class="empty-state">Нет записей.<br>Добавьте первое дело дня.</div>`;
+      return `<div class="empty-state">Нет записей.<br>Добавьте первую запись.</div>`;
     }
     return tasks.map(t => renderTaskRow(t)).join('');
   }
@@ -108,23 +109,32 @@ const DayScreen = (() => {
 
     return `
       <div class="task-row ${isSelected ? 'selected' : ''}" data-id="${task.id}">
-        <div class="task-name" contenteditable="true" data-placeholder="Название дела" data-id="${task.id}">${escHtml(task.name)}</div>
+        <div class="task-info">
+          <div class="task-name" contenteditable="true" data-placeholder="Что происходило?" data-id="${task.id}">${escHtml(task.name)}</div>
+          ${DB.SPHERES.some(s=>s.id===task.sphereId) ? '<div class="task-sphere">'+DB.SPHERES.find(s=>s.id===task.sphereId).name+'</div>' : ''}
+        </div>
         <div class="score-chip ${chipClass}" data-id="${task.id}">${chipLabel}</div>
       </div>
-      ${isSelected ? renderPicker(task.id) : ''}
+      ${isSelected ? renderPicker(task) : ''}
       ${isSelected ? `
       <div class="task-delete-row">
         <button class="task-delete-btn" data-delete="${task.id}">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
-          Удалить дело
+          Удалить запись
         </button>
       </div>` : ''}
     `;
   }
 
-  function renderPicker(taskId) {
+  function renderPicker(task) {
+    const taskId = task.id;
     return `
       <div class="score-picker" data-picker="${taskId}">
+        <label class="picker-label" for="task-sphere-${taskId}">Сфера жизни (необязательно)</label>
+        <select class="task-sphere-select" id="task-sphere-${taskId}" data-task="${taskId}">
+          <option value="">Без категории</option>
+          ${DB.SPHERES.map(s=>`<option value="${s.id}" ${task.sphereId===s.id?'selected':''}>${s.name}</option>`).join('')}
+        </select>
         <div class="picker-label">Оценка энергии</div>
         <div class="picker-opts">
           ${SCORES.map(s => `
@@ -175,10 +185,16 @@ const DayScreen = (() => {
       el.addEventListener('blur', () => {
         const id = parseInt(el.dataset.id);
         DB.updateTask(state.week, state.day, id, { name: el.textContent.trim() });
-        render();
       });
       el.addEventListener('keydown', e => {
         if (e.key === 'Enter') { e.preventDefault(); el.blur(); }
+      });
+    });
+
+    document.querySelectorAll('.task-sphere-select').forEach(el => {
+      el.addEventListener('change', () => {
+        DB.updateTask(state.week,state.day,Number(el.dataset.task),{sphereId:el.value||null});
+        render();
       });
     });
 
@@ -203,6 +219,7 @@ const DayScreen = (() => {
       });
     });
 
+    document.getElementById('task-library')?.addEventListener('click',openTaskLibrary);
     // Добавить задачу
     const addBtn = document.getElementById('add-task-btn');
     if (addBtn) {
@@ -218,6 +235,15 @@ const DayScreen = (() => {
         }, 50);
       });
     }
+  }
+
+  function openTaskLibrary(){
+    if(document.getElementById('task-library-modal'))return;
+    const wrap=document.createElement('div');wrap.id='task-library-modal';wrap.className='modal-bg open';
+    wrap.innerHTML='<div class="modal"><h3>Библиотека дел и событий</h3><p class="library-hint">Идеи, а не обязательный список.</p><select aria-label="Сфера жизни">'+DB.SPHERES.map(s=>'<option value="'+s.id+'">'+s.emoji+' '+s.name+'</option>').join('')+'</select><div class="library-list"></div><button type="button" class="library-open" id="library-close">Закрыть</button></div>';
+    const select=wrap.querySelector('select'),list=wrap.querySelector('.library-list');
+    function show(){list.replaceChildren();for(const name of DB.LIBRARY[select.value][1]){const b=document.createElement('button');b.type='button';b.textContent=name+' +';b.onclick=()=>{if(DB.getTasks(state.week,state.day).length>=14)return;const tasks=DB.addTask(state.week,state.day,name,null,select.value);state.selectedTaskId=tasks[tasks.length-1].id;wrap.remove();render();};list.appendChild(b);}}
+    select.onchange=show;wrap.querySelector('#library-close').onclick=()=>wrap.remove();wrap.onclick=e=>{if(e.target===wrap)wrap.remove();};document.body.appendChild(wrap);show();
   }
 
   function moveCursorToEnd(el) {
@@ -237,14 +263,8 @@ const DayScreen = (() => {
 
     const comp = DB.getCompletionsForDate(dateStr);
 
-    const SPHERES = {
-      energy: '🔥', self: '💛', work: '💼', love: '💞',
-      home: '🏡', growth: '🌱', values: '✨'
-    };
-    const SPHERE_NAMES = {
-      energy: 'Энергия и тело', self: 'Я и только я', work: 'Дело и деньги',
-      love: 'Отношения', home: 'Пространство', growth: 'Саморазвитие', values: 'Ценности'
-    };
+    const SPHERES = Object.fromEntries(DB.SPHERES.map(s=>[s.id,s.emoji]));
+    const SPHERE_NAMES = Object.fromEntries(DB.SPHERES.map(s=>[s.id,s.name]));
 
     const rows = habits.filter(h => comp[h.id] || DB.isHabitEligible(h,dateStr)).map(h => {
       const done = comp[h.id] || false;
