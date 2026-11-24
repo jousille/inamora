@@ -35,8 +35,12 @@ const HabitsScreen = (() => {
     const isPast = weekOffset < 0;
     const todayDow = (new Date().getDay() || 7) - 1; // 0=пн..6=вс
 
-    const habits = DB.getHabits();
+    const allHabits = DB.getHabits();
+    // В текущей неделе — только активные; в прошлых — все у кого есть отметки
     const completions = DB.getCompletionsForWeek(weekOffset);
+    const habits = isPast
+      ? allHabits.filter(h => completions[h.id] && completions[h.id].some(Boolean))
+      : allHabits.filter(h => !h.archived);
 
     // Группируем по сферам
     const bySphere = {};
@@ -149,7 +153,7 @@ const HabitsScreen = (() => {
         <div class="habit-del-row">
           <button class="habit-del-btn" onclick="HabitsScreen.confirmDelete(${habit.id})">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
-            Удалить привычку
+            Убрать привычку
           </button>
         </div>` : ''}
       </div>`;
@@ -267,8 +271,8 @@ const HabitsScreen = (() => {
   function confirmDelete(habitId) {
     const habit = DB.getHabits().find(h => h.id === habitId);
     if (!habit) return;
-    if (!confirm(`Удалить привычку «${habit.name}»?`)) return;
-    DB.deleteHabit(habitId);
+    if (!confirm(`Убрать привычку «${habit.name}»?\nОтметки в прошлых неделях сохранятся.`)) return;
+    DB.archiveHabit(habitId);
     render();
     if (typeof DayScreen !== 'undefined') DayScreen.refreshHabits();
   }

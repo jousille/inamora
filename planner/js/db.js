@@ -239,6 +239,13 @@ const DB = (() => {
     saveHabits(getHabits().filter(h => h.id !== id));
   }
 
+  function archiveHabit(id) {
+    const habits = getHabits();
+    const idx = habits.findIndex(h => h.id === id);
+    if (idx !== -1) habits[idx].archived = true;
+    saveHabits(habits);
+  }
+
   // Ключ для хранения отметок одной недели
   // weekOffset: 0 = текущая неделя, -1 = прошлая, итд.
   // Храним абсолютный ISO-ключ начала недели (понедельник)
@@ -297,9 +304,9 @@ const DB = (() => {
     return comp[habitId][dayIdx]; // новое состояние
   }
 
-  // Суммарный бонус привычек за дату
+  // Суммарный бонус привычек за дату (только активные)
   function getHabitsEnergyForDate(dateStr) {
-    const habits = getHabits();
+    const habits = getHabits().filter(h => !h.archived);
     const comp = getCompletionsForDate(dateStr);
     return habits.reduce((sum, h) => sum + (comp[h.id] ? h.energy : 0), 0);
   }
@@ -337,7 +344,7 @@ const DB = (() => {
   return {
     init, getToken,
     getTasks, saveTasks, addTask, updateTask, deleteTask,
-    getHabits, saveHabits, addHabit, deleteHabit,
+    getHabits, saveHabits, addHabit, deleteHabit, archiveHabit,
     getCompletionsForWeek, toggleCompletion,
     getCompletionsForDate, toggleCompletionByDate, getHabitsEnergyForDate,
     getReflection, saveReflection,
