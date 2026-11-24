@@ -66,6 +66,7 @@ const MonthScreen = (() => {
 
     // Точки на вершинах
     SPHERES.forEach((s, i) => {
+      if (!stats[s.id]?.total) return;
       const pct = (stats[s.id]?.pct ?? 0) / 100;
       const r = Rmin + (Rmax - Rmin) * Math.max(0.03, pct);
       const [x, y] = pt(r, i);
@@ -79,10 +80,11 @@ const MonthScreen = (() => {
     });
 
     // Центр
-    const avg = Math.round(SPHERES.reduce((sum, s) => sum + (stats[s.id]?.pct ?? 0), 0) / N);
+    const totals = Object.values(stats).reduce((a,s)=>({done:a.done+s.done,total:a.total+s.total}),{done:0,total:0});
+    const avg = totals.total ? Math.round(100*totals.done/totals.total)+'%' : '—';
     html += `<circle cx="${cx}" cy="${cy}" r="${Rmin}" fill="var(--dark)"/>`;
     html += `<text x="${cx}" y="${cy - 4}" text-anchor="middle" font-size="7" fill="#B58E8E" font-family="var(--font-sans)" letter-spacing="1">ВСЕГО</text>`;
-    html += `<text x="${cx}" y="${cy + 11}" text-anchor="middle" font-size="15" font-weight="500" fill="var(--lighter)" font-family="var(--font-sans)">${avg}%</text>`;
+    html += `<text x="${cx}" y="${cy + 11}" text-anchor="middle" font-size="15" font-weight="500" fill="var(--lighter)" font-family="var(--font-sans)">${avg}</text>`;
 
     return `
       <div class="wheel-wrap">
@@ -103,12 +105,12 @@ const MonthScreen = (() => {
           <div class="ssr-body">
             <div class="ssr-top">
               <span class="ssr-name">${s.name}</span>
-              <span class="ssr-pct">${st.pct}%</span>
+              <span class="ssr-pct">${st.total ? st.pct+'%' : '—'}</span>
             </div>
             <div class="ssr-track">
               <div class="ssr-fill" style="width:${st.pct}%; background:${color}"></div>
             </div>
-            <div class="ssr-sub">${st.done} из ${st.total} отметок</div>
+            <div class="ssr-sub">${st.total ? `${st.done} из ${st.total} отметок` : 'Нет данных'}</div>
           </div>
         </div>
       `;
@@ -135,7 +137,7 @@ const MonthScreen = (() => {
     const scoreDisp = monthScore > 0 ? `+${monthScore}` : `${monthScore}`;
 
     const monthName = (() => {
-      const d = meta.startDate ? new Date(meta.startDate) : new Date();
+      const d = meta.startDate ? DB.parseDate(meta.startDate) : new Date();
       return d.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' });
     })();
 

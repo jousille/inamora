@@ -68,8 +68,28 @@ const DB = (() => {
 
   // ── Агрегация ─────────────────────────────────────────────────
 
+  function localDate(d = new Date()) {
+    return [d.getFullYear(), String(d.getMonth()+1).padStart(2,'0'), String(d.getDate()).padStart(2,'0')].join('-');
+  }
+  function parseDate(s) {
+    const [y,m,d] = s.split('-').map(Number);
+    return new Date(y,m-1,d,12);
+  }
+  function dateForDay(week, day, monthIdx = getCurrentMonthIndex()) {
+    const start = monthIdx === getCurrentMonthIndex() ? getMeta().startDate : getMonthMeta(monthIdx).startDate;
+    if (!start) return null;
+    const d = parseDate(start);
+    d.setDate(d.getDate() + (week-1)*7 + day-1);
+    return localDate(d);
+  }
+  function getDayBreakdown(week, day, monthIdx) {
+    const tasks = getTasks(week, day, monthIdx).reduce((sum,t)=>sum+(Number(t.score)||0),0);
+    const date = dateForDay(week,day,monthIdx);
+    const habits = date ? getHabitsEnergyForDate(date) : 0;
+    return {tasks, habits, total:tasks+habits};
+  }
   function getDayScore(week, day, monthIdx) {
-    return getTasks(week, day, monthIdx).reduce((s, t) => s + (t.score || 0), 0);
+    return getDayBreakdown(week,day,monthIdx).total;
   }
 
   function getWeekScore(week, monthIdx) {
@@ -100,7 +120,10 @@ const DB = (() => {
 
     for (let w = weekFrom; w <= weekTo; w++) {
       for (let d = 1; d <= 7; d++) {
-        getTasks(w, d, mi).forEach(t => {
+        const date = dateForDay(w,d,mi);
+        const completed = date ? getCompletionsForDate(date) : {};
+        const entries = getTasks(w,d,mi).concat(getHabits().filter(h=>completed[h.id]).map(h=>({name:h.name,score:Number(h.energy)||0})));
+        entries.forEach(t => {
           if (t.name && t.name.trim() && typeof t.score === 'number' && t.score !== 0) {
             all.push({ name: t.name.trim(), score: t.score });
           }
@@ -108,7 +131,7 @@ const DB = (() => {
       }
     }
 
-    const map = {};
+    const map = Object.create(null);
     all.forEach(({ name, score }) => {
       if (map[name] === undefined) { map[name] = score; return; }
       map[name] = mode === 'min' ? Math.min(map[name], score) : Math.max(map[name], score);
@@ -116,7 +139,7 @@ const DB = (() => {
 
     const entries = Object.entries(map)
       .map(([name, score]) => ({ name, score }))
-      .filter(e => mode === 'min' ? e.score <= -3 : e.score >= 3);
+      .filter(e => mode === 'min' ? e.score <= -3 : e.score > 0);
 
     entries.sort((a, b) => mode === 'min' ? a.score - b.score : b.score - a.score);
     return entries.slice(0, limit);
@@ -128,12 +151,12 @@ const DB = (() => {
     const meta = getMeta();
     if (!meta.startDate) return { week: 1, day: 1, isFinished: false };
 
-    const start = new Date(meta.startDate);
+    const start = parseDate(meta.startDate);
     start.setHours(0, 0, 0, 0);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const diffDays = Math.floor((today - start) / (1000 * 60 * 60 * 24));
+    const diffDays = (Date.parse(localDate(today)) - Date.parse(localDate(start))) / 86400000;
 
     if (diffDays < 0)  return { week: 1, day: 1, isFinished: false };
     if (diffDays >= 28) return { week: 4, day: 7, isFinished: true };
@@ -230,7 +253,7 @@ const DB = (() => {
 
   function addHabit({ name, sphereId, energy }) {
     const habits = getHabits();
-    habits.push({ id: Date.now(), name, sphereId, energy: energy || 3, createdAt: new Date().toISOString() });
+    habits.push({ id: Date.now(), name, sphereId, energy: energy || 3, createdAt: new Date().toISOString(), createdOn: localDate() });
     saveHabits(habits);
     return habits;
   }
@@ -242,131 +265,83 @@ const DB = (() => {
   function archiveHabit(id) {
     const habits = getHabits();
     const idx = habits.findIndex(h => h.id === id);
-    if (idx !== -1) habits[idx].archived = true;
+    if (idx !== -1) { habits[idx].archived = true; habits[idx].archivedOn = localDate(); }
     saveHabits(habits);
   }
 
-  // Ключ для хранения отметок одной недели
-  // weekOffset: 0 = текущая неделя, -1 = прошлая, итд.
-  // Храним абсолютный ISO-ключ начала недели (понедельник)
-  function _weekKey(weekOffset) {
-    const now = new Date();
-    const dow = now.getDay() || 7;
-    const mon = new Date(now);
-    mon.setDate(now.getDate() - (dow - 1) + weekOffset * 7);
-    mon.setHours(0, 0, 0, 0);
-    return key('comp', mon.toISOString().slice(0, 10));
+  // v2 uses local Monday keys. Legacy UTC keys are read without deleting them.
+  function monday(dateStr) {
+    const d = parseDate(dateStr);
+    d.setDate(d.getDate() - ((d.getDay()+6)%7));
+    return d;
   }
-
-  // Возвращает объект { [habitId]: [bool×7] }
-  function getCompletionsForWeek(weekOffset) {
-    const raw = localStorage.getItem(_weekKey(weekOffset));
-    return raw ? JSON.parse(raw) : {};
+  function weekDate(offset) {
+    const d = monday(localDate());
+    d.setDate(d.getDate()+offset*7);
+    return localDate(d);
   }
-
-  function toggleCompletion(habitId, weekOffset, dayIndex) {
-    const comp = getCompletionsForWeek(weekOffset);
-    if (!comp[habitId]) comp[habitId] = Array(7).fill(false);
-    comp[habitId][dayIndex] = !comp[habitId][dayIndex];
-    localStorage.setItem(_weekKey(weekOffset), JSON.stringify(comp));
-  }
-
-  // Получить выполненные привычки за конкретную дату (для дневника)
-  function getCompletionsForDate(dateStr) {
-    // dateStr = 'YYYY-MM-DD'
-    const date = new Date(dateStr);
-    const dow = date.getDay() || 7;
-    const mon = new Date(date);
-    mon.setDate(date.getDate() - (dow - 1));
-    mon.setHours(0, 0, 0, 0);
-    const wKey = key('comp', mon.toISOString().slice(0, 10));
-    const comp = JSON.parse(localStorage.getItem(wKey) || '{}');
-    const dayIdx = dow - 1; // 0=пн..6=вс
+  function readWeek(dateStr) {
+    const mon = monday(dateStr);
+    const canonical = key('comp_v2',localDate(mon));
+    const saved = localStorage.getItem(canonical);
+    if (saved !== null) return JSON.parse(saved);
+    // Old keys are either Monday or the preceding Sunday, depending on timezone.
+    const sun = new Date(mon); sun.setDate(sun.getDate()-1);
     const result = {};
-    for (const hId of Object.keys(comp)) {
-      result[hId] = comp[hId][dayIdx] || false;
+    for (const date of [localDate(sun),localDate(mon)]) {
+      const old = JSON.parse(localStorage.getItem(key('comp',date)) || '{}');
+      for (const [id,days] of Object.entries(old)) {
+        result[id] = Array.from({length:7},(_,i)=>Boolean(result[id]?.[i] || days[i]));
+      }
     }
     return result;
   }
-
-  function toggleCompletionByDate(habitId, dateStr) {
-    const date = new Date(dateStr);
-    const dow = date.getDay() || 7;
-    const mon = new Date(date);
-    mon.setDate(date.getDate() - (dow - 1));
-    mon.setHours(0, 0, 0, 0);
-    const wKey = key('comp', mon.toISOString().slice(0, 10));
-    const comp = JSON.parse(localStorage.getItem(wKey) || '{}');
-    const dayIdx = dow - 1;
-    if (!comp[habitId]) comp[habitId] = Array(7).fill(false);
-    comp[habitId][dayIdx] = !comp[habitId][dayIdx];
-    localStorage.setItem(wKey, JSON.stringify(comp));
-    return comp[habitId][dayIdx]; // новое состояние
+  function writeToggle(id,dateStr) {
+    const mon = monday(dateStr);
+    const i = (parseDate(dateStr).getDay()+6)%7;
+    const comp = readWeek(dateStr);
+    const habit = getHabits().find(h=>String(h.id)===String(id));
+    if (!habit || !isHabitEligible(habit,dateStr) || dateStr > localDate()) return Boolean(comp[id]?.[i]);
+    if (!comp[id]) comp[id] = Array(7).fill(false);
+    comp[id][i] = !comp[id][i];
+    localStorage.setItem(key('comp_v2',localDate(mon)),JSON.stringify(comp));
+    return comp[id][i];
   }
-
-  // Суммарный бонус привычек за дату (только активные)
+  function getCompletionsForWeek(offset) { return readWeek(weekDate(offset)); }
+  function toggleCompletion(id,offset,i) {
+    const d = parseDate(weekDate(offset)); d.setDate(d.getDate()+i);
+    return writeToggle(id,localDate(d));
+  }
+  function getCompletionsForDate(dateStr) {
+    const i = (parseDate(dateStr).getDay()+6)%7;
+    return Object.fromEntries(Object.entries(readWeek(dateStr)).map(([id,days])=>[id,Boolean(days[i])]));
+  }
+  function toggleCompletionByDate(id,dateStr) { return writeToggle(id,dateStr); }
+  function isHabitEligible(h,dateStr) {
+    const created = h.createdOn || (h.createdAt ? localDate(new Date(h.createdAt)) : '2000-01-01');
+    return dateStr >= created && (!h.archived || (h.archivedOn && dateStr <= h.archivedOn));
+  }
   function getHabitsEnergyForDate(dateStr) {
-    const habits = getHabits().filter(h => !h.archived);
     const comp = getCompletionsForDate(dateStr);
-    return habits.reduce((sum, h) => sum + (comp[h.id] ? h.energy : 0), 0);
+    return getHabits().reduce((sum,h)=>sum+(comp[h.id] ? Number(h.energy)||0 : 0),0);
   }
-
-  // ── Статистика привычек по сферам за месяц ───────────────────
-  // Возвращает { [sphereId]: { done, total, pct } }
-  function getHabitsSphereStats() {
-    const habits = getHabits(); // все, включая архивные
-    const today = new Date();
-    today.setHours(0,0,0,0);
-
-    // Собираем все даты текущего месяца до сегодня включительно
-    const year  = today.getFullYear();
-    const month = today.getMonth();
-    const days  = [];
-    for (let d = 1; d <= today.getDate(); d++) {
-      const dt = new Date(year, month, d);
-      days.push(dt.toISOString().slice(0, 10));
-    }
-
-    // Кешируем completions по неделям чтобы не читать localStorage каждый раз
-    const weekCache = {};
-    function getWeekComp(dateStr) {
-      const date = new Date(dateStr);
-      const dow = date.getDay() || 7;
-      const mon = new Date(date);
-      mon.setDate(date.getDate() - (dow - 1));
-      mon.setHours(0,0,0,0);
-      const wKey = key('comp', mon.toISOString().slice(0,10));
-      if (!weekCache[wKey]) {
-        weekCache[wKey] = JSON.parse(localStorage.getItem(wKey) || '{}');
-      }
-      const dayIdx = dow - 1;
-      const raw = weekCache[wKey];
-      const result = {};
-      // id может быть числом — приводим к строке для сравнения
-      for (const hId of Object.keys(raw)) {
-        result[hId] = raw[hId][dayIdx] || false;
-      }
-      return result;
-    }
-
+  function getHabitsSphereStats(monthIdx = getCurrentMonthIndex()) {
     const stats = {};
-    habits.forEach(h => {
-      if (!stats[h.sphereId]) stats[h.sphereId] = { done: 0, total: 0 };
-      const hIdStr = String(h.id); // ключи в localStorage всегда строки
-      days.forEach(dateStr => {
-        const created = h.createdAt ? h.createdAt.slice(0,10) : '2000-01-01';
-        if (created > dateStr) return;
-        const comp = getWeekComp(dateStr);
-        stats[h.sphereId].total++;
-        if (comp[hIdStr]) stats[h.sphereId].done++;
-      });
-    });
-
-    Object.keys(stats).forEach(id => {
-      const s = stats[id];
-      s.pct = s.total > 0 ? Math.round(s.done / s.total * 100) : 0;
-    });
-
+    const today = localDate();
+    const meta = monthIdx === getCurrentMonthIndex() ? {} : getMonthMeta(monthIdx);
+    const end = meta.archivedAt ? localDate(new Date(meta.archivedAt)) : today;
+    for (let w=1;w<=4;w++) for(let d=1;d<=7;d++) {
+      const date = dateForDay(w,d,monthIdx);
+      if (!date || date>today || date>end) continue;
+      const comp = getCompletionsForDate(date);
+      for (const h of getHabits()) {
+        if (!comp[h.id] && !isHabitEligible(h,date)) continue;
+        const st = stats[h.sphereId] ||= {done:0,total:0,pct:0};
+        st.total++;
+        if(comp[h.id]) st.done++;
+      }
+    }
+    for(const st of Object.values(stats)) st.pct = Math.round(100*st.done/st.total);
     return stats;
   }
 
@@ -401,7 +376,7 @@ const DB = (() => {
   }
 
   return {
-    init, getToken,
+    init, getToken, localDate, parseDate, dateForDay, getDayBreakdown, isHabitEligible,
     getTasks, saveTasks, addTask, updateTask, deleteTask,
     getHabits, saveHabits, addHabit, deleteHabit, archiveHabit,
     getCompletionsForWeek, toggleCompletion,

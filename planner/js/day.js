@@ -21,7 +21,7 @@ const DayScreen = (() => {
   function render() {
     const el = document.getElementById('screen-day');
     const meta = DB.getMeta();
-    const startDate = meta.startDate ? new Date(meta.startDate) : new Date();
+    const startDate = meta.startDate ? DB.parseDate(meta.startDate) : new Date();
     const dayDate = new Date(startDate);
     dayDate.setDate(startDate.getDate() + (state.week - 1) * 7 + (state.day - 1));
 
@@ -30,8 +30,8 @@ const DayScreen = (() => {
     const DAYS_SHORT_REAL = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
     const realDayName = DAYS_REAL[dayDate.getDay()];
     const tasks = DB.getTasks(state.week, state.day);
-    const habitsBonus = DB.getHabitsEnergyForDate(dayDate.toISOString().slice(0, 10));
-    const dayScore = DB.getDayScore(state.week, state.day) + habitsBonus;
+    const breakdown = DB.getDayBreakdown(state.week, state.day);
+    const dayScore = breakdown.total;
 
     const maxAbs = 50;
     const fillPct = Math.min(100, Math.max(0, ((dayScore + maxAbs) / (maxAbs * 2)) * 100));
@@ -72,6 +72,7 @@ const DayScreen = (() => {
       </div>
 
       <div class="page-content">
+        <div class="section-label">Дела: ${breakdown.tasks > 0 ? "+" : ""}${breakdown.tasks} · Привычки: +${breakdown.habits}</div>
         <div class="section-label">Дела дня</div>
         <div class="task-list" id="task-list">
           ${renderTasks(tasks)}
@@ -84,7 +85,7 @@ const DayScreen = (() => {
           <span class="add-task-text">Добавить дело</span>
         </button>` : ''}
 
-        ${renderHabitsSection(dayDate.toISOString().slice(0, 10))}
+        ${renderHabitsSection(DB.localDate(dayDate))}
       </div>
     `;
 
@@ -245,13 +246,13 @@ const DayScreen = (() => {
       love: 'Отношения', home: 'Пространство', growth: 'Саморазвитие', values: 'Ценности'
     };
 
-    const rows = habits.map(h => {
+    const rows = habits.filter(h => comp[h.id] || DB.isHabitEligible(h,dateStr)).map(h => {
       const done = comp[h.id] || false;
       const sphereEmoji = SPHERES[h.sphereId] || '·';
       const sphereName  = SPHERE_NAMES[h.sphereId] || '';
       return `
         <div class="habit-day-row ${done ? 'hab-done' : ''}" data-hab="${h.id}" data-date="${dateStr}">
-          <div class="hab-check" onclick="DayScreen.toggleHabit('${h.id}', '${dateStr}')">
+          <div class="hab-check" ${DB.isHabitEligible(h,dateStr) && dateStr <= DB.localDate() ? `onclick="DayScreen.toggleHabit('${h.id}', '${dateStr}')"` : ''}>
             ${done
               ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`
               : ''}

@@ -58,8 +58,9 @@ const HabitsScreen = (() => {
         sHabits.forEach(h => {
           for (let i = 0; i < 7; i++) {
             const isFuture = weekOffset === 0 && i > todayDow;
-            if (!isFuture) total++;
-            if (completions[h.id] && completions[h.id][i]) done++;
+            const dt = new Date(mon); dt.setDate(dt.getDate()+i);
+            const marked = Boolean(completions[h.id]?.[i]);
+            if (!isFuture && (marked || DB.isHabitEligible(h,DB.localDate(dt)))) { total++; if(marked) done++; }
           }
         });
         const pct = total ? Math.round(done / total * 100) : 0;
@@ -122,8 +123,10 @@ const HabitsScreen = (() => {
 
   function renderHabitCard(habit, completions, todayDow, isPast) {
     const done = completions[habit.id] || Array(7).fill(false);
-    const totalDays = isPast ? 7 : todayDow + 1;
-    const doneDays = done.filter(Boolean).length;
+    const mon = getWeekStart(weekOffset);
+    const eligible = done.map((marked,i)=>{const d=new Date(mon);d.setDate(d.getDate()+i);return (isPast || i<=todayDow) && (marked || DB.isHabitEligible(habit,DB.localDate(d)));});
+    const totalDays = eligible.filter(Boolean).length;
+    const doneDays = done.filter((v,i)=>v && eligible[i]).length;
     const pct = totalDays ? Math.round(doneDays / totalDays * 100) : 0;
 
     // Серия подряд
@@ -134,7 +137,7 @@ const HabitsScreen = (() => {
       const isDone = done[i];
       const isToday = !isPast && i === todayDow;
       return `<div class="dot ${isDone ? 'done' : ''} ${isToday ? 'today-dot' : ''} ${isFuture ? 'future-dot' : ''}"
-        ${!isFuture && !isPast ? `onclick="HabitsScreen.toggleDot('${habit.id}', ${i})"` : ''}
+        ${!isFuture && !isPast && eligible[i] ? `onclick="HabitsScreen.toggleDot('${habit.id}', ${i})"` : ''}
         title="${d}">${d[0]}</div>`;
     }).join('');
 

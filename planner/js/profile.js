@@ -42,7 +42,7 @@ const ProfileScreen = (() => {
     const monthN = (meta.currentMonth || 0) + 1;
 
     const startDate = meta.startDate
-      ? new Date(meta.startDate).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })
+      ? DB.parseDate(meta.startDate).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })
       : 'не задана';
 
     let totalTasks = 0;
@@ -85,7 +85,7 @@ const ProfileScreen = (() => {
           <div class="nmb-title">🎉 Месяц завершён!</div>
           <div class="nmb-desc">Результаты сохранены в архиве. Готовы начать новый месяц?</div>
           <input type="date" class="ref-input" id="new-month-date"
-            value="${new Date().toISOString().split('T')[0]}"
+            value="${DB.localDate()}"
             style="min-height:auto; padding:10px; margin:10px 0;">
           <button class="new-month-btn" id="start-new-month-btn">Начать новый месяц →</button>
         </div>
@@ -130,7 +130,7 @@ const ProfileScreen = (() => {
     if (newMonthBtn) {
       newMonthBtn.addEventListener('click', () => {
         const dateInput = document.getElementById('new-month-date');
-        const newDate = dateInput ? dateInput.value : new Date().toISOString().split('T')[0];
+        const newDate = dateInput ? dateInput.value : DB.localDate();
         if (confirm(`Начать новый месяц с ${new Date(newDate).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}?\n\nТекущий месяц сохранится в архиве.`)) {
           DB.startNewMonth(newDate);
           DayScreen.initToday();
@@ -289,7 +289,7 @@ const ProfileScreen = (() => {
         <div class="section-label">Прошлые месяцы</div>
         ${archive.map(m => {
           const startStr = m.startDate
-            ? new Date(m.startDate).toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' })
+            ? DB.parseDate(m.startDate).toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' })
             : `Месяц ${m.index + 1}`;
           const monthScore = [1,2,3,4].reduce((s, w) => s + DB.getWeekScore(w, m.index), 0);
           const scoreDisp = monthScore > 0 ? `+${monthScore}` : `${monthScore}`;
@@ -317,7 +317,7 @@ const ProfileScreen = (() => {
         const idx = parseInt(btn.dataset.delete);
         const m = DB.getMonthMeta(idx);
         const label = m.startDate
-          ? new Date(m.startDate).toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' })
+          ? DB.parseDate(m.startDate).toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' })
           : `Месяц ${idx + 1}`;
         if (confirm(`Удалить ${label} из архива?
 
@@ -340,7 +340,7 @@ const ProfileScreen = (() => {
   function showArchiveMonth(monthIdx) {
     const m = DB.getMonthMeta(monthIdx);
     const startStr = m.startDate
-      ? new Date(m.startDate).toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' })
+      ? DB.parseDate(m.startDate).toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' })
       : `Месяц ${monthIdx + 1}`;
 
     const weekScores = [1,2,3,4].map(w => DB.getWeekScore(w, monthIdx));
@@ -414,7 +414,7 @@ const ProfileScreen = (() => {
     const json = JSON.stringify(backup, null, 2);
     const blob = new Blob([json], { type: 'application/json' });
     const url  = URL.createObjectURL(blob);
-    const date = new Date().toISOString().split('T')[0];
+    const date = DB.localDate();
     const a    = document.createElement('a');
     a.href     = url;
     a.download = `planer-backup-${date}.json`;

@@ -148,7 +148,7 @@ const WeekScreen = (() => {
 
   function weekDateRange(week) {
     const meta = DB.getMeta();
-    const start = meta.startDate ? new Date(meta.startDate) : new Date();
+    const start = meta.startDate ? DB.parseDate(meta.startDate) : new Date();
     const from = new Date(start);
     from.setDate(start.getDate() + (week - 1) * 7);
     const to = new Date(from);

@@ -43,7 +43,7 @@ const App = (() => {
     // Если дата начала не задана — ставим сегодня
     const meta = DB.getMeta();
     if (!meta.startDate) {
-      const today = new Date().toISOString().split('T')[0];
+      const today = DB.localDate();
       DB.setMeta({ startDate: today });
     }
 
@@ -157,7 +157,7 @@ const App = (() => {
       const json = DB.exportAllData();
       const blob = new Blob([json], { type: 'application/json' });
       const url  = URL.createObjectURL(blob);
-      const date = new Date().toISOString().split('T')[0];
+      const date = DB.localDate();
       const a    = document.createElement('a');
       a.href = url;
       a.download = `planer-backup-${date}.json`;
