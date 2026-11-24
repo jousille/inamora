@@ -1,6 +1,6 @@
 // ── sw.js — Service Worker для PWA ───────────────────────────
 
-const CACHE = 'planner-v3';
+const CACHE = 'planner-v4';
 const ASSETS = [
   './',
   './index.html',
