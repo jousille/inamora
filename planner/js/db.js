@@ -3,6 +3,16 @@
 const DB = (() => {
 
   let _token = null;
+  const SPHERES = Object.freeze([
+    {id:'energy',emoji:'🔥',name:'Энергия и тело'},
+    {id:'self',emoji:'💛',name:'Я и только я'},
+    {id:'work',emoji:'💼',name:'Дело и деньги'},
+    {id:'love',emoji:'💞',name:'Отношения'},
+    {id:'home',emoji:'🏡',name:'Пространство'},
+    {id:'growth',emoji:'🌱',name:'Саморазвитие'},
+    {id:'values',emoji:'✨',name:'Ценности'}
+  ].map(Object.freeze));
+  function normalizeSphere(id) { return SPHERES.some(s=>s.id===id) ? id : null; }
 
   function init(token) { _token = token; }
 
@@ -32,9 +42,9 @@ const DB = (() => {
     localStorage.setItem(monthKey(mi, 'tasks', week, day), JSON.stringify(tasks));
   }
 
-  function addTask(week, day, name, score) {
+  function addTask(week, day, name, score, sphereId = null) {
     const tasks = getTasks(week, day);
-    tasks.push({ id: Date.now(), name, score });
+    tasks.push({ id: Date.now(), name, score, sphereId: normalizeSphere(sphereId) });
     saveTasks(week, day, tasks);
     return tasks;
   }
@@ -42,7 +52,7 @@ const DB = (() => {
   function updateTask(week, day, id, fields) {
     const tasks = getTasks(week, day);
     const idx = tasks.findIndex(t => t.id === id);
-    if (idx !== -1) Object.assign(tasks[idx], fields);
+    if (idx !== -1) Object.assign(tasks[idx], fields, Object.hasOwn(fields,'sphereId') ? {sphereId:normalizeSphere(fields.sphereId)} : {});
     saveTasks(week, day, tasks);
     return tasks;
   }
@@ -376,7 +386,7 @@ const DB = (() => {
   }
 
   return {
-    init, getToken, localDate, parseDate, dateForDay, getDayBreakdown, isHabitEligible,
+    SPHERES, normalizeSphere, init, getToken, localDate, parseDate, dateForDay, getDayBreakdown, isHabitEligible,
     getTasks, saveTasks, addTask, updateTask, deleteTask,
     getHabits, saveHabits, addHabit, deleteHabit, archiveHabit,
     getCompletionsForWeek, toggleCompletion,

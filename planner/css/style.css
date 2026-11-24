@@ -771,3 +771,8 @@ input[type="date"].ref-input {
 .ssr-track { height: 4px; background: var(--mid); border-radius: 4px; margin-bottom: 4px; }
 .ssr-fill  { height: 100%; border-radius: 4px; transition: width .4s; }
 .ssr-sub   { font-size: 11px; color: var(--mid-dk); }
+
+/* Task categories */
+.task-info { flex:1; min-width:0; }
+.task-sphere { font-size:11px; color:var(--acc-lt); margin-top:3px; }
+.task-sphere-select { display:block; width:100%; box-sizing:border-box; font:inherit; color:inherit; background:transparent; border:1px solid var(--acc-lt); border-radius:8px; padding:8px; margin:6px 0 12px; }

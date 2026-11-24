@@ -108,10 +108,13 @@ const DayScreen = (() => {
 
     return `
       <div class="task-row ${isSelected ? 'selected' : ''}" data-id="${task.id}">
-        <div class="task-name" contenteditable="true" data-placeholder="Название дела" data-id="${task.id}">${escHtml(task.name)}</div>
+        <div class="task-info">
+          <div class="task-name" contenteditable="true" data-placeholder="Название дела" data-id="${task.id}">${escHtml(task.name)}</div>
+          ${DB.SPHERES.some(s=>s.id===task.sphereId) ? '<div class="task-sphere">'+DB.SPHERES.find(s=>s.id===task.sphereId).name+'</div>' : ''}
+        </div>
         <div class="score-chip ${chipClass}" data-id="${task.id}">${chipLabel}</div>
       </div>
-      ${isSelected ? renderPicker(task.id) : ''}
+      ${isSelected ? renderPicker(task) : ''}
       ${isSelected ? `
       <div class="task-delete-row">
         <button class="task-delete-btn" data-delete="${task.id}">
@@ -122,9 +125,15 @@ const DayScreen = (() => {
     `;
   }
 
-  function renderPicker(taskId) {
+  function renderPicker(task) {
+    const taskId = task.id;
     return `
       <div class="score-picker" data-picker="${taskId}">
+        <label class="picker-label" for="task-sphere-${taskId}">Сфера жизни (необязательно)</label>
+        <select class="task-sphere-select" id="task-sphere-${taskId}" data-task="${taskId}">
+          <option value="">Без категории</option>
+          ${DB.SPHERES.map(s=>`<option value="${s.id}" ${task.sphereId===s.id?'selected':''}>${s.name}</option>`).join('')}
+        </select>
         <div class="picker-label">Оценка энергии</div>
         <div class="picker-opts">
           ${SCORES.map(s => `
@@ -175,10 +184,16 @@ const DayScreen = (() => {
       el.addEventListener('blur', () => {
         const id = parseInt(el.dataset.id);
         DB.updateTask(state.week, state.day, id, { name: el.textContent.trim() });
-        render();
       });
       el.addEventListener('keydown', e => {
         if (e.key === 'Enter') { e.preventDefault(); el.blur(); }
+      });
+    });
+
+    document.querySelectorAll('.task-sphere-select').forEach(el => {
+      el.addEventListener('change', () => {
+        DB.updateTask(state.week,state.day,Number(el.dataset.task),{sphereId:el.value||null});
+        render();
       });
     });
 
@@ -237,14 +252,8 @@ const DayScreen = (() => {
 
     const comp = DB.getCompletionsForDate(dateStr);
 
-    const SPHERES = {
-      energy: '🔥', self: '💛', work: '💼', love: '💞',
-      home: '🏡', growth: '🌱', values: '✨'
-    };
-    const SPHERE_NAMES = {
-      energy: 'Энергия и тело', self: 'Я и только я', work: 'Дело и деньги',
-      love: 'Отношения', home: 'Пространство', growth: 'Саморазвитие', values: 'Ценности'
-    };
+    const SPHERES = Object.fromEntries(DB.SPHERES.map(s=>[s.id,s.emoji]));
+    const SPHERE_NAMES = Object.fromEntries(DB.SPHERES.map(s=>[s.id,s.name]));
 
     const rows = habits.filter(h => comp[h.id] || DB.isHabitEligible(h,dateStr)).map(h => {
       const done = comp[h.id] || false;

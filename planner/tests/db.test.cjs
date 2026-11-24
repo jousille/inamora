@@ -59,3 +59,15 @@ test('zero energy habit is saved and counted without changing energy',()=>{
  assert.equal(db.getCompletionsForDate(db.localDate())[h.id],true);
  assert.equal(db.getHabitsEnergyForDate(db.localDate()),0);
 });
+
+test('task categories are optional, validated and preserve old records',()=>{
+ const {db}=setup();
+ db.saveTasks(1,1,[{id:1,name:'Old',score:-5}]);
+ db.updateTask(1,1,1,{sphereId:'work'});
+ assert.equal(db.getTasks(1,1)[0].sphereId,'work');
+ db.updateTask(1,1,1,{sphereId:''});
+ assert.equal(db.getTasks(1,1)[0].sphereId,null);
+ db.addTask(1,1,'New',3,'growth');
+ assert.equal(db.getTasks(1,1)[1].sphereId,'growth');
+ assert.equal(db.getDayScore(1,1),-2);
+});

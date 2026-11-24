@@ -2,15 +2,7 @@
 
 const HabitsScreen = (() => {
 
-  const SPHERES = [
-    { id: 'energy',  emoji: '🔥', name: 'Энергия и тело' },
-    { id: 'self',    emoji: '💛', name: 'Я и только я' },
-    { id: 'work',    emoji: '💼', name: 'Дело и деньги' },
-    { id: 'love',    emoji: '💞', name: 'Отношения' },
-    { id: 'home',    emoji: '🏡', name: 'Пространство' },
-    { id: 'growth',  emoji: '🌱', name: 'Саморазвитие' },
-    { id: 'values',  emoji: '✨', name: 'Ценности' },
-  ];
+  const SPHERES = DB.SPHERES;
 
   const DAYS_SHORT = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
   const MONTHS_SHORT = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
