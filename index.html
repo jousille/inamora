@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&family=Prata&display=swap" rel="stylesheet">
 <style>
 /* ── CSS VARIABLES ── */
 :root {
@@ -848,6 +849,67 @@ section .container { padding: 0; }
 }
 .blog-more:hover { background: var(--light); }
 
+/* Editorial hero preview */
+.editorial-hero {background:linear-gradient(90deg,rgba(251,247,247,.88) 0%,rgba(251,247,247,.65) 43%,rgba(251,247,247,.08) 78%),url('hero-hydrangea.jpg?v=4') center center/cover no-repeat;color:#3D2E2E;min-height:clamp(450px,40vw,630px);display:flex;align-items:center;padding:clamp(40px,5vw,76px) var(--pad);text-align:left;border-bottom:1px solid #D4B8B8;font-family:'Onest',sans-serif;}
+.editorial-hero .container {width:100%;max-width:1400px;padding:0;}
+.editorial-hero .hero-marquee {justify-content:flex-start;margin-bottom:16px;}
+.editorial-hero .hero-marquee span {color:#604949;font-size:.68rem;}
+.editorial-name {font-size:.82rem;letter-spacing:.35em;margin-bottom:14px;color:#604949;}
+.editorial-hero h1 {font-family:'Prata',Georgia,serif;color:#3D2E2E;font-size:clamp(2rem,3.4vw,3.4rem);font-weight:400;font-style:normal;line-height:1.15;max-width:690px;margin:0 0 24px;}
+.editorial-hero h1 em {font-weight:400;font-style:normal;display:block;}
+.editorial-hero p {color:#3D2E2E;max-width:530px;font-weight:400;margin:0 0 32px;}
+.editorial-hero .hero-cta {flex-direction:row;justify-content:flex-start;flex-wrap:wrap;gap:12px;}
+.editorial-hero .hero-cta .btn {font-family:'Onest',sans-serif;background:#3D2E2E;color:#FBF7F7;border:1px solid #3D2E2E;}
+.editorial-hero .hero-cta .editorial-secondary {background:rgba(251,247,247,.35);color:#3D2E2E;}
+@media(max-width:600px){.editorial-hero{min-height:510px;background-image:linear-gradient(90deg,rgba(251,247,247,.88),rgba(251,247,247,.62)),url('hero-hydrangea.jpg?v=4');background-position:65% center;}.editorial-hero .hero-marquee{gap:6px;margin-bottom:24px;}.editorial-hero h1{font-size:clamp(1.8rem,6.5vw,2.5rem);}.editorial-hero .hero-cta .btn{padding:12px 20px;}}
+@media(min-width:601px){.editorial-hero .container{padding-left:clamp(24px,5vw,80px);}}
+.editorial-blog{background:#FBF7F7;font-family:'Onest',sans-serif;padding:clamp(42px,6vw,76px) var(--pad);}
+.editorial-blog .container{max-width:1200px;}
+.editorial-blog-head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:28px;}
+.editorial-blog h2{font-family:'Prata',Georgia,serif;font-weight:400;font-size:clamp(1.4rem,2.2vw,1.85rem);}
+.editorial-blog .section-label{font-family:'Onest',sans-serif;color:#795959;}
+.editorial-all{font-size:.85rem;color:#795959;white-space:nowrap;}
+.editorial-blog .blog-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin:0;}
+.editorial-blog .blog-card{display:flex;flex-direction:column;background:transparent;border:0;border-radius:0;overflow:hidden;box-shadow:none;}
+.editorial-blog .blog-cover{height:auto;aspect-ratio:3/2;border-radius:var(--r-md);position:relative;}
+.editorial-blog .blog-cover-label,.editorial-blog .blog-cover-bg{display:none;}
+.editorial-blog .blog-body{padding:16px 0 0;display:flex;flex-direction:column;flex:1;gap:10px;}
+.editorial-blog .blog-meta{display:flex;flex-wrap:wrap;gap:7px;font-size:.7rem;color:#795959;}
+.editorial-blog .blog-tag{font-size:inherit;color:inherit;}
+.editorial-blog .blog-title{font-family:'Prata',Georgia,serif;font-size:clamp(1rem,1.5vw,1.25rem);font-weight:400;line-height:1.5;color:#3D2E2E;}
+.editorial-blog .blog-excerpt{font-size:.83rem;line-height:1.65;color:#6B4E4E;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.editorial-blog .blog-footer-row{display:flex;justify-content:space-between;gap:8px;margin-top:auto;font-size:.75rem;color:#795959;}
+@media(max-width:700px){.editorial-blog .blog-grid{grid-template-columns:1fr;gap:30px;}.editorial-blog .blog-title{font-size:1.2rem;}}
+.editorial-products{background:#F5ECEC;color:#3D2E2E;padding:clamp(42px,6vw,76px) var(--pad);font-family:'Onest',sans-serif;}
+.editorial-products .container{max-width:1200px;}
+.editorial-products h2{font-family:'Prata',Georgia,serif;font-size:clamp(1.4rem,2.2vw,1.85rem);font-weight:400;color:#3D2E2E;}
+.editorial-products .section-label{font-family:'Onest',sans-serif;color:#795959;}
+.ep-intro{max-width:680px;font-size:.95rem;line-height:1.7;margin:0 0 28px;color:#604949;}
+.ep-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;}
+.ep-card{background:#FBF7F7;border:1px solid #D4B8B8;border-radius:var(--r-lg);padding:clamp(22px,3vw,36px);display:flex;flex-direction:column;gap:16px;}
+.ep-format{font-size:.72rem;color:#795959;letter-spacing:.05em;text-transform:uppercase;}
+.ep-card h3{font-family:'Prata',Georgia,serif;font-weight:400;font-size:clamp(1.15rem,1.8vw,1.5rem);line-height:1.4;margin:0;color:#3D2E2E;}
+.ep-card p{font-size:.9rem;line-height:1.7;color:#604949;margin:0 0 12px;}
+.ep-bottom{margin-top:auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:.78rem;color:#795959;}
+.ep-bottom a{color:#3D2E2E;text-decoration:underline;text-underline-offset:4px;}
+@media(max-width:700px){.ep-grid{grid-template-columns:1fr;gap:16px;}}
+.editorial-about,.editorial-social{font-family:'Onest',sans-serif;color:#3D2E2E;padding:clamp(42px,6vw,76px) var(--pad);}
+.editorial-about{background:#FBF7F7;}
+.editorial-about .container,.editorial-social .container{max-width:1200px;}
+.ea-grid{display:grid;grid-template-columns:minmax(180px,280px) minmax(0,1fr);align-items:center;gap:clamp(24px,5vw,64px);}
+.ea-photo{aspect-ratio:4/5;border-radius:var(--r-lg);background:#EDD8D8;display:grid;place-items:center;color:#B58E8E;font-family:'Prata',Georgia,serif;font-size:3rem;}
+.editorial-about h2,.editorial-social h2{font-family:'Prata',Georgia,serif;font-size:clamp(1.4rem,2.2vw,1.85rem);font-weight:400;color:#3D2E2E;margin:0 0 20px;}
+.editorial-about .section-label,.editorial-social .section-label{font-family:'Onest',sans-serif;color:#795959;}
+.editorial-about p,.editorial-social p{font-size:.95rem;line-height:1.8;color:#604949;max-width:650px;margin:0 0 16px;}
+.editorial-social{background:#F5ECEC;text-align:center;}
+.editorial-social p{margin:0 auto 24px;}
+.es-primary{display:inline-block;background:#3D2E2E;color:#FBF7F7;padding:13px 24px;border-radius:var(--r-md);font-size:.9rem;}
+.es-links{display:flex;justify-content:center;flex-wrap:wrap;gap:24px;margin-top:24px;font-size:.85rem;}
+.es-links a{color:#604949;text-decoration:underline;text-underline-offset:4px;}
+@media(max-width:700px){.ea-grid{grid-template-columns:1fr;}.ea-photo{max-width:220px;}}
+.ea-photo{overflow:hidden;position:relative;}.ea-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 40%;}
+.es-links{gap:10px;margin-top:22px;}.es-links a{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:11px 17px;border:1px solid #D4B8B8;border-radius:var(--r-md);background:#FBF7F7;color:#604949;text-decoration:none;transition:background .2s,border-color .2s;}.es-links a:hover,.es-links a:focus-visible{background:#EDD8D8;border-color:#B58E8E;}.es-links svg{flex-shrink:0;}@media(max-width:480px){.es-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));max-width:360px;margin-left:auto;margin-right:auto;}.es-links a{padding:10px 8px;font-size:.78rem;}}
+@media(max-width:480px){.es-links a:last-child{grid-column:1/-1;justify-self:center;}}
 </style>
 </head>
 <body>
@@ -865,251 +927,67 @@ section .container { padding: 0; }
 </div>
 
 <!-- HERO -->
-<header class="hero">
+<header class="hero editorial-hero">
   <div class="container">
-    <div class="hero-marquee">
-      <span>управление энергией</span><span class="dot">·</span>
-      <span>slow life</span><span class="dot">·</span>
-      <span>жизнь в ресурсе</span><span class="dot">·</span>
-      <span>архитектура жизни</span>
-    </div>
-    <h1>Жизнь в ресурсе: система для тех, кто устал успевать</h1>
-    <p>Планер, книга и воркбук – три шага к тому, чтобы перестать тратить себя на то, что не стоит ваших сил</p>
-    <div class="hero-cta">
-      <a href="products/index.html" class="btn">Выбрать свой шаг →</a>
-      <span class="hero-sub">Доступ навсегда · Работает с телефона и ПК</span>
-    </div>
+    <div class="hero-marquee"><span>lifestyle</span><span class="dot">·</span><span>самоорганизация</span><span class="dot">·</span><span>личное пространство</span></div>
+    <h1>Искусство жить <em>по-своему</em></h1>
+    <p>О повседневной жизни, личном пространстве, привычках, эстетике и самоорганизации. Без культа продуктивности и необходимости быть лучшей версией себя.</p>
+    <div class="hero-cta"><a href="blog.html" class="btn">Читать блог</a><a href="products/index.html" class="btn editorial-secondary">Мои продукты</a></div>
   </div>
 </header>
 
-<!-- PAIN -->
-<section class="pain">
-  <div class="container">
-    <div class="section-label">узнаёте себя?</div>
-    <h2>Вам знакомо это ощущение?</h2>
-    <div class="pain-grid">
-      <div class="pain-card">
-        <div class="pain-icon">⚡</div>
-        <h4>Усталость без причины</h4>
-        <p>Сделали всего пару дел, а чувствуете себя выжатой как лимон. Всё из-за дел-«вампиров», которых вы не замечаете.</p>
-      </div>
-      <div class="pain-card">
-        <div class="pain-icon">⏳</div>
-        <h4>Время идёт, а ничего не меняется</h4>
-        <p>Пробовали планеры и тайм-менеджмент. Но проблема была не во времени, а в нехватке энергии.</p>
-      </div>
-      <div class="pain-card">
-        <div class="pain-icon">🌀</div>
-        <h4>Чувство вины за отдых</h4>
-        <p>Отдыхать сложно: нужно успеть переделать кучу дел. Но именно это и держит вас в постоянном «минусе».</p>
-      </div>
-      <div class="pain-card">
-        <div class="pain-icon">🧠</div>
-        <h4>Мозг не отдыхает</h4>
-        <p>Мысли, списки, прокручивание сценариев, обязательства без конца. Внутренний диалог работает 24/7.</p>
-      </div>
-    </div>
-    <p class="pain-note">Если узнали себя хотя бы в одном пункте – всё в порядке. Дело не в вас. Вам просто нужна система, которая покажет, куда уходит ваша энергия, и поможет это изменить.</p>
-  </div>
-</section>
+<!-- BLOG -->
+<section class="blog editorial-blog"><div class="container"><div class="editorial-blog-head"><div><div class="section-label">Блог</div><h2>Избранное</h2></div><a href="blog.html" class="editorial-all">Все статьи →</a></div><div class="blog-grid"><a href="blog/millenialy-ustali.html" class="blog-card" data-category="личность">
+        <div class="blog-cover" style="background-image:url('blog/images/millenialy-ustali.jpg');background-size:cover;background-position:center;background-color:#EDD8D8">
+          <div class="blog-cover-bg"></div>
+          <span class="blog-cover-label">Энергия и ресурс</span>
+        </div>
+        <div class="blog-body">
+          <div class="blog-meta"><span class="blog-tag">Энергия и ресурс</span><span class="blog-dot">·</span><span class="blog-date">20 ноября 2026</span></div>
+          <div class="blog-title">Миллениалы устали. Но почему мы всё ещё пытаемся заслужить отдых?</div>
+          <div class="blog-excerpt">Мы успели пожить без интернета, выучить номера телефонов наизусть, записывать музыку с радио на кассеты, а потом освоили смартфоны, социальные сети и необходимость быть доступными практически круглосуточно.</div>
+          <div class="blog-footer-row"><span class="blog-read">Читать →</span><span class="blog-time">5 мин</span></div>
+        </div>
+      </a>
+<a href="blog/zabota-eto-razocharovyvat.html" class="blog-card" data-category="личность">
+        <div class="blog-cover" style="background-image:url('blog/images/zabota-eto-razocharovyvat.jpg');background-size:cover;background-position:center;background-color:#EDD8D8">
+          <div class="blog-cover-bg"></div>
+          <span class="blog-cover-label">Личность</span>
+        </div>
+        <div class="blog-body">
+          <div class="blog-meta"><span class="blog-tag">Личность</span><span class="blog-dot">·</span><span class="blog-date">14 июня 2026</span></div>
+          <div class="blog-title">Забота о себе – это умение разочаровывать людей</div>
+          <div class="blog-excerpt">Откройте любую подборку про self-care: красивые картинки, приятная эстетика. Но настоящая забота о себе заключается в другом. И об этом не снимают сторис.</div>
+          <div class="blog-footer-row"><span class="blog-read">Читать →</span><span class="blog-time">3 мин</span></div>
+        </div>
+      </a>
+<a href="blog/ozhidaniya-v-otnosheniyakh.html" class="blog-card" data-category="отношения">
+        <div class="blog-cover" style="background-image:url('blog/images/ozhidaniya-v-otnosheniyakh.jpg');background-size:cover;background-position:center;background-color:#EDD8D8">
+          <div class="blog-cover-bg"></div>
+          <span class="blog-cover-label">Отношения</span>
+        </div>
+        <div class="blog-body">
+          <div class="blog-meta"><span class="blog-tag">Отношения</span><span class="blog-dot">·</span><span class="blog-date">12 июня 2026</span></div>
+          <div class="blog-title">Про ожидания в отношениях</div>
+          <div class="blog-excerpt">Нас учат, что взрослые люди сами закрывают все свои потребности. Но это так не работает.</div>
+          <div class="blog-footer-row"><span class="blog-read">Читать →</span><span class="blog-time">3 мин</span></div>
+        </div>
+      </a></div></div></section>
 
 <!-- PRODUCTS -->
-<section class="products" id="products">
-  <div class="container">
-    <div class="section-label">инструменты</div>
-    <h2>Ваша система жизни в ресурсе</h2>
-    
-<div class="prod-grid">
-  <div class="prod-card p1">
-    <span class="prod-num">01</span>
-    <h3>Планер энергетического баланса</h3>
-    <p class="prod-format" style="font-size:.72rem;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">PDF для печати</p>
-    <p>Распечатайте и заполняйте от руки.</p>
-    <div class="prod-price" style="color:var(--accent)">Бесплатно</div>
-    <a href="products/free/planer.html" class="btn">Скачать PDF →</a>
-  </div>
-  <div class="prod-card p1" style="border-color:var(--accent)">
-    <span class="prod-num">02</span>
-    <h3>Планер энергетического баланса</h3>
-    <p class="prod-format" style="font-size:.72rem;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Google Таблица</p>
-    <p>Энергетические «вампиры» и «доноры» определяются автоматически. Работает с телефона и компьютера.</p>
-    <div class="prod-price">490 ₽</div>
-    <a href="products/planer.html#google" class="btn" style="display:block;text-align:center;">Купить →</a>
-  </div>
-  <div class="prod-card p3" style="position:relative;opacity:.55;pointer-events:none">
-    <span style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,.12);color:var(--accent-lt);font-size:.65rem;padding:3px 8px;border-radius:3px;letter-spacing:.06em">СКОРО</span>
-    <span class="prod-num">03</span>
-    <h3>Книга «Жизнь в ресурсе»</h3>
-    <p class="prod-format" style="font-size:.72rem;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">~80 страниц · PDF</p>
-    <p style="color:var(--accent-lt)">Скрипты вежливых отказов, антикризисный протокол, 50 «доноров» энергии.</p>
-    <div class="prod-price" style="color:var(--accent-lt)">Скоро</div>
-    <a href="https://t.me/in_amora" class="btn btn-outline" target="_blank" rel="noopener" style="display:block;text-align:center;pointer-events:all;opacity:.85">Следить в Telegram</a>
-  </div>
-  <div class="prod-card p3" style="position:relative;opacity:.55;pointer-events:none">
-    <span style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,.12);color:var(--accent-lt);font-size:.65rem;padding:3px 8px;border-radius:3px;letter-spacing:.06em">СКОРО</span>
-    <span class="prod-num">04</span>
-    <h3>Воркбук «Архитектура моей жизни»</h3>
-    <p class="prod-format" style="font-size:.72rem;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">70+ страниц · Год</p>
-    <p style="color:var(--accent-lt)">Диагностика, ценности, квартальные циклы, 52 еженедельных шаблона.</p>
-    <div class="prod-price" style="color:var(--accent-lt)">Скоро</div>
-    <a href="https://t.me/in_amora" class="btn btn-outline" target="_blank" rel="noopener" style="display:block;text-align:center;pointer-events:all;opacity:.85">Следить в Telegram</a>
-  </div>
-</div>
-</section>
-
-<!-- BUNDLE -->
-<div class="bundle">
-  <h3>Или возьмите всё сразу</h3>
-  <p>3 продукта = единая система</p>
-  <div class="bundle-items">
-    <span class="bundle-item">Планер энергетического баланса</span>
-    <span class="bundle-item">Книга «Жизнь в ресурсе»</span>
-    <span class="bundle-item">Воркбук «Архитектура моей жизни»</span>
-  </div>
-  <!--
-  <div class="bundle-prices">
-    <span class="bundle-old">3 770 ₽</span>
-    <span class="bundle-new">2 990 ₽</span>
-    <span class="bundle-save">экономия 780 ₽</span>
-  </div>
-  <a href="#" class="btn">Купить комплект →</a>
-  -->
-  <div class="prod-price" style="color:var(--accent-lt)">Скоро</div>
-</div>
-
-<!-- RESULTS -->
-<section class="results">
-  <div class="container">
-    <div class="section-label">результаты</div>
-    <h2>Как изменится ваша жизнь</h2>
-    <div class="results-grid">
-      <div class="result-card">
-        <h4>Ясность в голове</h4>
-        <p>Вы понимаете, что забирает вашу энергию, и можете это изменить.</p>
-      </div>
-      <div class="result-card">
-        <h4>Отдых без чувства вины</h4>
-        <p>Восстановление становится частью системы, а не наградой за всё сделанное.</p>
-      </div>
-      <div class="result-card">
-        <h4>Нет лишних обязательств</h4>
-        <p>Вы научились говорить «нет» без конфликтов и чувства вины.</p>
-      </div>
-      <div class="result-card">
-        <h4>Год с ориентирами</h4>
-        <p>Первый год, который вы проживёте осознанно, а не как получится.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- REVIEWS -->
-<section class="reviews">
-  <div class="container">
-    <div class="section-label">отзывы</div>
-    <h2>Те, кто уже в ресурсе</h2>
-    <div class="reviews-grid">
-      <div class="review-card">
-        <div class="review-header">
-          <div class="review-avatar">А</div>
-          <div>
-            <div class="review-name">Анна, 31 год</div>
-            <div class="review-tag">планер</div>
-          </div>
-        </div>
-        <div class="review-stars">★★★★★</div>
-        <p class="review-text">Никогда не думала, что таблица может изменить мой день. Теперь вижу, почему вечером нет сил, и знаю, что с этим делать.</p>
-      </div>
-      <div class="review-card">
-        <div class="review-header">
-          <div class="review-avatar">М</div>
-          <div>
-            <div class="review-name">Маша, 28 лет</div>
-            <div class="review-tag">планер</div>
-          </div>
-        </div>
-        <div class="review-stars">★★★★★</div>
-        <p class="review-text">Впервые за несколько лет я вижу, что меня радует по-настоящему, а что вытягивает силы. И не абстрактно, а конкретно, потому что начала всё записывать.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- BLOG -->
-<section class="blog">
-  <div class="container">
-    <div class="section-label">статьи</div>
-    <h2>Про энергию и slowlife</h2>
-    <div class="blog-grid">
-      <a href="blog/article.html" class="blog-card">
-        <div class="blog-cover" style="background-image:url('images/blog/ustalost-bez-prichiny.jpg');background-size:cover;background-position:center top">⚡</div>
-        <div class="blog-body">
-          <div class="blog-tag">Энергия и ресурс</div>
-          <div class="blog-title">Усталость без причины — это миф</div>
-          <div class="blog-link">Читать →</div>
-        </div>
-      </a>
-      <a href="blog/work-life-balance.html" class="blog-card">
-        <div class="blog-cover" style="background-image:url('images/blog/work-life-balance.jpg');background-size:cover;background-position:center">⚡</div>
-        <div class="blog-body">
-          <div class="blog-tag">Энергия и ресурс</div>
-          <div class="blog-title">Что не так с work-life balance?</div>
-          <div class="blog-link">Читать →</div>
-        </div>
-      </a>
-      <a href="blog/10-veschey-otdykh.html" class="blog-card">
-        <div class="blog-cover" style="background-image:url('images/blog/10-veschey-otdykh.jpg');background-size:cover;background-position:center">☕</div>
-        <div class="blog-body">
-          <div class="blog-tag">Энергия и ресурс</div>
-          <div class="blog-title">10 вещей, которые ошибочно считают отдыхом</div>
-          <div class="blog-link">Читать →</div>
-        </div>
-      </a>
-    </div>
-    <a href="blog.html" class="blog-more">Все статьи →</a>
-  </div>
-</section>
-
-<!-- FAQ -->
-<section class="faq">
-  <div class="container">
-    <div class="section-label">вопросы</div>
-    <h2>Частые вопросы</h2>
-    <div class="faq-list">
-      <div class="faq-item">
-        <button class="faq-q">С чего начать, если никогда не вела планеры?<span class="faq-chevron">▾</span></button>
-        <div class="faq-a">С планера. Записывайте дела и ставьте оценку энергии от -10 до +5. Больше ничего не нужно уметь. Инструкция внутри файла.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">Планер – это Excel?<span class="faq-chevron">▾</span></button>
-        <div class="faq-a">Google Таблица. Работает в браузере и на телефоне, ничего не нужно устанавливать. Ссылка приходит сразу после оплаты.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">Книгу можно читать без планера?<span class="faq-chevron">▾</span></button>
-        <div class="faq-a">Да. Но с данными планера за неделю — вы получите от неё в десять раз больше, потому что будете работать со своими реальными паттернами.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">Как получить продукт после оплаты?<span class="faq-chevron">▾</span></button>
-        <div class="faq-a">Сразу автоматически — на email или в Telegram. Доступ навсегда. Если что-то не пришло — напишите в @in.a.mora.</div>
-      </div>
-    </div>
-  </div>
-</section>
+<section class="editorial-products" id="products">
+<div class="container">
+<div class="editorial-blog-head"><div><div class="section-label">Самоорганизация</div><h2>Мои продукты</h2></div><a href="products/index.html" class="editorial-all">Все продукты →</a></div>
+<p class="ep-intro">Инструменты, которые я создаю для себя и для тех, кто хочет лучше понимать себя и организовывать жизнь по-своему.</p>
+<div class="ep-grid">
+<article class="ep-card"><div class="ep-format">PDF · Google Sheets · Приложение</div><h3>Дневник энергии и привычек</h3><p>Наблюдайте за своей энергией, замечайте, что наполняет и истощает, и находите привычки, которые подходят именно вам.</p><div class="ep-bottom"><span>Готовится к запуску</span><a href="products/planer.html">Подробнее →</a></div></article>
+<article class="ep-card"><div class="ep-format">PDF для печати</div><h3>Планер энергетического баланса</h3><p>Простой способ начать наблюдать за своей энергией в течение дня. Лайт-версия дневника для тех, кто предпочитает бумагу.</p><div class="ep-bottom"><span>Бесплатная версия · готовится</span><a href="products/free/planer.html">Подробнее →</a></div></article>
+</div></div></section>
 
 <!-- AUTHOR -->
-<section class="author">
-  <div class="container">
-    <div class="section-label">об авторе</div>
-    <div class="author-inner">
-      <div class="author-avatar">ЮИ</div>
-      <div class="author-content">
-        <h3>Юля Инамора</h3>
-        <p>Life-архитектор. Несколько лет назад поняла, что устаю не столько от количества дел и событий, сколько от их качества. Начала записывать, анализировать и строить систему. Сначала для себя, а потом – для вас.</p>
-        <a href="https://t.me/in.a.mora" class="author-tg">✈ @in.a.mora в Telegram</a>
-      </div>
-    </div>
-  </div>
-</section>
+<section class="editorial-about" id="about"><div class="container"><div class="ea-grid"><div class="ea-photo"><img src="author.png" alt="Юля Инамора" loading="lazy" width="1056" height="1408"></div><div><div class="section-label">Об авторе</div><h2>Юля Инамора</h2><p>Мне интересно, как устроена наша повседневная жизнь: что мы выбираем, на что тратим силы, чем окружаем себя и от чего готовы отказаться.</p><p>Здесь я делюсь наблюдениями, личным опытом и инструментами, которые помогают мне организовывать жизнь. Не ради идеального распорядка, а ради возможности жить по-своему.</p></div></div></div></section>
+<!-- SOCIAL -->
+<section class="editorial-social"><div class="container"><div class="section-label">Остаёмся на связи</div><h2>За пределами сайта</h2><p>«Дневник Синички» – мой личный Telegram-канал о жизни в её разных проявлениях. От повседневных мелочей до больших размышлений.</p><a class="es-primary" href="https://t.me/in_amora" target="_blank" rel="noopener">Читать в Telegram →</a><div class="es-links"><a href="https://dzen.ru/inamora" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M12 2c0 7-3 10-10 10 7 0 10 3 10 10 0-7 3-10 10-10-7 0-10-3-10-10Z" fill="currentColor" stroke="none"/></svg><span>Дзен</span></a><a href="https://vk.com/inamora" target="_blank" rel="noopener"><svg viewBox="-2 -2 54 54" width="20" height="20" fill="currentColor"><path d="M25,2C12.318,2,2,12.318,2,25s10.318,23,23,23c12.683,0,23-10.318,23-23S37.683,2,25,2z M34.973,29.535c2.237,1.986,2.702,2.695,2.778,2.816C38.678,33.821,36.723,34,36.723,34h-4.12c0,0-1.003,0.011-1.86-0.557c-1.397-0.915-2.86-2.689-3.888-2.381C25.992,31.32,26,32.486,26,33.483C26,33.84,25.693,34,25,34s-0.981,0-1.288,0c-2.257,0-4.706-0.76-7.149-3.313c-3.456-3.609-6.487-10.879-6.487-10.879s-0.179-0.366,0.016-0.589c0.221-0.25,0.822-0.218,0.822-0.218L14.909,19c0,0,0.376,0.071,0.646,0.261c0.223,0.156,0.347,0.454,0.347,0.454s0.671,2.216,1.526,3.629c1.67,2.758,2.447,2.828,3.014,2.531C21.27,25.445,21,22.513,21,22.513s0.037-1.259-0.395-1.82c-0.333-0.434-0.97-0.665-1.248-0.701c-0.225-0.029,0.151-0.423,0.63-0.648C20.627,19.059,21.498,18.986,23,19c1.169,0.011,1.506,0.081,1.962,0.186C26.341,19.504,26,20.343,26,23.289c0,0.944-0.13,2.271,0.582,2.711c0.307,0.19,1.359,0.422,3.231-2.618c0.889-1.442,1.596-3.834,1.596-3.834s0.146-0.263,0.373-0.393c0.232-0.133,0.225-0.13,0.543-0.13S35.832,19,36.532,19c0.699,0,1.355-0.008,1.468,0.402c0.162,0.589-0.516,2.607-2.234,4.797C32.943,27.793,32.63,27.457,34.973,29.535z"/></svg><span>ВКонтакте</span></a><a href="https://ok.ru/in.a.mora" target="_blank" rel="noopener"><svg viewBox="0 0 97.75 97.75" width="18" height="18" fill="currentColor"><path d="M48.921,40.507c4.667-0.017,8.384-3.766,8.367-8.443c-0.017-4.679-3.742-8.402-8.411-8.406c-4.708-0.005-8.468,3.787-8.432,8.508C40.48,36.826,44.239,40.524,48.921,40.507z"/><path d="M48.875,0C21.882,0,0,21.883,0,48.875S21.882,97.75,48.875,97.75S97.75,75.867,97.75,48.875S75.868,0,48.875,0z M48.945,14.863c9.52,0.026,17.161,7.813,17.112,17.438c-0.048,9.403-7.814,17.024-17.318,16.992c-9.407-0.032-17.122-7.831-17.066-17.253C31.726,22.515,39.445,14.837,48.945,14.863z M68.227,56.057c-2.105,2.161-4.639,3.725-7.453,4.816c-2.66,1.031-5.575,1.55-8.461,1.896c0.437,0.474,0.642,0.707,0.914,0.979c3.916,3.937,7.851,7.854,11.754,11.802c1.33,1.346,1.607,3.014,0.875,4.577c-0.799,1.71-2.592,2.834-4.351,2.713c-1.114-0.077-1.983-0.63-2.754-1.407c-2.956-2.974-5.968-5.895-8.862-8.925c-0.845-0.882-1.249-0.714-1.994,0.052c-2.973,3.062-5.995,6.075-9.034,9.072c-1.365,1.346-2.989,1.59-4.573,0.82c-1.683-0.814-2.753-2.533-2.671-4.262c0.058-1.166,0.632-2.06,1.434-2.858c3.877-3.869,7.742-7.75,11.608-11.628c0.257-0.257,0.495-0.53,0.868-0.93c-5.273-0.551-10.028-1.849-14.099-5.032c-0.506-0.396-1.027-0.778-1.487-1.222c-1.783-1.711-1.962-3.672-0.553-5.69c1.207-1.728,3.231-2.19,5.336-1.197c0.408,0.191,0.796,0.433,1.168,0.689c7.586,5.213,18.008,5.356,25.624,0.233c0.754-0.576,1.561-1.05,2.496-1.289c1.816-0.468,3.512,0.201,4.486,1.791C69.613,52.874,69.6,54.646,68.227,56.057z"/></svg><span>Одноклассники</span></a></div></div></section>
 
 <!-- FOOTER -->
 <footer class="footer"><div class="footer-inner">
