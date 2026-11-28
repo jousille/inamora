@@ -1004,13 +1004,13 @@ section .container { padding: 0; }
       <h1 style="color:var(--lighter);font-style:italic;font-weight:400;font-size:clamp(1.6rem,3.5vw,2.6rem);margin-bottom:12px">Планер энергетического баланса</h1>
       <p style="color:var(--accent-lt);font-size:.95rem;line-height:1.75;margin-bottom:24px;max-width:400px">Распечатайте и заполняйте от руки. 28 дней наблюдений — вампиры, доноры, итоги недели и месяца.</p>
       <div style="display:flex;gap:10px;flex-wrap:wrap">
-        <a href="#" class="btn">Скачать PDF →</a>
-        <a href="../planer.html#google" class="btn btn-outline">Купить Google Таблицу — 490 ₽</a>
+        <span class="btn" aria-disabled="true">PDF готовится</span>
+        <a href="../planer.html#google" class="btn btn-outline">Подробнее о полном дневнике</a>
       </div>
     </div>
     <div style="background:var(--mid);border-radius:var(--r-lg);height:260px;display:flex;align-items:center;justify-content:center;font-size:3rem;position:relative;overflow:hidden">
       <div style="position:absolute;inset:0;background:radial-gradient(circle at 30% 50%,rgba(181,142,142,.3),transparent 70%)"></div>
-      <img src="../../images/planer-pdf-cover.jpg" alt="Планер PDF" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0" onerror="this.style.opacity=0">
+      <img src="../../images/planer-pdf-cover.jpg" alt="Планер PDF" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:1" onerror="this.style.display='none'">
       📋
       <span style="position:absolute;bottom:12px;right:12px;font-size:.65rem;color:rgba(255,255,255,.6);background:rgba(0,0,0,.3);padding:3px 8px;border-radius:3px">PDF · A4 · для печати</span>
     </div>
@@ -1022,12 +1022,12 @@ section .container { padding: 0; }
   <div class="container">
     <span class="label">что внутри</span>
     <h2>28 дней честных наблюдений</h2>
-    <p style="font-size:.95rem;color:var(--dark-mid);line-height:1.75;max-width:580px;margin-top:12px">Каждый день записывайте дела и оцениваете их по шкале от −10 до +5. Сколько сил это взяло — или дало. В конце недели смотрите, что стало вашим главным вампиром, а что — донором.</p>
+    <p style="font-size:.95rem;color:var(--dark-mid);line-height:1.75;max-width:580px;margin-top:12px">Каждый день записывайте дела и оцениваете их по шкале от −10 до +10. Сколько сил это взяло — или дало. В конце недели смотрите, что стало вашим главным вампиром, а что — донором.</p>
     <div class="free-features">
       <div class="free-feature"><div class="free-feature-icon">📅</div><h4>28 дневных листов</h4><p>Дело → оценка энергии → комментарий. 5 минут вечером.</p></div>
       <div class="free-feature"><div class="free-feature-icon">📈</div><h4>4 листа итогов недели</h4><p>Вампиры и доноры недели. Выводы и что изменить.</p></div>
       <div class="free-feature"><div class="free-feature-icon">📋</div><h4>Итоги месяца</h4><p>Ваш энергетический профиль за 4 недели.</p></div>
-      <div class="free-feature"><div class="free-feature-icon">⚡</div><h4>Шкала −10 до +5</h4><p>Шесть градаций — от катастрофы до заряда.</p></div>
+      <div class="free-feature"><div class="free-feature-icon">⚡</div><h4>Шкала −10 до +10</h4><p>От сильного расхода энергии до заметного прилива сил.</p></div>
       <div class="free-feature"><div class="free-feature-icon">🖨️</div><h4>Формат A4</h4><p>Распечатайте дома или в печатном салоне.</p></div>
       <div class="free-feature"><div class="free-feature-icon">✏️</div><h4>Заполнять от руки</h4><p>Без телефона, без экранов. Просто бумага и ручка.</p></div>
     </div>
@@ -1040,10 +1040,10 @@ section .container { padding: 0; }
     <span class="label">страницы планера</span>
     <h2>Что вы получите</h2>
     <div class="preview-pages">
-      <div class="preview-page"><div class="preview-page-img"><img src="../../images/preview-day.jpg" alt="" style="width:100%;height:100%;object-fit:cover;opacity:0" onerror="this.style.opacity=0">📅</div><div class="preview-page-label">Дневной лист × 28</div></div>
-      <div class="preview-page"><div class="preview-page-img"><img src="../../images/preview-week.jpg" alt="" style="width:100%;height:100%;object-fit:cover;opacity:0" onerror="this.style.opacity=0">📊</div><div class="preview-page-label">Итоги недели × 4</div></div>
-      <div class="preview-page"><div class="preview-page-img"><img src="../../images/preview-month.jpg" alt="" style="width:100%;height:100%;object-fit:cover;opacity:0" onerror="this.style.opacity=0">📈</div><div class="preview-page-label">Итоги месяца × 1</div></div>
-      <div class="preview-page"><div class="preview-page-img"><img src="../../images/preview-scale.jpg" alt="" style="width:100%;height:100%;object-fit:cover;opacity:0" onerror="this.style.opacity=0">⚡</div><div class="preview-page-label">Шкала энергии</div></div>
+      <div class="preview-page"><div class="preview-page-img"><img src="../../images/preview-day.jpg" alt="" style="width:100%;height:100%;object-fit:cover;opacity:1" onerror="this.style.display='none'">📅</div><div class="preview-page-label">Дневной лист × 28</div></div>
+      <div class="preview-page"><div class="preview-page-img"><img src="../../images/preview-week.jpg" alt="" style="width:100%;height:100%;object-fit:cover;opacity:1" onerror="this.style.display='none'">📊</div><div class="preview-page-label">Итоги недели × 4</div></div>
+      <div class="preview-page"><div class="preview-page-img"><img src="../../images/preview-month.jpg" alt="" style="width:100%;height:100%;object-fit:cover;opacity:1" onerror="this.style.display='none'">📈</div><div class="preview-page-label">Итоги месяца × 1</div></div>
+      <div class="preview-page"><div class="preview-page-img"><img src="../../images/preview-scale.jpg" alt="" style="width:100%;height:100%;object-fit:cover;opacity:1" onerror="this.style.display='none'">⚡</div><div class="preview-page-label">Шкала энергии</div></div>
     </div>
   </div>
 </section>
@@ -1051,15 +1051,15 @@ section .container { padding: 0; }
 <!-- ХОТИТЕ БОЛЬШЕ -->
 <div style="background:var(--dark);padding:clamp(40px,6vw,64px) var(--pad);text-align:center">
   <h3 style="color:var(--lighter);font-family:var(--serif);font-size:1.6rem;font-style:italic;font-weight:400;margin-bottom:8px">Хотите больше?</h3>
-  <p style="color:var(--accent-lt);font-size:.9rem;margin-bottom:28px;max-width:480px;margin-left:auto;margin-right:auto">PDF — отличный старт. Но версия для Google Таблицы считает вампиров и доноров автоматически и работает с телефона.</p>
+  <p style="color:var(--accent-lt);font-size:.9rem;margin-bottom:28px;max-width:480px;margin-left:auto;margin-right:auto">PDF — отличный старт. Полный дневник помогает автоматически анализировать энергию и отслеживать привычки.</p>
   <div class="upsell-card-inner">
     <div>
       <div style="color:var(--lighter);font-family:var(--serif);font-size:1.1rem;margin-bottom:4px">Планер энергетического баланса</div>
-      <div style="color:var(--accent-lt);font-size:.82rem">Google Таблица · Автоматические итоги · Телефон и компьютер</div>
+      <div style="color:var(--accent-lt);font-size:.82rem">PDF · Google Sheets · приложение</div>
     </div>
     <div style="text-align:center">
-      <div style="font-family:var(--serif);font-size:1.4rem;color:var(--lighter)">490 ₽</div>
-      <a href="../planer.html#google" class="btn" style="display:block;text-align:center;margin-top:8px;white-space:nowrap">Купить →</a>
+      <div style="font-family:var(--serif);font-size:1.4rem;color:var(--lighter)">Скоро</div>
+      <a href="../planer.html#google" class="btn" style="display:block;text-align:center;margin-top:8px;white-space:nowrap">Подробнее →</a>
     </div>
   </div>
 </div>
@@ -1070,7 +1070,7 @@ section .container { padding: 0; }
     <span class="label">вопросы</span>
     <h2>Частые вопросы</h2>
     <div class="pfaq-list">
-      <div class="pfaq-item"><button class="pfaq-q">Как скачать планер?<span class="pfaq-chevron">▾</span></button><div class="pfaq-a">Нажмите кнопку «Скачать PDF» — файл скачается сразу. Регистрация и email не нужны.</div></div>
+      <div class="pfaq-item"><button class="pfaq-q">Как скачать планер?<span class="pfaq-chevron">▾</span></button><div class="pfaq-a">Обновлённая бесплатная версия готовится. Ссылка появится на этой странице.</div></div>
       <div class="pfaq-item"><button class="pfaq-q">На каком принтере лучше печатать?<span class="pfaq-chevron">▾</span></button><div class="pfaq-a">Подойдёт любой домашний или офисный принтер. Формат А4, чёрно-белая или цветная печать. Можно распечатать в копировальном центре.</div></div>
       <div class="pfaq-item"><button class="pfaq-q">В чём разница между PDF и Google Таблицей?<span class="pfaq-chevron">▾</span></button><div class="pfaq-a">PDF — для тех, кто любит бумагу. Заполняется ручкой, вампиров и доноров считаете сами. Google Таблица — делает это автоматически, работает с телефона, доступна в любой момент.</div></div>
       <div class="pfaq-item"><button class="pfaq-q">Можно ли использовать PDF повторно?<span class="pfaq-chevron">▾</span></button><div class="pfaq-a">Да, просто распечатайте снова. Файл остаётся у вас навсегда.</div></div>
